@@ -1,18 +1,34 @@
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
 #include <X11/Xlib.h>
 #include <fcntl.h> 
+#include <string.h>
 #include <assert.h>
 #define FIFO "wm-fifo"
-#define NIL (0)
 
 int screen, activeScreen;
 Display	*display;
 Window root; 
 struct timeval tv;
 
-//For Processing Tokens
-void tokenizeCommands(char* request) {
+typedef struct Client Client;
+struct Client {
+	Window window;
+	Client *previous;
+};
+
+typedef struct {
+	Window active;
+	Client *last;
+} Workspace;
+
+Workspace workspaces[10];
+int currentWorkspace = 0;
+
+/* =========================
+ * Handling of FIFO Commands 
+ * ========================= */
+void handleCommand(char* request) {
 	fprintf(stderr, "Recv from FIFO: %s", request);
 	char *lastToken, *token;
 	int tokenResponse;
@@ -22,6 +38,28 @@ void tokenizeCommands(char* request) {
 		fprintf(stderr, "Processing Token %s\n", token);
 	}
 }
+
+/* ====================
+ * Handling of X Events 
+ * ==================== */
+void xMapRequest(XEvent *event) {
+
+	Client *newClient;
+	newClient             = malloc(sizeof(Client));
+	newClient -> window   = event -> xmaprequest.window;
+	newClient -> previous = workspaces[currentWorkspace].last;
+
+	XMapWindow(display, newClient -> window);
+}
+
+
+void handleXEvent(XEvent *event) {
+	switch (event -> type) {
+		case MapRequest:     xMapRequest(event);    break;
+		default:                                    break;
+	}
+}
+
 
 void handleEvents() {
 	int fifoFd, xFd; //File Descriptors for FIFO and X
@@ -35,8 +73,6 @@ void handleEvents() {
 
 	//1 Second Interval
 	tv.tv_sec = 1;  
-	tv.tv_usec = 0;
-
 
 	for (;;) {
 		/* Reset the File Descriptor */
@@ -53,17 +89,16 @@ void handleEvents() {
 		//Recieved event from X
 		while (XPending(display)) {
 			XNextEvent(display, &event);
-			fprintf(stderr, "Recieved an X Event\n");
+			handleXEvent(&event);
 		}
 
 		//Commands from FIFO can be up to 300 character long
 		if ((result = read(fifoFd, commands, 300)) > 0) {
 			commands[result] = '\0';
-			tokenizeCommands(commands);
+			handleCommand(commands);
 		}
 		close(fifoFd);
 	}
-
 }
 
 
@@ -89,12 +124,4 @@ int main() {
 
 	handleEvents();
 	return 0;
-}
-
-void handleToken(char *token) {
-	printf("Handling token: %s\n", token);
-	if      (token == "kill") {}
-	else if (token == "focus") {}
-	else if (token == "workspace") {}
-	else if (token == "focus") {}
 }
