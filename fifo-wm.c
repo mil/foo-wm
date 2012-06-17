@@ -30,12 +30,22 @@ int currentWorkspace = 0;
  * ========================= */
 void handleCommand(char* request) {
 	fprintf(stderr, "Recv from FIFO: %s", request);
+
+	//Array to contain pointers to tokens, max of 5 tokens
+	char *tokens[5];
+
+	int counter = 0;
 	char *lastToken, *token;
-	int tokenResponse;
-	for ( token = strtok_r(request, " ", &lastToken); 
-			token; 
-			token = strtok_r(NULL, " ", &lastToken)) {
-		fprintf(stderr, "Processing Token %s\n", token);
+	for ( token = strtok_r(request, " ", &lastToken); token; token = strtok_r(NULL, " ", &lastToken)) {
+		tokens[counter++] = token;
+		fprintf(stderr, "Adding Token %s", token);
+	}
+
+	if (!strcmp(tokens[0], "kill")) {
+		fprintf(stderr, "Killing Client");
+	} else if (!strcmp(tokens[0], "workspace")) {
+		int workspace = atoi(tokens[1]);
+		fprintf(stderr, "Switchin to workspace %d", workspace);
 	}
 }
 
@@ -43,7 +53,6 @@ void handleCommand(char* request) {
  * Handling of X Events 
  * ==================== */
 void xMapRequest(XEvent *event) {
-
 	Client *newClient;
 	newClient             = malloc(sizeof(Client));
 	newClient -> window   = event -> xmaprequest.window;
