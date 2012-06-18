@@ -109,7 +109,7 @@ void handleEvents() {
 		FD_ZERO(&descriptors); 
 
 		/* Open the FIFO FD, Add the X FD and the FIFO FD to the Set */
-		fifoFd = open(FIFO, O_RDONLY | O_NONBLOCK);
+		fifoFd = open(FIFO, O_RDWR | O_NONBLOCK);
 		FD_SET(fifoFd, &descriptors);
 		FD_SET(xFd, &descriptors); 
 
