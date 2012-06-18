@@ -46,8 +46,28 @@ void handleCommand(char* request) {
 	} else if (!strcmp(tokens[0], "workspace")) {
 		int workspace = atoi(tokens[1]);
 		fprintf(stderr, "Switchin to workspace %d", workspace);
+		changeWorkspace(workspace);
 	}
 }
+
+int changeWorkspace(int workspace) {
+
+	fprintf(stderr, "Running change workspace to %d", workspace);
+	if (workspace == currentWorkspace) { return False; }
+	
+	Client *client;
+	for (client=workspaces[workspace].last; client; client = client -> previous) {
+		XMapWindow(display, client -> window);
+	}
+
+	for (client=workspaces[currentWorkspace].last; client; client = client -> previous) {
+		XUnmapWindow(display, client -> window);
+	}
+
+	currentWorkspace = workspace;
+	return True;
+}
+
 
 /* ====================
  * Handling of X Events 
@@ -57,6 +77,7 @@ void xMapRequest(XEvent *event) {
 	newClient             = malloc(sizeof(Client));
 	newClient -> window   = event -> xmaprequest.window;
 	newClient -> previous = workspaces[currentWorkspace].last;
+	workspaces[currentWorkspace].last = newClient;
 
 	XMapWindow(display, newClient -> window);
 }
@@ -114,6 +135,8 @@ void handleEvents() {
 int main() {
 	display = XOpenDisplay(NULL);
 	assert(display);
+
+	memset(&workspaces, 0x00, sizeof(Workspace)*10);
 
 	root = RootWindow(display, activeScreen);
 	activeScreen = DefaultScreen(display);
