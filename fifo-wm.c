@@ -14,8 +14,9 @@ Display	*display;
 Window root; 
 struct timeval tv;
 
-Workspace workspaces[10];
-int currentWorkspace = 0;
+/* Tracks the current container */
+Client *currentClient; //Current client
+Client *activeClient; // The active client
 
 /* =========================
  * Handling of FIFO Commands 
@@ -35,43 +36,97 @@ void handleCommand(char* request) {
 
 	if (!strcmp(tokens[0], "kill")) {
 		fprintf(stderr, "Killing Client");
-	} else if (!strcmp(tokens[0], "workspace")) {
-		int workspace = atoi(tokens[1]);
-		fprintf(stderr, "Switchin to workspace %d\n", workspace);
-		changeWorkspace(workspace);
 	}
 }
 
-int changeWorkspace(int workspace) {
 
-	fprintf(stderr, "Running change workspace to %d\n", workspace);
-	if (workspace == currentWorkspace) { return False; }
-	
-	Client *client;
-	for (client=workspaces[workspace].last; client; client = client -> previous) {
+/* ===================
+ * Tree Related
+ * =================== */
+int reparent(Client * child, Client * parent) {
+	/* First client to be added to container */
+	if (parent -> child == NULL) {
+		parent -> child = child;
+
+	} else {
+		/* Find last child added */
+		Client *c = parent -> child;
+		while (c -> next != NULL) { 
+			c = c -> next; 
+		}
+
+		/* Link new child */
+		c -> next = child;
+		child -> previous = c;
+	}
+
+	view(currentClient);
+}
+
+/* Views client, provides intial call to recursive fn placeClient */
+int view(Client * client) {
+	fprintf(stderr, "In view\nCalling placeClient()\n");
+	placeClient(
+			client, 0, 0, 
+			DisplayWidth  (display, activeScreen),
+			DisplayHeight (display, activeScreen)
+			);
+}
+
+int placeClient(Client * client, int x, int y, int width, int height) {
+	/* Reached the end, place */
+	if (! client -> child) {
 		XMapWindow(display, client -> window);
+		XMoveResizeWindow(display, client -> window, x, y, width, height);
+	} else {
+
+		int children;
+		Client *c = malloc(sizeof(Client));
+
+
+		for (c = client -> child; c != NULL; c = c -> next) {
+			children++;
+		}
+
+		fprintf(stderr, "I have %d children\n", children);
+
+		int i = 0;
+		switch (client -> layout) {
+			case 0: //Vertical
+				for (c = client -> child; c != NULL; c = c -> next, i++) {
+					placeClient(
+							c,
+							x + (i * (width/children)),
+							y,
+							(width / children),
+							height);
+				}
+				break;
+			case 1: //Horizontal
+				break;
+			case 2: //Tabbed
+				break;
+			case 3: //Full Screen
+				break;
+			default:
+				break;
+		}
 	}
 
-	for (client=workspaces[currentWorkspace].last; client; client = client -> previous) {
-		XUnmapWindow(display, client -> window);
-	}
-
-	currentWorkspace = workspace;
-	return True;
+	return 0;
 }
+
 
 
 /* ====================
  * Handling of X Events 
  * ==================== */
 void xMapRequest(XEvent *event) {
-	Client *newClient;
+	Client *newClient; /* Create and then parent the client */
 	newClient             = malloc(sizeof(Client));
 	newClient -> window   = event -> xmaprequest.window;
-	newClient -> previous = workspaces[currentWorkspace].last;
-	workspaces[currentWorkspace].last = newClient;
-
-	XMapWindow(display, newClient -> window);
+	fprintf(stderr, "Got a map request\n");
+	reparent(newClient, currentClient);
 }
 
 
@@ -125,10 +180,11 @@ void handleEvents() {
 
 
 int main() {
+	currentClient = malloc(sizeof(Client));
+	currentClient -> layout = 0;
+
 	display = XOpenDisplay(NULL);
 	assert(display);
-
-	memset(&workspaces, 0x00, sizeof(Workspace)*10);
 
 	root = RootWindow(display, activeScreen);
 	activeScreen = DefaultScreen(display);
@@ -144,8 +200,8 @@ int main() {
 			KeyPressMask | ButtonPressMask
 			);
 
-	XFlush(display);
 
+	XFlush(display);
 	handleEvents();
 	return 0;
 }

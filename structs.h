@@ -2,21 +2,15 @@
 
 typedef struct Client Client;
 struct Client {
-	Window window;
-	Client *previous;
-	Client *next;
+	char			*label; 
+	Window    window; 
+
+	int layout; 
+	int width;
+	int height;
+
+	Client    *parent;
+	Client    *child; 
+	Client    *next;
+	Client    *previous;
 };
-
-typedef struct Container Container;
-struct Container {
-	Client    *lastClient;
-	Container *lastContainer; 
-	Client    *previous; //Previous Container in stack
-	char			*label; //Name of Containers Label
-};
-
-
-typedef struct {
-	Window active;
-	Client *last;
-} Workspace;
