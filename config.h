@@ -1,0 +1,1 @@
+#define FIFO "wm-fifo"

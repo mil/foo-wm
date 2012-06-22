@@ -4,23 +4,15 @@
 #include <fcntl.h> 
 #include <string.h>
 #include <assert.h>
-#define FIFO "wm-fifo"
+
+#include "structs.h"
+#include "config.h"
+
 
 int screen, activeScreen;
 Display	*display;
 Window root; 
 struct timeval tv;
-
-typedef struct Client Client;
-struct Client {
-	Window window;
-	Client *previous;
-};
-
-typedef struct {
-	Window active;
-	Client *last;
-} Workspace;
 
 Workspace workspaces[10];
 int currentWorkspace = 0;
@@ -45,14 +37,14 @@ void handleCommand(char* request) {
 		fprintf(stderr, "Killing Client");
 	} else if (!strcmp(tokens[0], "workspace")) {
 		int workspace = atoi(tokens[1]);
-		fprintf(stderr, "Switchin to workspace %d", workspace);
+		fprintf(stderr, "Switchin to workspace %d\n", workspace);
 		changeWorkspace(workspace);
 	}
 }
 
 int changeWorkspace(int workspace) {
 
-	fprintf(stderr, "Running change workspace to %d", workspace);
+	fprintf(stderr, "Running change workspace to %d\n", workspace);
 	if (workspace == currentWorkspace) { return False; }
 	
 	Client *client;
