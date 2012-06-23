@@ -17,6 +17,8 @@ int lastOrientation;
 Display	*display;
 Window root; 
 struct timeval tv;
+long unfocusedColor;
+long focusedColor; 
 
 /* Tracks the current container */
 void crawlContainer(Container * container, int level) {
@@ -164,6 +166,17 @@ int placeContainer(Container * container, int x, int y, int width, int height) {
 	}
 }
 
+
+//Thank you DWM ;)
+unsigned long getColor(const char *colstr) {
+	Colormap cmap = DefaultColormap(display, activeScreen);
+	XColor color;
+
+	if(!XAllocNamedColor(display, cmap, colstr, &color, &color)) { return 0; }
+	return color.pixel;
+}
+
+
 /* ====================
  * Handling of X Events 
  * ==================== */
@@ -184,6 +197,10 @@ void xMapRequest(XEvent *event) {
 	dumpTree();
 
 	lastContainer = newContainer;
+
+
+	XSetWindowBorderWidth(display, newClient -> window, 5);
+	XSetWindowBorder(display, newClient -> window, unfocusedColor);
 
 	//Update view
 	placeContainer(
@@ -259,6 +276,8 @@ int main() {
 	currentContainer = malloc(sizeof(Container));
 	currentContainer -> layout = 0;
 
+
+
 	lastContainer = currentContainer;
 
 	display = XOpenDisplay(NULL);
@@ -266,6 +285,12 @@ int main() {
 
 	root = RootWindow(display, activeScreen);
 	activeScreen = DefaultScreen(display);
+
+
+	focusedColor = getColor(FOCUSEDCOLOR);
+	unfocusedColor = getColor(UNFOCUSEDCOLOR);
+
+
 
 	XGrabButton(
 			display, AnyButton, AnyModifier, 
