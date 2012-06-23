@@ -3,46 +3,15 @@
     m:0x40 + c:36
     Mod4 + Enter 
 
+"dwb"
+    m:0x40 + c:51
+    Mod4 + backslash
 
+### WM
+"echo 'layout vertical set' > /home/mil/repos/github/fifo-wm/wm-fifo"
+	m:0x40 + c:55
+	Mod4 + v
 
-### Workspaces Switching via FIFO
-"echo 'workspace 0' > /home/mil/repos/github/fifo-wm/wm-fifo"
-	m:0x40 + c:10
-	Mod4 + 1
-
-"echo 'workspace 1' > /home/mil/repos/github/fifo-wm/wm-fifo"
-	m:0x40 + c:11
-	Mod4 + 2
-
-"echo 'workspace 2' > /home/mil/repos/github/fifo-wm/wm-fifo"
-	m:0x40 + c:12
-	Mod4 + 3
-
-"echo 'workspace 3' > /home/mil/repos/github/fifo-wm/wm-fifo"
-	m:0x40 + c:13
-	Mod4 + 4
-
-"echo 'workspace 4' > /home/mil/repos/github/fifo-wm/wm-fifo"
-	m:0x40 + c:14
-	Mod4 + 5
-
-"echo 'workspace 5' > /home/mil/repos/github/fifo-wm/wm-fifo"
-	m:0x40 + c:15
-	Mod4 + 6
-
-"echo 'workspace 6' > /home/mil/repos/github/fifo-wm/wm-fifo"
-	m:0x40 + c:16
-	Mod4 + 7
-
-
-"echo 'workspace 7' > /home/mil/repos/github/fifo-wm/wm-fifo"
-	m:0x40 + c:17
-	Mod4 + 8
-
-"echo 'workspace 8' > /home/mil/repos/github/fifo-wm/wm-fifo"
-	m:0x40 + c:18
-	Mod4 + 9
-
-"echo 'workspace 9' > /home/mil/repos/github/fifo-wm/wm-fifo"
-	m:0x40 + c:19
-	Mod4 + 0
+"echo 'layout horizontal set' > /home/mil/repos/github/fifo-wm/wm-fifo"
+	m:0x40 + c:56
+	Mod4 + b

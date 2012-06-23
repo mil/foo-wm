@@ -62,7 +62,7 @@ void handleCommand(char* request) {
 	char *lastToken, *token;
 	for ( token = strtok_r(request, " ", &lastToken); token; token = strtok_r(NULL, " ", &lastToken)) {
 		tokens[counter++] = token;
-		fprintf(stderr, "Adding Token %s", token);
+		fprintf(stderr, "Adding Token %s\n", token);
 	}
 
 	if (!strcmp(tokens[0], "kill")) {
