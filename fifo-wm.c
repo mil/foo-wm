@@ -13,7 +13,7 @@ Container * currentContainer;
 Container * lastContainer;
 
 int screen, activeScreen;
-int lastOrientation;
+int layout;
 Display	*display;
 Window root; 
 struct timeval tv;
@@ -26,15 +26,17 @@ void crawlContainer(Container * container, int level) {
 	for (c = container; c != NULL; c = c -> next) {
 		int j;
 		for (j = level; j > 0; j--) { fprintf(stderr, "\t"); }
-		fprintf(stderr, "[%d]=> Container\n", level);
-		if (c -> child == NULL) {
+		char *or = c -> layout == 0 ? "Vertical" : "Horizontal";
+		fprintf(stderr, "[%d]=> Container (%s)\n", level, or);
+		if (c -> client != NULL) {
 			Client *d;
 			for (d = c -> client; d != NULL; d = d -> next) {
 				int h;
 				for (h = level + 1; h > 0; h--) { fprintf(stderr, "\t"); }
 				fprintf(stderr, "Client\n");
 			}
-		} else {
+		}
+		if (c -> child != NULL) {
 			crawlContainer(c -> child, level + 1);
 		}
 	}
@@ -67,6 +69,13 @@ void handleCommand(char* request) {
 		fprintf(stderr, "Killing Client");
 	} else if (!strcmp(tokens[0], "dump")) {
 		dumpTree();
+	} else if (!strcmp(tokens[0], "layout")) {
+		fprintf(stderr, "Setting layout to: %s", tokens[1]);
+		if (!strcmp(tokens[1], "vertical")) {	
+			lastContainer -> layout = 0;
+		} else if (!strcmp(tokens[1], "horizontal")) {
+			lastContainer -> layout = 1;
+		}
 	}
 
 }
@@ -83,7 +92,7 @@ int parentClient(Client * child, Container * parent) {
 	child -> parent = parent;
 
 	if (parent -> client == NULL) {
-		fprintf(stderr, "Addng client");
+		fprintf(stderr, "Addng client\n");
 		parent -> client = child;
 
 	} else {
@@ -190,11 +199,9 @@ void xMapRequest(XEvent *event) {
 	//Create a new container, parent it in last container, parent client in this new container
 	Container * newContainer = malloc(sizeof(Container));
 
-	lastOrientation = (lastOrientation == 0) ? 1 : 0;
-	newContainer -> layout = lastOrientation;
+	newContainer -> layout = layout;
 	parentClient(newClient, newContainer);
 	parentContainer(newContainer, lastContainer);
-	dumpTree();
 
 	lastContainer = newContainer;
 
@@ -272,7 +279,7 @@ int xError(XErrorEvent *e) {
 
 
 int main() {
-	lastOrientation = 1;
+	layout = 0;
 	currentContainer = malloc(sizeof(Container));
 	currentContainer -> layout = 0;
 
