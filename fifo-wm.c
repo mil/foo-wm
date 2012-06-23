@@ -10,8 +10,10 @@
 
 
 Container * currentContainer;
+Container * lastContainer;
 
 int screen, activeScreen;
+int lastOrientation;
 Display	*display;
 Window root; 
 struct timeval tv;
@@ -72,13 +74,14 @@ void handleCommand(char* request) {
  * Tree Related
  * =================== */
 
-int parent(Client * child, Container * parent) {
+int parentClient(Client * child, Container * parent) {
 	/* First client to be added to container */
 	if (parent == NULL) { return 0; }
 
 	child -> parent = parent;
 
 	if (parent -> client == NULL) {
+		fprintf(stderr, "Addng client");
 		parent -> client = child;
 
 	} else {
@@ -90,62 +93,71 @@ int parent(Client * child, Container * parent) {
 	}
 }
 
-/* Views client, provides intial call to recursive fn placeClient */
-int viewContainer(Container * container) {
-	fprintf(stderr, "In view\nCalling placeClient()\n");
-	placeContainer(
-			container, 0, 0, 
-			DisplayWidth  (display, activeScreen),
-			DisplayHeight (display, activeScreen)
-			);
+int parentContainer(Container * child, Container * parent) {
+	if (parent == NULL) { return 0; }
+
+	child -> parent = parent;
+
+	if (parent -> child == NULL) {
+		parent -> child = child;
+	
+	} else {
+		Container *c = parent -> child;
+		while (c -> next != NULL) { c = c -> next; }
+		c -> next = child;
+		child -> previous = c;
+		child -> parent = parent;
+	}
 }
 
 int placeContainer(Container * container, int x, int y, int width, int height) {
 
 	//Count up children containers
-	int containerChildren;
+	int containerChildren = 0;
 	Container *b = malloc(sizeof(Container));
 	for (b = container -> child; b != NULL; b = b -> next) { containerChildren++; }
 
 	//Count up children clients
-	int clientChildren;
+	int clientChildren = 0;
 	Client *a = malloc(sizeof(Client));
 	for (a = container -> client; a != NULL; a = a -> next) { clientChildren++; }
 
-	int i = 0;
-	if (containerChildren > 0) { //Were dealing with clients (leaf container)
-		for (b = container -> child; b != NULL; b = b -> next, i++) {
-			switch (container -> layout) {
-				case 0:
-					placeContainer(b,
-							x + (i * (width/containerChildren)), y,
-							(width / containerChildren), height);
-					break;
+	int children = containerChildren + clientChildren;
 
-				case 1:
-					placeContainer(b,
-							x, y + (i * (height/containerChildren)),
-							width, (height / containerChildren));
-					break;
-			}
+	int i = 0;
+	for (b = container -> child; b != NULL; b = b -> next, i++) {
+		switch (container -> layout) {
+			case 0:
+				placeContainer(b,
+						x + (i * (width/children)), y,
+						(width / children), height);
+				break;
+
+			case 1:
+				placeContainer(b,
+						x, y + (i * (height/children)),
+						width, (height / children));
+				break;
+
+			default:
+				break;
 		}
-	} else { //Were dealing with a container of containers
-		for (a = container -> client; a != NULL; a = a -> next, i++) {
-			XMapWindow(display, a -> window);
-			switch (container -> layout) {
-				case 0:
-					XMoveResizeWindow(display, a -> window, 
-							x + (i * (width / clientChildren)), y, 
-							(width / clientChildren), height);
-					break;
-				case 1:
-					XMoveResizeWindow(display, a -> window, 
-							x, y + (i * (height / clientChildren)), 
-							width, (height / clientChildren));
-					break;
-				default:
-					break;
-			}
+	}
+	for (a = container -> client; a != NULL; a = a -> next, i++) {
+		XMapWindow(display, a -> window);
+		switch (container -> layout) {
+			case 0:
+				XMoveResizeWindow(display, a -> window, 
+						x + (i * (width / children)), y, 
+						(width / children), height);
+				break;
+			case 1:
+				XMoveResizeWindow(display, a -> window, 
+						x, y + (i * (height / children)), 
+						width, (height / children));
+				break;
+			default:
+				break;
 		}
 
 		return 0;
@@ -161,8 +173,25 @@ void xMapRequest(XEvent *event) {
 	newClient -> window   = event -> xmaprequest.window;
 	fprintf(stderr, "Got a map request\n");
 
-	parent(newClient, currentContainer);
-	viewContainer(currentContainer);
+
+	//Create a new container, parent it in last container, parent client in this new container
+	Container * newContainer = malloc(sizeof(Container));
+
+	lastOrientation = (lastOrientation == 0) ? 1 : 0;
+	newContainer -> layout = lastOrientation;
+	parentClient(newClient, newContainer);
+	parentContainer(newContainer, lastContainer);
+	dumpTree();
+
+	lastContainer = newContainer;
+
+	//Update view
+	placeContainer(
+			currentContainer, 0, 0, 
+			DisplayWidth  (display, activeScreen),
+			DisplayHeight (display, activeScreen)
+			);
+
 }
 
 
@@ -226,8 +255,11 @@ int xError(XErrorEvent *e) {
 
 
 int main() {
+	lastOrientation = 1;
 	currentContainer = malloc(sizeof(Container));
 	currentContainer -> layout = 0;
+
+	lastContainer = currentContainer;
 
 	display = XOpenDisplay(NULL);
 	assert(display);
