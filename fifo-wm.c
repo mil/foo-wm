@@ -13,6 +13,7 @@ Container * currentContainer;
 Container * lastContainer;
 
 int screen, activeScreen;
+int padding;
 int layout;
 Display	*display;
 Window root; 
@@ -64,6 +65,9 @@ void handleCommand(char* request) {
 		tokens[counter++] = token;
 		fprintf(stderr, "Adding Token %s\n", token);
 	}
+
+
+	fprintf(stderr, "Last Token %s");
 
 	if (!strcmp(tokens[0], "kill")) {
 		fprintf(stderr, "Killing Client");
@@ -156,16 +160,23 @@ int placeContainer(Container * container, int x, int y, int width, int height) {
 	}
 	for (a = container -> client; a != NULL; a = a -> next, i++) {
 		XMapWindow(display, a -> window);
+		XSetWindowBorderWidth(display, a -> window, 1);
+		XSetWindowBorder(display, a -> window, unfocusedColor);
+
 		switch (container -> layout) {
 			case 0:
 				XMoveResizeWindow(display, a -> window, 
-						x + (i * (width / children)), y, 
-						(width / children), height);
+						(x + (i * (width / children))) + padding, 
+						y + padding, 
+						(width / children) + padding, 
+						height + padding);
 				break;
 			case 1:
 				XMoveResizeWindow(display, a -> window, 
-						x, y + (i * (height / children)), 
-						width, (height / children));
+						x + padding, 
+						(y + (i * (height / children))) + padding, 
+						width + padding, 
+						(height / children) + padding);
 				break;
 			default:
 				break;
@@ -185,12 +196,17 @@ unsigned long getColor(const char *colstr) {
 	return color.pixel;
 }
 
+void focusClient(Client * client) {
+	XSetWindowBorderWidth(display, client -> window, 2);
+	XSetWindowBorder(display, client -> window, focusedColor);
+}
+
 
 /* ====================
  * Handling of X Events 
  * ==================== */
 void xMapRequest(XEvent *event) {
-	Client *newClient; /* Create and then parent the client */
+	Client *newClient; /* Create and then parent the cusecusecuseclient */
 	newClient             = malloc(sizeof(Client));
 	newClient -> window   = event -> xmaprequest.window;
 	fprintf(stderr, "Got a map request\n");
@@ -205,7 +221,6 @@ void xMapRequest(XEvent *event) {
 
 	lastContainer = newContainer;
 
-
 	XSetWindowBorderWidth(display, newClient -> window, 5);
 	XSetWindowBorder(display, newClient -> window, unfocusedColor);
 
@@ -215,6 +230,9 @@ void xMapRequest(XEvent *event) {
 			DisplayWidth  (display, activeScreen),
 			DisplayHeight (display, activeScreen)
 			);
+
+	focusClient(newClient);
+
 
 }
 
@@ -237,8 +255,9 @@ void handleEvents() {
 	int result;
 	int count = 0;
 
-	//1 Second Interval
-	tv.tv_sec = 1;  
+	//1/5 Second Interval
+	tv.tv_sec = 0;  
+	tv.tv_usec = 200000;
 
 	for (;;) {
 		/* Reset the File Descriptor */
@@ -276,14 +295,14 @@ int xError(XErrorEvent *e) {
 	return 0;
 }
 
-
+  
 
 int main() {
-	layout = 0;
+	layout = CONTAINER_DEFAULT_LAYOUT;
+	padding = CONTAINER_PADDING;
+
 	currentContainer = malloc(sizeof(Container));
-	currentContainer -> layout = 0;
-
-
+	currentContainer -> layout = layout;
 
 	lastContainer = currentContainer;
 
@@ -294,8 +313,8 @@ int main() {
 	activeScreen = DefaultScreen(display);
 
 
-	focusedColor = getColor(FOCUSEDCOLOR);
-	unfocusedColor = getColor(UNFOCUSEDCOLOR);
+	focusedColor = getColor(CLIENT_FOCUSED_COLOR);
+	unfocusedColor = getColor(CLIENT_UNFOCUSED_COLOR);
 
 
 
