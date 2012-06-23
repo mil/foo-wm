@@ -9,14 +9,39 @@
 #include "config.h"
 
 
+Container * currentContainer;
+
 int screen, activeScreen;
 Display	*display;
 Window root; 
 struct timeval tv;
 
 /* Tracks the current container */
-Client *currentClient; //Current client
-Client *activeClient; // The active client
+void crawlContainer(Container * container, int level) {
+	Container *c;
+	for (c = container; c != NULL; c = c -> next) {
+		int j;
+		for (j = level; j > 0; j--) { fprintf(stderr, "\t"); }
+		fprintf(stderr, "[%d]=> Container\n", level);
+		if (c -> child == NULL) {
+			Client *d;
+			for (d = c -> client; d != NULL; d = d -> next) {
+				int h;
+				for (h = level + 1; h > 0; h--) { fprintf(stderr, "\t"); }
+				fprintf(stderr, "Client\n");
+			}
+		} else {
+			crawlContainer(c -> child, level + 1);
+		}
+	}
+}
+
+
+void dumpTree() {
+	fprintf(stderr, "Printing the tree\n");
+	crawlContainer(currentContainer , 0);
+}
+
 
 /* =========================
  * Handling of FIFO Commands 
@@ -36,87 +61,96 @@ void handleCommand(char* request) {
 
 	if (!strcmp(tokens[0], "kill")) {
 		fprintf(stderr, "Killing Client");
+	} else if (!strcmp(tokens[0], "dump")) {
+		dumpTree();
 	}
+
 }
 
 
 /* ===================
  * Tree Related
  * =================== */
-int reparent(Client * child, Client * parent) {
+
+int parent(Client * child, Container * parent) {
 	/* First client to be added to container */
-	if (parent -> child == NULL) {
-		parent -> child = child;
+	if (parent == NULL) { return 0; }
+
+	child -> parent = parent;
+
+	if (parent -> client == NULL) {
+		parent -> client = child;
 
 	} else {
-		/* Find last child added */
-		Client *c = parent -> child;
-		while (c -> next != NULL) { 
-			c = c -> next; 
-		}
-
-		/* Link new child */
+		Client *c = parent -> client;
+		while (c -> next != NULL) { c = c -> next; }
 		c -> next = child;
 		child -> previous = c;
+		child -> parent = parent;
 	}
-
-	view(currentClient);
 }
 
 /* Views client, provides intial call to recursive fn placeClient */
-int view(Client * client) {
+int viewContainer(Container * container) {
 	fprintf(stderr, "In view\nCalling placeClient()\n");
-	placeClient(
-			client, 0, 0, 
+	placeContainer(
+			container, 0, 0, 
 			DisplayWidth  (display, activeScreen),
 			DisplayHeight (display, activeScreen)
 			);
 }
 
-int placeClient(Client * client, int x, int y, int width, int height) {
-	/* Reached the end, place */
-	if (! client -> child) {
-		XMapWindow(display, client -> window);
-		XMoveResizeWindow(display, client -> window, x, y, width, height);
-	} else {
+int placeContainer(Container * container, int x, int y, int width, int height) {
 
-		int children;
-		Client *c = malloc(sizeof(Client));
+	//Count up children containers
+	int containerChildren;
+	Container *b = malloc(sizeof(Container));
+	for (b = container -> child; b != NULL; b = b -> next) { containerChildren++; }
 
+	//Count up children clients
+	int clientChildren;
+	Client *a = malloc(sizeof(Client));
+	for (a = container -> client; a != NULL; a = a -> next) { clientChildren++; }
 
-		for (c = client -> child; c != NULL; c = c -> next) {
-			children++;
+	int i = 0;
+	if (containerChildren > 0) { //Were dealing with clients (leaf container)
+		for (b = container -> child; b != NULL; b = b -> next, i++) {
+			switch (container -> layout) {
+				case 0:
+					placeContainer(b,
+							x + (i * (width/containerChildren)), y,
+							(width / containerChildren), height);
+					break;
+
+				case 1:
+					placeContainer(b,
+							x, y + (i * (height/containerChildren)),
+							width, (height / containerChildren));
+					break;
+			}
+		}
+	} else { //Were dealing with a container of containers
+		for (a = container -> client; a != NULL; a = a -> next, i++) {
+			XMapWindow(display, a -> window);
+			switch (container -> layout) {
+				case 0:
+					XMoveResizeWindow(display, a -> window, 
+							x + (i * (width / clientChildren)), y, 
+							(width / clientChildren), height);
+					break;
+				case 1:
+					XMoveResizeWindow(display, a -> window, 
+							x, y + (i * (height / clientChildren)), 
+							width, (height / clientChildren));
+					break;
+				default:
+					break;
+			}
 		}
 
-		fprintf(stderr, "I have %d children\n", children);
-
-		int i = 0;
-		switch (client -> layout) {
-			case 0: //Vertical
-				for (c = client -> child; c != NULL; c = c -> next, i++) {
-					placeClient(
-							c,
-							x + (i * (width/children)),
-							y,
-							(width / children),
-							height);
-				}
-				break;
-			case 1: //Horizontal
-				break;
-			case 2: //Tabbed
-				break;
-			case 3: //Full Screen
-				break;
-			default:
-				break;
-		}
+		return 0;
 	}
-
-	return 0;
 }
-
-
 
 /* ====================
  * Handling of X Events 
@@ -126,7 +160,9 @@ void xMapRequest(XEvent *event) {
 	newClient             = malloc(sizeof(Client));
 	newClient -> window   = event -> xmaprequest.window;
 	fprintf(stderr, "Got a map request\n");
-	reparent(newClient, currentClient);
+
+	parent(newClient, currentContainer);
+	viewContainer(currentContainer);
 }
 
 
@@ -178,10 +214,20 @@ void handleEvents() {
 	}
 }
 
+int xError(XErrorEvent *e) {
+	char err[500];
+
+	XGetErrorText(display, e -> request_code, err, 500);
+	fprintf(stderr, "XErrorEvent of Request Code: %d and Error Code of %d\n", e -> request_code, e -> error_code);
+	fprintf(stderr, "%s\n", err);
+	return 0;
+}
+
+
 
 int main() {
-	currentClient = malloc(sizeof(Client));
-	currentClient -> layout = 0;
+	currentContainer = malloc(sizeof(Container));
+	currentContainer -> layout = 0;
 
 	display = XOpenDisplay(NULL);
 	assert(display);
@@ -200,6 +246,8 @@ int main() {
 			KeyPressMask | ButtonPressMask
 			);
 
+
+	XSetErrorHandler((XErrorHandler)(xError));
 
 	XFlush(display);
 	handleEvents();
