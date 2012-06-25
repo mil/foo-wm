@@ -8,10 +8,10 @@
     Mod4 + backslash
 
 ### WM
-"echo 'layout vertical set' > /home/mil/repos/github/fifo-wm/wm-fifo"
+"echo 'layout vertical set' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
 	m:0x40 + c:55
 	Mod4 + v
 
-"echo 'layout horizontal set' > /home/mil/repos/github/fifo-wm/wm-fifo"
+"echo 'layout horizontal set' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
 	m:0x40 + c:56
 	Mod4 + b

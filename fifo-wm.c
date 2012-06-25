@@ -127,18 +127,15 @@ int parentContainer(Container * child, Container * parent) {
 
 int placeContainer(Container * container, int x, int y, int width, int height) {
 
-	//Count up children containers
-	int containerChildren = 0;
-	Container *b = malloc(sizeof(Container));
-	for (b = container -> child; b != NULL; b = b -> next) { containerChildren++; }
-
-	//Count up children clients
-	int clientChildren = 0;
+	//Count up children
+	int children = 0;
 	Client *a = malloc(sizeof(Client));
-	for (a = container -> client; a != NULL; a = a -> next) { clientChildren++; }
+	Container *b = malloc(sizeof(Container));
+	for (a = container -> client; a != NULL; a = a -> next) { children++; }
+	for (b = container -> child;  b != NULL; b = b -> next) { children++; }
 
-	int children = containerChildren + clientChildren;
 
+	/* Recursive call to placeContainer */
 	int i = 0;
 	for (b = container -> child; b != NULL; b = b -> next, i++) {
 		switch (container -> layout) {
@@ -158,6 +155,8 @@ int placeContainer(Container * container, int x, int y, int width, int height) {
 				break;
 		}
 	}
+
+
 	for (a = container -> client; a != NULL; a = a -> next, i++) {
 		XMapWindow(display, a -> window);
 		XSetWindowBorderWidth(display, a -> window, 1);
@@ -182,8 +181,10 @@ int placeContainer(Container * container, int x, int y, int width, int height) {
 				break;
 		}
 
-		return 0;
 	}
+
+	free(a), free(b);
+	return 0;
 }
 
 
@@ -196,16 +197,49 @@ unsigned long getColor(const char *colstr) {
 	return color.pixel;
 }
 
-void focusClient(Client * client) {
-	XSetWindowBorderWidth(display, client -> window, 2);
-	XSetWindowBorder(display, client -> window, focusedColor);
+
+void centerPointer(Window *window) {
+	//Get Window Attributes
+	XWindowAttributes windowAttributes;
+	XGetWindowAttributes(display, *window, &windowAttributes);
+
+	int centerX = windowAttributes.width  / 2,
+			centerY = windowAttributes.height / 2;
+
+	//Warp to Center
+	XWarpPointer(display, None, *window, 0, 0, 0, 0, centerX,centerY);
+}
+
+
+void focusWindow(Window * window) {
+
+	XSetWindowBorderWidth(display, *window, 2);
+	XSetWindowBorder(display, *window, focusedColor);
+
+	//Focuses window
+	XSelectInput(
+			display, *window, 
+			FocusChangeMask | KeyPressMask | ButtonPressMask | LeaveWindowMask | OwnerGrabButtonMask
+			);
+	XGrabButton(
+			display, 
+			AnyButton,
+			AnyModifier,
+			*window,
+			False,
+			OwnerGrabButtonMask | ButtonPressMask,
+			GrabModeSync,
+			GrabModeSync,
+			None,
+			None);
+
 }
 
 
 /* ====================
  * Handling of X Events 
  * ==================== */
-void xMapRequest(XEvent *event) {
+void eMapRequest(XEvent *event) {
 	Client *newClient; /* Create and then parent the cusecusecuseclient */
 	newClient             = malloc(sizeof(Client));
 	newClient -> window   = event -> xmaprequest.window;
@@ -231,15 +265,23 @@ void xMapRequest(XEvent *event) {
 			DisplayHeight (display, activeScreen)
 			);
 
-	focusClient(newClient);
+	focusWindow(&(newClient -> window));
+}
 
+void eButtonPress(XEvent *event) {
+	//Root Window
+	if (event -> xbutton.subwindow == None) { return; }
+	fprintf(stderr, "Got the button press event\n");
+
+	focusWindow( & (event -> xbutton.subwindow));
 
 }
 
 
 void handleXEvent(XEvent *event) {
 	switch (event -> type) {
-		case MapRequest:     xMapRequest(event);    break;
+		case MapRequest:     eMapRequest(event);    break;
+		case ButtonPress:    eButtonPress(event);   break;
 		default:                                    break;
 	}
 }
@@ -257,7 +299,7 @@ void handleEvents() {
 
 	//1/5 Second Interval
 	tv.tv_sec = 0;  
-	tv.tv_usec = 200000;
+	tv.tv_usec = 50000;
 
 	for (;;) {
 		/* Reset the File Descriptor */
@@ -334,5 +376,7 @@ int main() {
 
 	XFlush(display);
 	handleEvents();
+
+	free(currentContainer);
 	return 0;
 }
