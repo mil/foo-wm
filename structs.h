@@ -23,3 +23,11 @@ struct Container {
 	Container *child;
 	Client    *client;
 };
+
+/* Struct used for looking up a window's associated client */
+typedef struct Lookup Lookup;
+struct Lookup {
+	int window;
+	Client *client;
+	Lookup *previous;
+};
