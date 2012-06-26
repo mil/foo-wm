@@ -5,22 +5,9 @@
 #include <string.h>
 #include <assert.h>
 
-#include "structs.h"
 #include "config.h"
-
-
-Container * currentContainer;
-Container * lastContainer;
-Lookup * lookup;
-
-int screen, activeScreen;
-int padding;
-int layout;
-Display	*display;
-Window root; 
-struct timeval tv;
-long unfocusedColor;
-long focusedColor; 
+#include "fifo-wm.h"
+#include "events.h"
 
 /* Tracks the current container */
 void crawlContainer(Container * container, int level) {
@@ -245,61 +232,6 @@ void focusWindow(Window * window) {
 			None,
 			None);
 
-}
-
-
-/* ====================
- * Handling of X Events 
- * ==================== */
-void eMapRequest(XEvent *event) {
-	Client *newClient; 
-	newClient             = malloc(sizeof(Client));
-	newClient -> window   = event -> xmaprequest.window;
-	fprintf(stderr, "Got a map request\n");
-
-	fprintf(stderr, "\n\nMap Request Window is %d\n\n", event -> xmaprequest.window);
-
-	//Create a new container, parent it in last container, parent client in this new container
-	Container * newContainer = malloc(sizeof(Container));
-
-	newContainer -> layout = layout;
-	parentClient(newClient, newContainer);
-	parentContainer(newContainer, lastContainer);
-
-	lastContainer = newContainer;
-
-	XSetWindowBorderWidth(display, newClient -> window, 5);
-	XSetWindowBorder(display, newClient -> window, unfocusedColor);
-
-	//Update view
-	placeContainer(
-			currentContainer, 0, 0, 
-			DisplayWidth  (display, activeScreen),
-			DisplayHeight (display, activeScreen)
-			);
-
-	focusWindow(&(newClient -> window));
-
-	//Add Client and window to lookup list
-	Lookup *entry = malloc(sizeof(Lookup));
-	entry -> client = newClient;
-	int win = event -> xmaprequest.window; 
-	entry -> window = win;
-	entry -> previous = lookup;
-	lookup = entry;
-}
-
-void eButtonPress(XEvent *event) {
-
-	fprintf(stderr, "\n\nButton Event Window is %p\n\n", &(event -> xbutton.subwindow));
-
-	//Root Window
-	if (event -> xbutton.subwindow == None) { return; }
-
-	Client *c = getClientByWindow(&(event -> xbutton.subwindow));
-
-	fprintf(stderr, "Got the client matching to the window %d", c);
-	//focusWindow( & (event -> xbutton.subwindow));
 }
 
 
