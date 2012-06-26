@@ -5,6 +5,8 @@
 
 #include "fifo-wm.h"
 #include "events.h"
+#include "tree.h"
+#include "window.h"
 
 void handleXEvent(XEvent *event) {
 	switch (event -> type) {
@@ -19,8 +21,6 @@ void eMapRequest(XEvent *event) {
 	newClient             = malloc(sizeof(Client));
 	newClient -> window   = event -> xmaprequest.window;
 	fprintf(stderr, "Got a map request\n");
-
-	fprintf(stderr, "\n\nMap Request Window is %d\n\n", event -> xmaprequest.window);
 
 	//Create a new container, parent it in last container, parent client in this new container
 	Container * newContainer = malloc(sizeof(Container));
@@ -59,8 +59,7 @@ void eButtonPress(XEvent *event) {
 	//Root Window
 	if (event -> xbutton.subwindow == None) { return; }
 
-	Client *c = getClientByWindow(&(event -> xbutton.subwindow));
-
+	/* Client *c = getClientByWindow(&(event -> xbutton.subwindow));
 	fprintf(stderr, "Got the client matching to the window %d", c);
-	//focusWindow( & (event -> xbutton.subwindow));
+	focusWindow( & (event -> xbutton.subwindow)); */
 }

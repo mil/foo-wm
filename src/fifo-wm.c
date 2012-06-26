@@ -1,5 +1,6 @@
-#include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <X11/Xlib.h>
 #include <fcntl.h> 
 #include <string.h>
@@ -14,16 +15,15 @@
 #include "window.h"
 
 void handleEvents() {
-	int fifoFd, xFd; //File Descriptors for FIFO and X
+	int fifoFd = 0;
+	int xFd = 0;
 	fd_set descriptors; //Descriptors FD Set
 	XEvent event; 
 
 	char commands[256];
 
-	int result;
-	int count = 0;
+	int result = 0;
 
-	//1/5 Second Interval
 	tv.tv_sec = 0;  
 	tv.tv_usec = 50000;
 

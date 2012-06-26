@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-lX11 -g
+CFLAGS=-Wall -lX11 -g
 VPATH=./src
 
 all:fifo-wm

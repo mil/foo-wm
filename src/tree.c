@@ -51,6 +51,8 @@ int parentClient(Client * child, Container * parent) {
 		child -> previous = c;
 		child -> parent = parent;
 	}
+
+	return 1;
 }
 
 int parentContainer(Container * child, Container * parent) {
@@ -68,6 +70,8 @@ int parentContainer(Container * child, Container * parent) {
 		child -> previous = c;
 		child -> parent = parent;
 	}
+
+	return 1;
 }
 
 int placeContainer(Container * container, int x, int y, int width, int height) {
@@ -141,4 +145,5 @@ Client * getClientByWindow(Window * window) {
 			return node -> client;
 
 	free(node);
+	return NULL;
 }

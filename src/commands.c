@@ -3,6 +3,7 @@
 
 #include "fifo-wm.h"
 #include "commands.h"
+#include "tree.h"
 
 void handleCommand(char* request) {
 	fprintf(stderr, "Recv from FIFO: %s", request);
@@ -18,7 +19,7 @@ void handleCommand(char* request) {
 	}
 
 
-	fprintf(stderr, "Last Token %s");
+	//fprintf(stderr, "Last Token %s");
 
 	if (!strcmp(tokens[0], "kill")) {
 		fprintf(stderr, "Killing Client");
