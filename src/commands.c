@@ -32,6 +32,13 @@ void handleCommand(char* request) {
 		} else if (!strcmp(tokens[1], "horizontal")) {
 			lastContainer -> layout = 1;
 		}
+	} else if (!strcmp(tokens[0], "spawn")) {
+		if (!strcmp(tokens[1], "child")) {
+			fprintf(stderr, "Setting spawn to child");
+			spawn = 1;
+		} else if (!strcmp(tokens[1], "brother")) {
+			fprintf(stderr, "Setting spawn to brother");
+			spawn = 0;
+		}
 	}
-
 }

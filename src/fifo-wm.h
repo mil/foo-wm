@@ -8,6 +8,7 @@ Lookup * lookup;
 int screen, activeScreen;
 int padding;
 int layout;
+int spawn;
 Display	*display;
 Window root; 
 struct timeval tv;

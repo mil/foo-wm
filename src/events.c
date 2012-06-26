@@ -22,14 +22,17 @@ void eMapRequest(XEvent *event) {
 	newClient -> window   = event -> xmaprequest.window;
 	fprintf(stderr, "Got a map request\n");
 
-	//Create a new container, parent it in last container, parent client in this new container
-	Container * newContainer = malloc(sizeof(Container));
 
-	newContainer -> layout = layout;
-	parentClient(newClient, newContainer);
-	parentContainer(newContainer, lastContainer);
+	if (spawn == 0) { //Brother
+		parentClient(newClient, lastContainer);
 
-	lastContainer = newContainer;
+	} else if (spawn == 1) { //Child
+		Container * newContainer = malloc(sizeof(Container));
+		newContainer -> layout = layout;
+		parentClient(newClient, newContainer);
+		parentContainer(newContainer, lastContainer);
+		lastContainer = newContainer;
+	}
 
 	XSetWindowBorderWidth(display, newClient -> window, 5);
 	XSetWindowBorder(display, newClient -> window, unfocusedColor);
@@ -42,6 +45,7 @@ void eMapRequest(XEvent *event) {
 			);
 
 	focusWindow(&(newClient -> window));
+
 
 	//Add Client and window to lookup list
 	Lookup *entry = malloc(sizeof(Lookup));

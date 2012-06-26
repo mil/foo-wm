@@ -58,6 +58,7 @@ void handleEvents() {
 int main() {
 	layout = CONTAINER_DEFAULT_LAYOUT;
 	padding = CONTAINER_PADDING;
+	spawn = 0;
 
 	currentContainer = malloc(sizeof(Container));
 	currentContainer -> layout = layout;
