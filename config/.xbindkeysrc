@@ -16,10 +16,7 @@
 	m:0x40 + c:56
 	Mod4 + b
 
-"echo 'spawn child set' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
-	m:0x40 + c33
-	Mod4 + p
 
-"echo 'spawn parent set' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
-	m:0x40 + c33
+"echo 'containerize set' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
+	m:0x40 + c:33
 	Mod4 + p

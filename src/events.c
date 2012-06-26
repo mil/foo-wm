@@ -22,24 +22,23 @@ void eMapRequest(XEvent *event) {
 	newClient -> window   = event -> xmaprequest.window;
 	fprintf(stderr, "Got a map request\n");
 
+		parentClient(newClient, currentContainer);
+		currentClient = newClient;
 
-	if (spawn == 0) { //Brother
-		parentClient(newClient, lastContainer);
-
-	} else if (spawn == 1) { //Child
+		/*
 		Container * newContainer = malloc(sizeof(Container));
 		newContainer -> layout = layout;
 		parentClient(newClient, newContainer);
-		parentContainer(newContainer, lastContainer);
-		lastContainer = newContainer;
-	}
+		parentContainer(newContainer, currentContainer);
+		currentContainer = newContainer;
 
 	XSetWindowBorderWidth(display, newClient -> window, 5);
 	XSetWindowBorder(display, newClient -> window, unfocusedColor);
 
+	*/
 	//Update view
 	placeContainer(
-			currentContainer, 0, 0, 
+			rootContainer, 0, 0, 
 			DisplayWidth  (display, activeScreen),
 			DisplayHeight (display, activeScreen)
 			);

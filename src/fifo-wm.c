@@ -60,10 +60,10 @@ int main() {
 	padding = CONTAINER_PADDING;
 	spawn = 0;
 
-	currentContainer = malloc(sizeof(Container));
-	currentContainer -> layout = layout;
+	rootContainer = malloc(sizeof(Container));
+	rootContainer -> layout = layout;
 
-	lastContainer = currentContainer;
+	currentContainer = rootContainer;
 
 	display = XOpenDisplay(NULL);
 	assert(display);
@@ -94,6 +94,6 @@ int main() {
 	XFlush(display);
 	handleEvents();
 
-	free(currentContainer);
+	free(rootContainer);
 	return 0;
 }

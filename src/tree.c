@@ -30,13 +30,26 @@ void crawlContainer(Container * container, int level) {
 
 void dumpTree() {
 	fprintf(stderr, "Printing the tree\n");
-	crawlContainer(currentContainer , 0);
+	crawlContainer(rootContainer, 0);
 }
 
 
 int parentClient(Client * child, Container * parent) {
 	/* First client to be added to container */
 	if (parent == NULL) { return 0; }
+
+	//Moving the client
+	if (child -> parent != NULL) {
+		child -> parent = NULL;
+
+		if (child -> next != NULL) {
+			(child -> next) -> previous = child -> previous;
+		}
+
+		if (child -> previous != NULL) {
+			(child -> previous) -> next = child -> next;
+		}
+	}
 
 	child -> parent = parent;
 

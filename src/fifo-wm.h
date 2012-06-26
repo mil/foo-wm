@@ -1,8 +1,9 @@
 #include <X11/Xlib.h>
 #include "structs.h"
 
+Container * rootContainer;
 Container * currentContainer;
-Container * lastContainer;
+Client * currentClient;
 Lookup * lookup;
 
 int screen, activeScreen;

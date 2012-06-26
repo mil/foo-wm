@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "fifo-wm.h"
@@ -19,8 +20,6 @@ void handleCommand(char* request) {
 	}
 
 
-	//fprintf(stderr, "Last Token %s");
-
 	if (!strcmp(tokens[0], "kill")) {
 		fprintf(stderr, "Killing Client");
 	} else if (!strcmp(tokens[0], "dump")) {
@@ -28,17 +27,15 @@ void handleCommand(char* request) {
 	} else if (!strcmp(tokens[0], "layout")) {
 		fprintf(stderr, "Setting layout to: %s", tokens[1]);
 		if (!strcmp(tokens[1], "vertical")) {	
-			lastContainer -> layout = 0;
+			currentContainer -> layout = 0;
 		} else if (!strcmp(tokens[1], "horizontal")) {
-			lastContainer -> layout = 1;
+			currentContainer -> layout = 1;
 		}
-	} else if (!strcmp(tokens[0], "spawn")) {
-		if (!strcmp(tokens[1], "child")) {
-			fprintf(stderr, "Setting spawn to child");
-			spawn = 1;
-		} else if (!strcmp(tokens[1], "brother")) {
-			fprintf(stderr, "Setting spawn to brother");
-			spawn = 0;
-		}
+	} else if (!strcmp(tokens[0], "containerize")) {
+		fprintf(stderr, "Containerizing!");
+		Container * newContainer = malloc(sizeof(Container));
+		parentClient(currentClient, newContainer);
+		parentContainer(newContainer, currentContainer);
+		currentContainer = newContainer;
 	}
 }
