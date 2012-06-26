@@ -3,8 +3,16 @@
 #include <string.h>
 #include <X11/Xlib.h>
 
-#include "events.h"
 #include "fifo-wm.h"
+#include "events.h"
+
+void handleXEvent(XEvent *event) {
+	switch (event -> type) {
+		case MapRequest:     eMapRequest(event);    break;
+		case ButtonPress:    eButtonPress(event);   break;
+		default:                                    break;
+	}
+}
 
 void eMapRequest(XEvent *event) {
 	Client *newClient; 
