@@ -28,14 +28,23 @@ void handleCommand(char* request) {
 		fprintf(stderr, "Setting layout to: %s", tokens[1]);
 		if (!strcmp(tokens[1], "vertical")) {	
 			currentContainer -> layout = 0;
+
 		} else if (!strcmp(tokens[1], "horizontal")) {
 			currentContainer -> layout = 1;
 		}
+		placeContainer(currentContainer, 
+				currentContainer -> x, currentContainer -> y, 
+				currentContainer -> width, currentContainer -> height);
+
 	} else if (!strcmp(tokens[0], "containerize")) {
-		fprintf(stderr, "Containerizing!");
-		Container * newContainer = malloc(sizeof(Container));
-		parentClient(currentClient, newContainer);
-		parentContainer(newContainer, currentContainer);
-		currentContainer = newContainer;
+		if (currentClient -> previous != NULL) {
+			fprintf(stderr, "Containerizing!");
+			Container * newContainer = malloc(sizeof(Container));
+			parentClient(currentClient, newContainer);
+			parentContainer(newContainer, currentContainer);
+			currentContainer = newContainer;
+		} else {
+			fprintf(stderr, "Containerize called but already alone in a container...");
+		}
 	}
 }

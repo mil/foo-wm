@@ -14,26 +14,3 @@ void centerPointer(Window *window) {
 	//Warp to Center
 	XWarpPointer(display, None, *window, 0, 0, 0, 0, centerX,centerY);
 }
-
-
-void focusWindow(Window * window) {
-XSetWindowBorderWidth(display, *window, 2);
-	XSetWindowBorder(display, *window, focusedColor);
-
-	//Focuses window
-	XSelectInput(
-			display, *window, 
-			FocusChangeMask | KeyPressMask | ButtonPressMask | LeaveWindowMask | OwnerGrabButtonMask
-			);
-	XGrabButton(
-			display, 
-			AnyButton,
-			AnyModifier,
-			*window,
-			False,
-			OwnerGrabButtonMask | ButtonPressMask,
-			GrabModeSync,
-			GrabModeSync,
-			None,
-			None);
-}

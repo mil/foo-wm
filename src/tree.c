@@ -88,6 +88,10 @@ int parentContainer(Container * child, Container * parent) {
 }
 
 int placeContainer(Container * container, int x, int y, int width, int height) {
+	container -> x = x;
+	container -> y = y;
+	container -> width = width;
+	container -> height = height;
 
 	//Count up children
 	int children = 0;
@@ -103,8 +107,8 @@ int placeContainer(Container * container, int x, int y, int width, int height) {
 		switch (container -> layout) {
 			case 0:
 				placeContainer(b,
-						x + (i * (width/children)), y,
-						(width / children), height);
+						x + (i * (width/children)) + padding, y + padding,
+						(width / children) - (padding * 2), height - (padding * 2));
 				break;
 
 			case 1:
@@ -127,17 +131,17 @@ int placeContainer(Container * container, int x, int y, int width, int height) {
 		switch (container -> layout) {
 			case 0:
 				XMoveResizeWindow(display, a -> window, 
-						(x + (i * (width / children))) + padding, 
+						(x + (i * (width / children))), 
 						y + padding, 
-						(width / children) + padding, 
-						height + padding);
+						(width / children), 
+						height);
 				break;
 			case 1:
 				XMoveResizeWindow(display, a -> window, 
-						x + padding, 
-						(y + (i * (height / children))) + padding, 
-						width + padding, 
-						(height / children) + padding);
+						x , 
+						(y + (i * (height / children))), 
+						width, 
+						(height / children));
 				break;
 			default:
 				break;
@@ -148,6 +152,7 @@ int placeContainer(Container * container, int x, int y, int width, int height) {
 	free(a), free(b);
 	return 0;
 }
+
 
 //Returns the client associated with given window
 Client * getClientByWindow(Window * window) {

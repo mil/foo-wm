@@ -14,6 +14,7 @@ struct Client {
 struct Container {
 	char			*label; 
 	int       layout; 
+	int				x, y, width, height;
 
 	Container *parent;
 	Container *next;

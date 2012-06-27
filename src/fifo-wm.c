@@ -15,45 +15,39 @@
 #include "window.h"
 
 void handleEvents() {
-	int fifoFd = 0;
-	int xFd = 0;
-	fd_set descriptors; //Descriptors FD Set
 	XEvent event; 
+	int fifoFd = 0;
+	int xFd = XConnectionNumber(display);
+	fd_set descriptors; //Descriptors FD Set
 
 	char commands[256];
 
 	int result = 0;
 
-	tv.tv_sec = 0;  
-	tv.tv_usec = 50000;
+	tv.tv_sec = 20;  
+	tv.tv_usec = 5;
 
+	fifoFd = open(FIFO, O_RDONLY | O_NONBLOCK);
 	for (;;) {
-		/* Reset the File Descriptor */
 		FD_ZERO(&descriptors); 
-
-		/* Open the FIFO FD, Add the X FD and the FIFO FD to the Set */
-		fifoFd = open(FIFO, O_RDWR | O_NONBLOCK);
-		FD_SET(fifoFd, &descriptors);
 		FD_SET(xFd, &descriptors); 
+		FD_SET(fifoFd, &descriptors);
 
-		/* Run Select on File Descriptors */
-		select(xFd + 1, &descriptors, 0, 0, &tv);
+		select(fifoFd + 1, &descriptors, 0, 0, &tv);
 
-		//Recieved event from X
-		while (XPending(display)) {
-			XNextEvent(display, &event);
-			handleXEvent(&event);
-		}
-
-		//Commands from FIFO can be up to 300 character long
-		if ((result = read(fifoFd, commands, 300)) > 0) {
+		if ((result = read(fifoFd, commands, 200)) > 0) {
 			commands[result] = '\0';
 			handleCommand(commands);
 		}
-		close(fifoFd);
+
+		while (XPending(display) > 0) {
+			XNextEvent(display, &event);
+			handleXEvent(&event);
+		}
 	}
+	close(fifoFd);
 }
-  
+
 
 int main() {
 	layout = CONTAINER_DEFAULT_LAYOUT;

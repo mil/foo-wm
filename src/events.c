@@ -7,6 +7,7 @@
 #include "events.h"
 #include "tree.h"
 #include "window.h"
+#include "client.h"
 
 void handleXEvent(XEvent *event) {
 	switch (event -> type) {
@@ -43,7 +44,7 @@ void eMapRequest(XEvent *event) {
 			DisplayHeight (display, activeScreen)
 			);
 
-	focusWindow(&(newClient -> window));
+	//focusClient(newClient);
 
 
 	//Add Client and window to lookup list
@@ -57,12 +58,11 @@ void eMapRequest(XEvent *event) {
 
 void eButtonPress(XEvent *event) {
 
-	fprintf(stderr, "\n\nButton Event Window is %p\n\n", &(event -> xbutton.subwindow));
+	fprintf(stderr, "Button Event Window is %p\n", &(event -> xbutton.subwindow));
 
 	//Root Window
 	if (event -> xbutton.subwindow == None) { return; }
 
-	/* Client *c = getClientByWindow(&(event -> xbutton.subwindow));
-	fprintf(stderr, "Got the client matching to the window %d", c);
-	focusWindow( & (event -> xbutton.subwindow)); */
+	Client *c = getClientByWindow(&(event -> xbutton.subwindow));
+	focusClient(c);
 }
