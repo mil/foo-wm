@@ -162,6 +162,5 @@ Client * getClientByWindow(Window * window) {
 		if (win == node -> window)
 			return node -> client;
 
-	free(node);
 	return NULL;
 }
