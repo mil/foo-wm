@@ -7,6 +7,10 @@
     m:0x40 + c:51
     Mod4 + backslash
 
+"xdotool getactivewindow windowkill"
+	m:0x41 + c:24
+	Shift+Mod4 + q
+
 ### WM
 "echo 'layout vertical set' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
 	m:0x40 + c:55

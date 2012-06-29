@@ -23,20 +23,9 @@ void eMapRequest(XEvent *event) {
 	newClient -> window   = event -> xmaprequest.window;
 	fprintf(stderr, "Got a map request\n");
 
-		parentClient(newClient, currentContainer);
-		currentClient = newClient;
+	parentClient(newClient, currentContainer);
+	currentClient = newClient;
 
-		/*
-		Container * newContainer = malloc(sizeof(Container));
-		newContainer -> layout = layout;
-		parentClient(newClient, newContainer);
-		parentContainer(newContainer, currentContainer);
-		currentContainer = newContainer;
-
-	XSetWindowBorderWidth(display, newClient -> window, 5);
-	XSetWindowBorder(display, newClient -> window, unfocusedColor);
-
-	*/
 	//Update view
 	placeContainer(
 			rootContainer, 0, 0, 
@@ -44,8 +33,7 @@ void eMapRequest(XEvent *event) {
 			DisplayHeight (display, activeScreen)
 			);
 
-	//focusClient(newClient);
-
+	focusClient(newClient);
 
 	//Add Client and window to lookup list
 	Lookup *entry = malloc(sizeof(Lookup));
@@ -57,7 +45,6 @@ void eMapRequest(XEvent *event) {
 }
 
 void eButtonPress(XEvent *event) {
-
 	fprintf(stderr, "Button Event Window is %p\n", &(event -> xbutton.subwindow));
 
 	//Root Window

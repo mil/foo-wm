@@ -15,6 +15,7 @@ struct Container {
 	char			*label; 
 	int       layout; 
 	int				x, y, width, height;
+	Client    *focus;
 
 	Container *parent;
 	Container *next;

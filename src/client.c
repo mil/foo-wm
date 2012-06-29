@@ -1,15 +1,30 @@
 #include <X11/Xlib.h>
+#include <stdio.h>
 
 #include "fifo-wm.h"
 #include "client.h"
 
 
 void focusClient(Client *client) {
-	XSetWindowBorder(display, currentClient -> window, unfocusedColor);
-	XSetWindowBorderWidth(display, currentClient -> window, 0);
 
-	XSetWindowBorderWidth(display, client -> window, 2);
-	XSetWindowBorder(display, client -> window, focusedColor);
+	fprintf(stderr, "Focusing client window %p\n", &client -> window);
+
+	Client *c;
+	for (c = (client -> parent) -> client; c != NULL; c = c -> next) {
+
+		if (client == c) {
+			XSetWindowBorder(display, client -> window, focusedColor);
+			XSetWindowBorderWidth(display, client -> window, 2);
+
+		} else {
+			XSetWindowBorder(display, c -> window, unfocusedColor);
+			XSetWindowBorderWidth(display, c -> window, 0);
+
+		}
+	}
+
+
+	(client -> parent) -> focus = client;
 
 	//Focuses window
 	XSelectInput(
@@ -20,5 +35,9 @@ void focusClient(Client *client) {
 	XGrabButton(
 			display, AnyButton, AnyModifier, client -> window, False,
 			OwnerGrabButtonMask | ButtonPressMask,
-			GrabModeSync, GrabModeSync, None, None);
+			GrabModeSync, GrabModeSync, None, None
+			);
+
+	XRaiseWindow(display, client -> window);
+	XSetInputFocus(display, client -> window, RevertToPointerRoot, CurrentTime);
 }

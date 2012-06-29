@@ -93,6 +93,8 @@ int placeContainer(Container * container, int x, int y, int width, int height) {
 	container -> width = width;
 	container -> height = height;
 
+	fprintf(stderr, "Place Container called");
+
 	//Count up children
 	int children = 0;
 	Client *a = malloc(sizeof(Client));
@@ -124,9 +126,14 @@ int placeContainer(Container * container, int x, int y, int width, int height) {
 
 
 	for (a = container -> client; a != NULL; a = a -> next, i++) {
+
 		XMapWindow(display, a -> window);
 		XSetWindowBorderWidth(display, a -> window, 1);
-		XSetWindowBorder(display, a -> window, unfocusedColor);
+		if (container -> focus == a)
+			XSetWindowBorder(display, a -> window, focusedColor);
+		else
+			XSetWindowBorder(display, a -> window, unfocusedColor);
+
 
 		switch (container -> layout) {
 			case 0:
@@ -146,7 +153,6 @@ int placeContainer(Container * container, int x, int y, int width, int height) {
 			default:
 				break;
 		}
-
 	}
 
 	free(a), free(b);
@@ -158,9 +164,11 @@ int placeContainer(Container * container, int x, int y, int width, int height) {
 Client * getClientByWindow(Window * window) {
 	Lookup *node;
 	int win = *window;
-	for (node = lookup; node != NULL; node = node ->  previous)
+	for (node = lookup; node != NULL; node = node ->  previous) {
+		fprintf(stderr, "Comparing [%p] to [%p]\n", window, node -> window);
 		if (win == node -> window)
 			return node -> client;
+	}
 
 	return NULL;
 }
