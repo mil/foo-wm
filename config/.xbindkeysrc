@@ -24,3 +24,11 @@
 "echo 'containerize set' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
 	m:0x40 + c:33
 	Mod4 + p
+
+"echo 'focus next set' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
+	m:0x40 + c:44
+	Mod4 + j
+
+"echo 'focus previous set' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
+	m:0x40 + c:45
+	Mod4 + k

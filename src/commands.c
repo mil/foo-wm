@@ -36,6 +36,23 @@ void handleCommand(char* request) {
 				currentContainer -> x, currentContainer -> y, 
 				currentContainer -> width, currentContainer -> height);
 
+
+	} else if (!strcmp(tokens[0], "focus")) {
+		if (!strcmp(tokens[1], "next")) {
+			if ((currentContainer -> focus) -> next != NULL) {
+				focusClient((currentContainer -> focus) -> next);
+			} else if ((currentContainer -> focus) -> previous != NULL) {
+				focusClient((currentContainer -> focus) -> previous);
+			}
+		} else if (!strcmp(tokens[1], "previous")) {
+			if ((currentContainer -> focus) -> previous != NULL) {
+				focusClient((currentContainer -> focus) -> previous);
+			} else if ((currentContainer -> focus) -> next != NULL) {
+				focusClient((currentContainer -> focus) -> next);
+			}
+		} else if (!strcmp(tokens[1], "parent")) {
+		}
+
 	} else if (!strcmp(tokens[0], "containerize")) {
 		if ((currentContainer -> focus) -> previous != NULL) {
 			fprintf(stderr, "Containerizing!");
