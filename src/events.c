@@ -38,15 +38,12 @@ void eMapRequest(XEvent *event) {
 }
 
 void eConfigureRequest(XEvent *event) {
-	fprintf(stderr, "\n\nReceiveced a Resize Request EVENT\n\n");
+	fprintf(stderr, "Receiveced a Resize Request EVENT\n");
 	Client *c = getClientByWindow(&(event -> xconfigurerequest.window));
 	XConfigureRequestEvent *configure = &(event -> xconfigurerequest);
 
-	XWindowChanges changes;
-	changes.x = configure -> x;
-	changes.y = configure -> y;
-	changes.width = configure -> width;
-	changes.height = configure -> height;
+	XWindowChanges changes = { configure -> x, configure -> y, 
+		configure -> width, configure -> height };
 	XUnmapWindow(display, c -> window);
 	XConfigureWindow(display, c -> window, configure -> value_mask, &changes);
 	XMoveResizeWindow(display, c-> window, c -> x, c -> y, c -> width, c -> height);

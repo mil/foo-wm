@@ -23,7 +23,16 @@ void focus(int direction) {
 			focusClient((currentContainer -> focus) -> next);
 		}
 	} else if (direction == 2) {
-		currentContainer = currentContainer -> parent;
+		if (currentContainer -> parent != NULL) {
+			currentContainer = currentContainer -> parent;
+		} else {
+			Container * newContainer = malloc(sizeof(Container));
+			parentContainer(currentContainer, newContainer);
+			currentContainer = newContainer;
+			placeContainer(currentContainer, 
+				currentContainer -> x, currentContainer -> y, 
+				currentContainer -> width, currentContainer -> height);
+		}
 	}
 
 
