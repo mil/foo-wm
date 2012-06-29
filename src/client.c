@@ -18,6 +18,7 @@ void focusClient(Client *client) {
 		}
 	}
 
+	currentContainer = client -> parent;
 	(client -> parent) -> focus = client;
 
 	//Focuses window

@@ -10,15 +10,21 @@ void crawlContainer(Container * container, int level) {
 	Container *c;
 	for (c = container; c != NULL; c = c -> next) {
 		int j;
-		for (j = level; j > 0; j--) { fprintf(stderr, "\t"); }
+		for (j = level; j > 0; j--) { fprintf(stderr, "  | "); }
+		fprintf(stderr, "\n");
+		for (j = level; j > 0; j--) { fprintf(stderr, "  | "); }
 		char *or = c -> layout == 0 ? "Vertical" : "Horizontal";
-		fprintf(stderr, "[%d]=> Container (%s)\n", level, or);
+		fprintf(stderr, "=> Container %p (%s) \n", c, or);
+
 		if (c -> client != NULL) {
 			Client *d;
 			for (d = c -> client; d != NULL; d = d -> next) {
 				int h;
-				for (h = level + 1; h > 0; h--) { fprintf(stderr, "\t"); }
-				fprintf(stderr, "Client\n");
+				for (h = level + 1; h > 0; h--) { fprintf(stderr, "  | "); }
+
+				fprintf(stderr, "-> Client %p", d);
+				if (d == c -> focus) { fprintf(stderr, " [ACTIVE]\n"); }
+				fprintf(stderr, "\n");
 			}
 		}
 		if (c -> child != NULL) {
@@ -165,7 +171,6 @@ Client * getClientByWindow(Window * window) {
 	Lookup *node;
 	int win = *window;
 	for (node = lookup; node != NULL; node = node ->  previous) {
-		fprintf(stderr, "Comparing [%p] to [%p]\n", window, node -> window);
 		if (win == node -> window)
 			return node -> client;
 	}

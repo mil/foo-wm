@@ -5,6 +5,8 @@
 #include "fifo-wm.h"
 #include "commands.h"
 #include "tree.h"
+#include "client.h"
+
 
 void handleCommand(char* request) {
 	fprintf(stderr, "Recv from FIFO: %s", request);
@@ -51,10 +53,15 @@ void handleCommand(char* request) {
 				focusClient((currentContainer -> focus) -> next);
 			}
 		} else if (!strcmp(tokens[1], "parent")) {
+			currentContainer = currentContainer -> parent;
 		}
 
 	} else if (!strcmp(tokens[0], "containerize")) {
-		if ((currentContainer -> focus) -> previous != NULL) {
+		if (
+				(((currentContainer -> focus) -> previous != NULL) ||
+				((currentContainer -> focus) -> next != NULL)) ||
+				(currentContainer -> child != NULL)
+				) {
 			fprintf(stderr, "Containerizing!");
 			Container * newContainer = malloc(sizeof(Container));
 			parentClient((currentContainer -> focus) , newContainer);
