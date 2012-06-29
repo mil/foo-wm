@@ -32,3 +32,12 @@
 "echo 'focus previous set' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
 	m:0x40 + c:45
 	Mod4 + k
+
+"echo 'dump tree' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
+	m:0x40 + c:28
+	Mod4 + t
+
+
+"dmenu-suggestions.rb | dmenu -h 60 -x 100 -y 400 -w 1200 -fn 'Envy Code R-20' -sb '#ffffff' -nf '#00ffd5' -nb '#1f1f1f' -sf '#000000' -b -p 'Command:' | xargs -0 -I INPUT handler INPUT"
+	m:0x40 + c:40
+	Mod4 + d

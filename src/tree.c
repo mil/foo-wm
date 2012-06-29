@@ -11,10 +11,10 @@ void crawlContainer(Container * container, int level) {
 	for (c = container; c != NULL; c = c -> next) {
 		int j;
 		for (j = level; j > 0; j--) { fprintf(stderr, "  | "); }
-		fprintf(stderr, "\n");
-		for (j = level; j > 0; j--) { fprintf(stderr, "  | "); }
 		char *or = c -> layout == 0 ? "Vertical" : "Horizontal";
-		fprintf(stderr, "=> Container %p (%s) \n", c, or);
+		fprintf(stderr, "=> Container %p (%s)", c, or);
+		if (c == currentContainer) { fprintf(stderr, " [ACTIVE CONTAINER]"); }
+		fprintf(stderr, "\n");
 
 		if (c -> client != NULL) {
 			Client *d;
@@ -23,7 +23,7 @@ void crawlContainer(Container * container, int level) {
 				for (h = level + 1; h > 0; h--) { fprintf(stderr, "  | "); }
 
 				fprintf(stderr, "-> Client %p", d);
-				if (d == c -> focus) { fprintf(stderr, " [ACTIVE]\n"); }
+				if (d == c -> focus) { fprintf(stderr, " [ACTIVE]"); }
 				fprintf(stderr, "\n");
 			}
 		}
@@ -94,12 +94,8 @@ int parentContainer(Container * child, Container * parent) {
 }
 
 int placeContainer(Container * container, int x, int y, int width, int height) {
-	container -> x = x;
-	container -> y = y;
-	container -> width = width;
-	container -> height = height;
-
-	fprintf(stderr, "Place Container called");
+	container -> x = x; container -> y = y;
+	container -> width = width; container -> height = height;
 
 	//Count up children
 	int children = 0;
@@ -143,22 +139,23 @@ int placeContainer(Container * container, int x, int y, int width, int height) {
 
 		switch (container -> layout) {
 			case 0:
-				XMoveResizeWindow(display, a -> window, 
-						(x + (i * (width / children))), 
-						y + padding, 
-						(width / children), 
-						height);
+				a -> x = x + (i * (width / children));
+				a -> y = y + padding;
+				a -> width = width / children;
+				a -> height = height;
 				break;
 			case 1:
-				XMoveResizeWindow(display, a -> window, 
-						x , 
-						(y + (i * (height / children))), 
-						width, 
-						(height / children));
+				a -> x = x;
+				a -> y = y + (i * (height / children));
+				a -> width = width;
+				a -> height = height / children;
 				break;
 			default:
 				break;
 		}
+		XMoveResizeWindow(display, a -> window, 
+						a -> x, a -> y, a -> width, a-> height);
+
 	}
 
 	free(a), free(b);

@@ -6,6 +6,7 @@ typedef struct Container Container;
 
 struct Client {
 	Window    window; 
+	int				x, y, width, height;
 
 	Container *parent;
 	Client    *next;

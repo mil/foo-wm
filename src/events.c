@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <string.h>
 #include <X11/Xlib.h>
 
@@ -9,13 +10,6 @@
 #include "window.h"
 #include "client.h"
 
-void handleXEvent(XEvent *event) {
-	switch (event -> type) {
-		case MapRequest:     eMapRequest(event);    break;
-		case ButtonPress:    eButtonPress(event);   break;
-		default:                                    break;
-	}
-}
 
 void eMapRequest(XEvent *event) {
 	Client *newClient; 
@@ -43,6 +37,23 @@ void eMapRequest(XEvent *event) {
 	lookup = entry;
 }
 
+void eConfigureRequest(XEvent *event) {
+	fprintf(stderr, "\n\nReceiveced a Resize Request EVENT\n\n");
+	Client *c = getClientByWindow(&(event -> xconfigurerequest.window));
+	XConfigureRequestEvent *configure = &(event -> xconfigurerequest);
+
+	XWindowChanges changes;
+	changes.x = configure -> x;
+	changes.y = configure -> y;
+	changes.width = configure -> width;
+	changes.height = configure -> height;
+	XUnmapWindow(display, c -> window);
+	XConfigureWindow(display, c -> window, configure -> value_mask, &changes);
+	XMoveResizeWindow(display, c-> window, c -> x, c -> y, c -> width, c -> height);
+	XMapWindow(display, c -> window);
+	
+}
+
 void eButtonPress(XEvent *event) {
 	fprintf(stderr, "Button Event Window is %p\n", &(event -> xbutton.subwindow));
 
@@ -52,3 +63,13 @@ void eButtonPress(XEvent *event) {
 	Client *c = getClientByWindow(&(event -> xbutton.subwindow));
 	focusClient(c);
 }
+
+void handleXEvent(XEvent *event) {
+	switch (event -> type) {
+		case MapRequest:        eMapRequest(event);        break;
+		case ConfigureRequest:  eConfigureRequest(event);  break;
+		case ButtonPress:       eButtonPress(event);       break;
+		default:                                           break;
+	}
+}
+

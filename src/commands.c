@@ -8,6 +8,27 @@
 #include "client.h"
 
 
+void focus(int direction) {
+	//Direction: 0 - Previous, 1 - Next, 2 - Parent
+	if (direction == 0) {
+		if ((currentContainer -> focus) -> next != NULL) {
+			focusClient((currentContainer -> focus) -> next);
+		} else if ((currentContainer -> focus) -> previous != NULL) {
+			focusClient((currentContainer -> focus) -> previous);
+		}
+	} else if (direction == 1) {
+		if ((currentContainer -> focus) -> previous != NULL) {
+			focusClient((currentContainer -> focus) -> previous);
+		} else if ((currentContainer -> focus) -> next != NULL) {
+			focusClient((currentContainer -> focus) -> next);
+		}
+	} else if (direction == 2) {
+		currentContainer = currentContainer -> parent;
+	}
+
+
+}
+
 void handleCommand(char* request) {
 	fprintf(stderr, "Recv from FIFO: %s", request);
 
@@ -40,28 +61,19 @@ void handleCommand(char* request) {
 
 
 	} else if (!strcmp(tokens[0], "focus")) {
-		if (!strcmp(tokens[1], "next")) {
-			if ((currentContainer -> focus) -> next != NULL) {
-				focusClient((currentContainer -> focus) -> next);
-			} else if ((currentContainer -> focus) -> previous != NULL) {
-				focusClient((currentContainer -> focus) -> previous);
-			}
-		} else if (!strcmp(tokens[1], "previous")) {
-			if ((currentContainer -> focus) -> previous != NULL) {
-				focusClient((currentContainer -> focus) -> previous);
-			} else if ((currentContainer -> focus) -> next != NULL) {
-				focusClient((currentContainer -> focus) -> next);
-			}
-		} else if (!strcmp(tokens[1], "parent")) {
-			currentContainer = currentContainer -> parent;
-		}
+		if (!strcmp(tokens[1], "next"))
+			focus(0);
+		else if (!strcmp(tokens[1], "previous"))
+			focus(1);
+		else if (!strcmp(tokens[1], "parent"))
+			focus(2);
 
 	} else if (!strcmp(tokens[0], "containerize")) {
 		if (
 				(((currentContainer -> focus) -> previous != NULL) ||
-				((currentContainer -> focus) -> next != NULL)) ||
+				 ((currentContainer -> focus) -> next != NULL)) ||
 				(currentContainer -> child != NULL)
-				) {
+			 ) {
 			fprintf(stderr, "Containerizing!");
 			Container * newContainer = malloc(sizeof(Container));
 			parentClient((currentContainer -> focus) , newContainer);
