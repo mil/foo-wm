@@ -1,5 +1,5 @@
 // FIFO
-#define FIFO "wm-fifo"
+#define FIFO "/home/mil/fifos/wm-fifo"
 
 // Windows
 #define CLIENT_FOCUSED_COLOR   "rgb:37/ff/00"

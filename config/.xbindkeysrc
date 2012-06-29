@@ -12,28 +12,28 @@
 	Shift+Mod4 + q
 
 ### WM
-"echo 'layout vertical set' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
+"echo 'layout vertical set' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:55
 	Mod4 + v
 
-"echo 'layout horizontal set' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
+"echo 'layout horizontal set' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:56
 	Mod4 + b
 
 
-"echo 'containerize set' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
+"echo 'containerize set' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:33
 	Mod4 + p
 
-"echo 'focus next set' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
+"echo 'focus next set' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:44
 	Mod4 + j
 
-"echo 'focus previous set' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
+"echo 'focus previous set' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:45
 	Mod4 + k
 
-"echo 'dump tree' > /home/mil/code/repos/github/fifo-wm/wm-fifo"
+"echo 'dump tree' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:28
 	Mod4 + t
 
@@ -41,3 +41,7 @@
 "dmenu-suggestions.rb | dmenu -h 60 -x 100 -y 400 -w 1200 -fn 'Envy Code R-20' -sb '#ffffff' -nf '#00ffd5' -nb '#1f1f1f' -sf '#000000' -b -p 'Command:' | xargs -0 -I INPUT handler INPUT"
 	m:0x40 + c:40
 	Mod4 + d
+
+"cat /home/mil/code/repos/github/fifo-wm/config/commands | dmenu -h 60 -x 100 -y 400 -w 1200 -fn 'Envy Code R-20' -sb '#ffffff' -nf '#00ffd5' -nb '#1f1f1f' -sf '#000000' -b -p 'fifowm:' | xargs -0 -I INPUT sh /home/mil/code/repos/github/fifo-wm/config/writefifo INPUT"
+	m:0x40 + c:38
+	Mod4 + a
