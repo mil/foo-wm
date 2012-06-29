@@ -39,24 +39,40 @@ void dumpTree() {
 	crawlContainer(rootContainer, 0);
 }
 
+void unparentClient(Client *c) {
+	if (c -> parent != NULL) {
+		c -> parent = NULL;
+
+		if (c -> next != NULL) {
+			(c -> next) -> previous = c -> previous;
+		}
+
+		if (c -> previous != NULL) {
+			(c -> previous) -> next = c -> next;
+		}
+	}
+}
+
+void destroyContainer(Container *c) {
+
+}
+
+void destroyClient(Client *c) {
+	if (c != NULL) {
+		fprintf(stderr, "Destorying %p\n", c);
+		unparentClient(c);
+		free(c);
+	}
+}
+
+
 
 int parentClient(Client * child, Container * parent) {
 	/* First client to be added to container */
 	if (parent == NULL) { return 0; }
 
 	//Moving the client
-	if (child -> parent != NULL) {
-		child -> parent = NULL;
-
-		if (child -> next != NULL) {
-			(child -> next) -> previous = child -> previous;
-		}
-
-		if (child -> previous != NULL) {
-			(child -> previous) -> next = child -> next;
-		}
-	}
-
+	unparentClient(child);
 	child -> parent = parent;
 
 	if (parent -> client == NULL) {

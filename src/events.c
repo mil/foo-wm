@@ -37,6 +37,20 @@ void eMapRequest(XEvent *event) {
 	lookup = entry;
 }
 
+void eDestroyNotify(XEvent *event) {
+	fprintf(stderr, "DESTROY NOTIFY RECIEVED");
+
+	Client *c = getClientByWindow(&(event -> xdestroywindow.window));
+	destroyClient(c);
+
+	//Update view
+	placeContainer(
+			rootContainer, 0, 0, 
+			DisplayWidth  (display, activeScreen),
+			DisplayHeight (display, activeScreen)
+			);
+}
+
 void eConfigureRequest(XEvent *event) {
 	fprintf(stderr, "Receiveced a Resize Request EVENT\n");
 	Client *c = getClientByWindow(&(event -> xconfigurerequest.window));
@@ -64,6 +78,7 @@ void eButtonPress(XEvent *event) {
 void handleXEvent(XEvent *event) {
 	switch (event -> type) {
 		case MapRequest:        eMapRequest(event);        break;
+		case DestroyNotify:     eDestroyNotify(event);     break;
 		case ConfigureRequest:  eConfigureRequest(event);  break;
 		case ButtonPress:       eButtonPress(event);       break;
 		default:                                           break;
