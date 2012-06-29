@@ -24,7 +24,6 @@ void eMapRequest(XEvent *event) {
 	fprintf(stderr, "Got a map request\n");
 
 	parentClient(newClient, currentContainer);
-	currentClient = newClient;
 
 	//Update view
 	placeContainer(

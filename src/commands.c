@@ -37,10 +37,10 @@ void handleCommand(char* request) {
 				currentContainer -> width, currentContainer -> height);
 
 	} else if (!strcmp(tokens[0], "containerize")) {
-		if (currentClient -> previous != NULL) {
+		if ((currentContainer -> focus) -> previous != NULL) {
 			fprintf(stderr, "Containerizing!");
 			Container * newContainer = malloc(sizeof(Container));
-			parentClient(currentClient, newContainer);
+			parentClient((currentContainer -> focus) , newContainer);
 			parentContainer(newContainer, currentContainer);
 			currentContainer = newContainer;
 		} else {

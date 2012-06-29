@@ -3,7 +3,6 @@
 
 Container * rootContainer;
 Container * currentContainer;
-Client * currentClient;
 Lookup * lookup;
 
 int screen, activeScreen;

@@ -11,18 +11,12 @@ void focusClient(Client *client) {
 
 	Client *c;
 	for (c = (client -> parent) -> client; c != NULL; c = c -> next) {
-
 		if (client == c) {
 			XSetWindowBorder(display, client -> window, focusedColor);
-			XSetWindowBorderWidth(display, client -> window, 2);
-
 		} else {
 			XSetWindowBorder(display, c -> window, unfocusedColor);
-			XSetWindowBorderWidth(display, c -> window, 0);
-
 		}
 	}
-
 
 	(client -> parent) -> focus = client;
 
