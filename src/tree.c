@@ -41,15 +41,18 @@ void dumpTree() {
 
 void unparentClient(Client *c) {
 	if (c -> parent != NULL) {
-		c -> parent = NULL;
 
 		if (c -> next != NULL) {
 			(c -> next) -> previous = c -> previous;
+			(c -> parent) -> focus = c -> next;
 		}
 
 		if (c -> previous != NULL) {
 			(c -> previous) -> next = c -> next;
+			(c -> parent) -> focus = c -> previous;
 		}
+
+		c -> parent = NULL;
 	}
 }
 
@@ -58,12 +61,12 @@ void destroyContainer(Container *c) {
 }
 
 void destroyClient(Client *c) {
-	if (c != NULL) {
-		fprintf(stderr, "Destorying %p\n", c);
-		XUnmapWindow(display, c -> window);
-		unparentClient(c);
-		free(c);
-	}
+	if (c == NULL) { return; }
+
+	fprintf(stderr, "Destroying %p\n", c);
+	XUnmapWindow(display, c -> window);
+	unparentClient(c);
+	free(c);
 }
 
 
