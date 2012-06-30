@@ -43,7 +43,7 @@ void unparentClient(Client *c) {
 	if (c -> parent != NULL) {
 
 		if (c -> next != NULL) {
-			(c -> next) -> previous = c -> previous;
+			(c -> next)   -> previous = c -> previous;
 			(c -> parent) -> focus = c -> next;
 		}
 
@@ -51,22 +51,62 @@ void unparentClient(Client *c) {
 			(c -> previous) -> next = c -> next;
 			(c -> parent) -> focus = c -> previous;
 		}
-
+		XUnmapWindow(display, c -> window);
 		c -> parent = NULL;
 	}
 }
 
-void destroyContainer(Container *c) {
+void unparentContainer(Container *c) {
+	if (c -> parent == NULL) { return; }
 
+	//Pop the container out of its linked list
+	if (c -> next == NULL && c -> previous == NULL) {
+		(c -> parent) -> child = NULL;
+	} else {
+		if (c -> next != NULL)     { (c -> next) -> previous = c -> previous; }
+		if (c -> previous != NULL) { (c -> previous) -> next = c -> next;     }
+	}
+
+
+	//Destroy Children Clients
+	if (c -> client != NULL) {
+			Client *client;
+			for (client = c -> client; client != NULL; client = client -> next) {
+				unparentClient(client);
+			}
+		}
+
+		//Destroy Children Containers
+		if (c -> child != NULL) {
+			Container *container;
+			for (container = c -> child; container != NULL; container = container -> next) {
+				unparentContainer(container);
+			}
+		}
+
+	c -> parent = NULL;
+}
+
+void destroyContainer(Container *c) {
+	if (c != NULL) {
+		fprintf(stderr, "Destorying Container %p\n", c);
+		unparentContainer(c);
+	}
 }
 
 void destroyClient(Client *c) {
+	//Check if client alone, if so destroy the container
 	if (c == NULL) { return; }
 
-	fprintf(stderr, "Destroying %p\n", c);
-	XUnmapWindow(display, c -> window);
-	unparentClient(c);
-	free(c);
+	fprintf(stderr, "c->next = %p\nc->previous = %p\n", c->next, c->previous);
+	if (c -> next == NULL && (c -> parent) -> client == c) {
+		destroyContainer(c -> parent);
+	} else {
+		fprintf(stderr, "Destroying Client %p\n", c);
+		unparentClient(c);
+		XUnmapWindow(display, c -> window);
+		free(c);
+	}
 }
 
 
@@ -87,6 +127,7 @@ int parentClient(Client * child, Container * parent) {
 		Client *c = parent -> client;
 		while (c -> next != NULL) { c = c -> next; }
 		c -> next = child;
+		fprintf(stderr, "c->next set to %p\n", c->next);
 		child -> previous = c;
 		child -> parent = parent;
 	}

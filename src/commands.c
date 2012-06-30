@@ -86,16 +86,32 @@ void handleCommand(char* request) {
 			parentClient((currentContainer -> focus) , newContainer);
 			parentContainer(newContainer, currentContainer);
 			currentContainer = newContainer;
+			placeContainer(currentContainer, 
+				currentContainer -> x, currentContainer -> y, 
+				currentContainer -> width, currentContainer -> height);
+
 		} else {
 			fprintf(stderr, "Containerize called but already alone in a container...");
 		}
 	} else if (!strcmp(tokens[0], "kill")) {
 		if (!strcmp(tokens[1], "client")) {
+
+
+			dumpTree();
+			fprintf(stderr, "Destroy Client %p\n", currentContainer -> focus);
+
 			destroyClient(currentContainer -> focus);
+
+			dumpTree();
+
 			placeContainer(currentContainer, 
 					currentContainer -> x, currentContainer -> y, 
 					currentContainer -> width, currentContainer -> height);
 		} else if (!strcmp(tokens[1], "container")) {
+			dumpTree();
+			fprintf(stderr, "Destroy Container %p\n", currentContainer);
+			destroyContainer(currentContainer);
+			dumpTree();
 		}
 	}
 }
