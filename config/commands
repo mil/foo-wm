@@ -5,3 +5,5 @@ layout vertical
 focus next
 focus previous
 focus parent
+kill client
+kill container

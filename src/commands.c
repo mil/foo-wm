@@ -52,9 +52,7 @@ void handleCommand(char* request) {
 	}
 
 
-	if (!strcmp(tokens[0], "kill")) {
-		fprintf(stderr, "Killing Client");
-	} else if (!strcmp(tokens[0], "dump")) {
+	if (!strcmp(tokens[0], "dump")) {
 		dumpTree();
 	} else if (!strcmp(tokens[0], "layout")) {
 		fprintf(stderr, "Setting layout to: %s", tokens[1]);
@@ -90,6 +88,14 @@ void handleCommand(char* request) {
 			currentContainer = newContainer;
 		} else {
 			fprintf(stderr, "Containerize called but already alone in a container...");
+		}
+	} else if (!strcmp(tokens[0], "kill")) {
+		if (!strcmp(tokens[1], "client")) {
+			destroyClient(currentContainer -> focus);
+			placeContainer(currentContainer, 
+					currentContainer -> x, currentContainer -> y, 
+					currentContainer -> width, currentContainer -> height);
+		} else if (!strcmp(tokens[1], "container")) {
 		}
 	}
 }

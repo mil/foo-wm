@@ -60,6 +60,7 @@ void destroyContainer(Container *c) {
 void destroyClient(Client *c) {
 	if (c != NULL) {
 		fprintf(stderr, "Destorying %p\n", c);
+		XUnmapWindow(display, c -> window);
 		unparentClient(c);
 		free(c);
 	}
