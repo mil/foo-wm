@@ -22,13 +22,13 @@ void eMapRequest(XEvent *event) {
 	}
 
 
-	focusNode(newNode);
 	//Update the view
 	placeNode(
-			viewNode, 0, 0, 
-			DisplayWidth(display, activeScreen),
-			DisplayHeight(display, activeScreen)
-			);
+			activeNode, activeNode -> x, activeNode -> y, 
+			activeNode -> width, activeNode -> height);
+
+	focusNode(newNode);
+
 
 	//Add Client and window to lookup list
 	Lookup *entry = malloc(sizeof(Lookup));
@@ -44,13 +44,7 @@ void eDestroyNotify(XEvent *event) {
 
 	Node *n = getNodeByWindow(&(event -> xdestroywindow.window));
 	if (n == NULL) { return; }
-	fprintf(stderr, "YO it aint null mofo\n");
-	if (n -> parent -> child == n && n -> parent -> previous == NULL) {
-		if (activeNode == n -> parent) { activeNode = n -> parent -> parent; }
-		destroyNode(n -> parent);
-	} else {
-		destroyNode(n);
-	}
+	destroyNode(n);
 
 	//Update view
 	placeNode(
@@ -65,13 +59,9 @@ void eConfigureRequest(XEvent *event) {
 
 	Node *n = getNodeByWindow(&(event -> xconfigurerequest.window));
 	if (n != NULL) {
-	XConfigureRequestEvent *configure = &(event -> xconfigurerequest);
-
-	XWindowChanges changes = { configure -> x, configure -> y, 
-		configure -> width, configure -> height };
-	XUnmapWindow(display, n -> window);
-	XMoveResizeWindow(display, n -> window, n -> x, n -> y, n -> width, n -> height);
-	XMapWindow(display, n -> window);
+		XUnmapWindow(display, n -> window);
+		XMoveResizeWindow(display, n -> window, n -> x, n -> y, n -> width, n -> height);
+		XMapWindow(display, n -> window);
 	}
 	
 }

@@ -83,6 +83,7 @@ void handleCommand(char* request) {
 		}
 
 	} else if (!strcmp(tokens[0], "view")) {
+
 		if (!strcmp(tokens[1], "parent")) {
 			if (viewNode -> parent != NULL) {
 				unmapNode(viewNode);
@@ -93,10 +94,16 @@ void handleCommand(char* request) {
 			}
 
 		} else if (!strcmp(tokens[1], "child")) {
-			viewNode = activeNode;
-			placeNode(viewNode, 0, 0,
-					DisplayWidth(display, activeScreen),
-					DisplayHeight(display, activeScreen));
+			if (activeNode != viewNode) {
+			Node *n = activeNode;
+			while (n -> parent != viewNode && n != NULL) { n = n -> parent; }
+
+				viewNode = n;
+
+				placeNode(viewNode, 0, 0,
+						DisplayWidth(display, activeScreen),
+						DisplayHeight(display, activeScreen));
+			}
 		}
 	} else if (!strcmp(tokens[0], "kill")) {
 		/*

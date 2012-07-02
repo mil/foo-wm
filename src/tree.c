@@ -11,7 +11,7 @@ void crawlNode(Node * node, int level) {
 		int j;
 		for (j = level; j > 0; j--) { fprintf(stderr, "|\t"); }
 
-		if (n -> child == NULL) { 
+		if (isClient(n -> child)) {
 			fprintf(stderr, "Client\n");
 		} else {
 			char *or = n -> layout == 0 ? "Vertical" : "Horizontal";
@@ -22,6 +22,7 @@ void crawlNode(Node * node, int level) {
 }
 
 void dumpTree() {
+	int layout;
 	fprintf(stderr, "Printing the tree\n");
 	crawlNode(viewNode, 0);
 }
@@ -31,25 +32,34 @@ void focusNode(Node * n) {
 	if ((n -> parent) -> focus == n) { return; }
 
 	(n -> parent) -> focus = n;
+
+	XRaiseWindow(display, n -> window);
+	XSetInputFocus(display, n -> window, RevertToPointerRoot, CurrentTime);
+
 	placeNode(n -> parent,
 			(n -> parent) -> x, (n -> parent) -> y,
 			(n -> parent) -> width, (n -> parent) -> height);
 
-	XRaiseWindow(display, n -> window);
-	XSetInputFocus(display, n -> window, RevertToPointerRoot, CurrentTime);
 }
 
 void destroyNode(Node * n) {
 	if (n == NULL) { return; }
+
+	
+	if (n -> parent -> child == n && n -> previous == NULL) {
+		destroyNode(n -> parent);
+		return;
+	}
+
+
+	//Unparent the node
+	unparentNode(n);
 
 	//Recursivly destroy all children of the node
 	Node * child;
 	for (child = n -> child; child != NULL; child -> next) {
 		destroyNode(child);
 	}
-
-	//Unparent the node
-	unparentNode(n);
 
 	if (n -> window != (Window)NULL) {
 		XUnmapWindow(display, n -> window);
@@ -148,6 +158,12 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 			placeNode(a, a -> x, a -> y, a -> width, a -> height);
 		}
 	}
+}
+
+Bool isClient(Node * node) {
+	if (node -> window != (Window) NULL)
+		return True;
+	return False;
 }
 
 //Returns the client associated with given window

@@ -53,17 +53,6 @@ int main() {
 	layout = CONTAINER_DEFAULT_LAYOUT;
 	padding = CONTAINER_PADDING;
 
-	/*
-	rootContainer = malloc(sizeof(Container));
-	rootContainer -> layout = layout;
-
-	currentContainer = rootContainer;
-	*/
-
-	activeNode           = malloc(sizeof(Node));
-	activeNode -> layout = layout;
-	viewNode = activeNode;
-
 	display = XOpenDisplay(NULL);
 	assert(display);
 
@@ -90,9 +79,19 @@ int main() {
 
 	XSetErrorHandler((XErrorHandler)(xError));
 
+
+	activeNode           = malloc(sizeof(Node));
+	activeNode -> layout = layout;
+	activeNode -> x = 0; activeNode -> y = 0;
+	activeNode -> width = DisplayWidth(display, activeScreen);
+	activeNode -> height = DisplayHeight(display, activeScreen);
+
+	viewNode = activeNode;
+
+
+
 	XFlush(display);
 	handleEvents();
 
-	free(rootContainer);
 	return 0;
 }
