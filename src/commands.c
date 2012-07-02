@@ -84,10 +84,13 @@ void handleCommand(char* request) {
 
 	} else if (!strcmp(tokens[0], "view")) {
 		if (!strcmp(tokens[1], "parent")) {
-			viewNode = viewNode -> parent;
-			placeNode(viewNode, 0, 0,
-					DisplayWidth(display, activeScreen),
-					DisplayHeight(display, activeScreen));
+			if (viewNode -> parent != NULL) {
+				unmapNode(viewNode);
+				viewNode = viewNode -> parent;
+				placeNode(viewNode, 0, 0,
+						DisplayWidth(display, activeScreen),
+						DisplayHeight(display, activeScreen));
+			}
 
 		} else if (!strcmp(tokens[1], "child")) {
 			viewNode = activeNode;

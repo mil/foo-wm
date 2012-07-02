@@ -18,10 +18,11 @@ void eMapRequest(XEvent *event) {
 
 	if (activeNode == NULL) {
 	} else {
-		fprintf(stderr, "The activeNode's layout is %d", activeNode -> layout);
 		parentNode(newNode, activeNode);
 	}
 
+
+	focusNode(newNode);
 	//Update the view
 	placeNode(
 			viewNode, 0, 0, 
@@ -44,7 +45,12 @@ void eDestroyNotify(XEvent *event) {
 	Node *n = getNodeByWindow(&(event -> xdestroywindow.window));
 	if (n == NULL) { return; }
 	fprintf(stderr, "YO it aint null mofo\n");
-	destroyNode(n);
+	if (n -> parent -> child == n && n -> parent -> previous == NULL) {
+		if (activeNode == n -> parent) { activeNode = n -> parent -> parent; }
+		destroyNode(n -> parent);
+	} else {
+		destroyNode(n);
+	}
 
 	//Update view
 	placeNode(
@@ -57,19 +63,21 @@ void eDestroyNotify(XEvent *event) {
 void eConfigureRequest(XEvent *event) {
 	fprintf(stderr, "Receiveced a Resize Request EVENT\n");
 
-	/*
-	Client *c = getClientByWindow(&(event -> xconfigurerequest.window));
+	Node *n = getNodeByWindow(&(event -> xconfigurerequest.window));
+	if (n != NULL) {
 	XConfigureRequestEvent *configure = &(event -> xconfigurerequest);
 
 	XWindowChanges changes = { configure -> x, configure -> y, 
 		configure -> width, configure -> height };
-	XUnmapWindow(display, c -> window);
-	XConfigureWindow(display, c -> window, configure -> value_mask, &changes);
-	XMoveResizeWindow(display, c-> window, c -> x, c -> y, c -> width, c -> height);
-	XMapWindow(display, c -> window);
-
-	*/
+	XUnmapWindow(display, n -> window);
+	XMoveResizeWindow(display, n -> window, n -> x, n -> y, n -> width, n -> height);
+	XMapWindow(display, n -> window);
+	}
 	
+}
+
+void eResizeRequest(XEvent *event) {
+
 }
 
 void eButtonPress(XEvent *event) {
@@ -78,10 +86,8 @@ void eButtonPress(XEvent *event) {
 	//Root Window
 	if (event -> xbutton.subwindow == None) { return; }
 
-	/*
-	Client *c = getClientByWindow(&(event -> xbutton.subwindow));
-	focusClient(c);
-	*/
+	Node *n = getNodeByWindow(&(event -> xbutton.subwindow));
+	focusNode(n);
 }
 
 void handleXEvent(XEvent *event) {
@@ -89,6 +95,7 @@ void handleXEvent(XEvent *event) {
 		case MapRequest:        eMapRequest(event);        break;
 		case DestroyNotify:     eDestroyNotify(event);     break;
 		case ConfigureRequest:  eConfigureRequest(event);  break;
+		case ResizeRequest:     eResizeRequest(event);     break;
 		case ButtonPress:       eButtonPress(event);       break;
 		default:                                           break;
 	}

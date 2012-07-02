@@ -26,6 +26,19 @@ void dumpTree() {
 	crawlNode(viewNode, 0);
 }
 
+//Will only work on nodes with windows for now
+void focusNode(Node * n) {
+	if ((n -> parent) -> focus == n) { return; }
+
+	(n -> parent) -> focus = n;
+	placeNode(n -> parent,
+			(n -> parent) -> x, (n -> parent) -> y,
+			(n -> parent) -> width, (n -> parent) -> height);
+
+	XRaiseWindow(display, n -> window);
+	XSetInputFocus(display, n -> window, RevertToPointerRoot, CurrentTime);
+}
+
 void destroyNode(Node * n) {
 	if (n == NULL) { return; }
 
@@ -48,6 +61,7 @@ void destroyNode(Node * n) {
 void unparentNode(Node *node) {
 	if (node -> parent == NULL) { return; }
 
+
 	if ((node -> parent) -> focus == node) {
 		if (node-> next != NULL) { (node -> parent) -> focus = node -> next; }
 		if (node-> previous != NULL) { (node -> parent) -> focus = node -> previous; }
@@ -55,6 +69,7 @@ void unparentNode(Node *node) {
 
 	if (node -> next != NULL) {
 		(node -> next) -> previous = node -> previous;
+		if (node == activeNode) { }
 	}
 
 	if (node -> previous != NULL) {
@@ -84,6 +99,18 @@ void parentNode(Node *node, Node *parent) {
 	}
 }
 
+void unmapNode(Node * node) {
+	Node *n;
+	for (n = node -> child; n != NULL; n = n -> next) {
+		if (n -> window != (Window) NULL) {
+			XUnmapWindow(display, n -> window);
+		} else {
+			if (n -> child != NULL) {
+				unmapNode(n -> child);
+			}
+		}
+	}
+}
 
 void placeNode(Node * node, int x, int y, int width, int height) {
 	node -> x = x; node -> y = y;
