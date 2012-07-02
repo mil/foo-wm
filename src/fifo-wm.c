@@ -17,15 +17,14 @@
 void handleEvents() {
 	XEvent event; 
 	int fifoFd = 0;
-	int xFd = XConnectionNumber(display);
+	int xFd = ConnectionNumber(display);
 	fd_set descriptors; //Descriptors FD Set
 
 	char commands[256];
 
 	int result = 0;
 
-	tv.tv_sec = 20;  
-	tv.tv_usec = 5;
+	tv.tv_sec = 200;  
 
 	fifoFd = open(FIFO, O_RDONLY | O_NONBLOCK);
 	for (;;) {
@@ -33,16 +32,17 @@ void handleEvents() {
 		FD_SET(xFd, &descriptors); 
 		FD_SET(fifoFd, &descriptors);
 
-		select(fifoFd + 1, &descriptors, 0, 0, &tv);
+		while (select(fifoFd + 1, &descriptors, 0, 0, &tv)) {
 
-		if ((result = read(fifoFd, commands, 200)) > 0) {
-			commands[result] = '\0';
-			handleCommand(commands);
-		}
+			if ((result = read(fifoFd, commands, 200)) > 0) {
+				commands[result] = '\0';
+				handleCommand(commands);
+			}
 
-		while (XPending(display) > 0) {
-			XNextEvent(display, &event);
-			handleXEvent(&event);
+			while (XPending(display) > 0) {
+				XNextEvent(display, &event);
+				handleXEvent(&event);
+			}
 		}
 	}
 	close(fifoFd);
