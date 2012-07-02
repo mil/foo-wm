@@ -22,7 +22,11 @@ void eMapRequest(XEvent *event) {
 		parentNode(newNode, activeNode -> parent);
 	}
 
+
+	fprintf(stderr, "The focused node (BEFORE) is %p\n", activeNode);
 	focusNode(newNode);
+	fprintf(stderr, "The focused node (AFTER) is %p\n", activeNode);
+
 
 
 	//Update the view

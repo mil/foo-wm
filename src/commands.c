@@ -76,6 +76,7 @@ void handleCommand(char* request) {
 
 			parentNode(activeNode, newContainer);
 			parentNode(newContainer, nodeParent);
+			activeNode = newContainer -> child;
 
 			placeNode(viewNode, 0, 0,
 					DisplayWidth(display, activeScreen),

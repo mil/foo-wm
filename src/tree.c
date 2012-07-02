@@ -6,25 +6,27 @@
 #include "tree.h"
 
 void crawlNode(Node * node, int level) {
-	Node *n;
-	for (n = node; n != NULL; n = n -> next) {
-		int j;
-		for (j = level; j > 0; j--) { fprintf(stderr, "|\t"); }
+	int j;
+	for (j = level; j > 0; j--) { fprintf(stderr, "|\t"); }
 
-		if (isClient(n -> child)) {
-			fprintf(stderr, "Client");
-			if (n -> child == activeNode) { fprintf(stderr, " [FOCUS]"); }
-			fprintf(stderr, "\n");
-		} else {
-			char *or = n -> layout == 0 ? "Vertical" : "Horizontal";
-			fprintf(stderr, "Container %s\n", or);
-			crawlNode(n -> child, level + 1);
+	if (isClient(node)) {
+		fprintf(stderr, "Client");
+		if (node == activeNode) { fprintf(stderr, " [FOCUS]"); }
+		fprintf(stderr, "\n");
+
+	} else {
+		char *or = node -> layout == 0 ? "Vertical" : "Horizontal";
+		fprintf(stderr, "Container %s\n", or);
+
+		Node *n;
+		for (n = node -> child; n != NULL; n = n -> next) {
+			crawlNode(n, level + 1);	
 		}
+
 	}
 }
 
 void dumpTree() {
-	int layout;
 	fprintf(stderr, "Printing the tree\n");
 	crawlNode(viewNode, 0);
 }
@@ -32,6 +34,7 @@ void dumpTree() {
 //Will only work on nodes with windows for now
 void focusNode(Node * n) {
 	if (activeNode == n) { return; }
+	if (isClient(n)) { fprintf(stderr, "Focusing a node thats not a client !\n"); }
 
 	activeNode = n;
 	XRaiseWindow(display, n -> window);
@@ -46,7 +49,7 @@ void focusNode(Node * n) {
 void destroyNode(Node * n) {
 	if (n == NULL) { return; }
 
-	
+
 	if (n -> parent -> child == n && n -> previous == NULL) {
 		destroyNode(n -> parent);
 		return;
@@ -62,6 +65,14 @@ void destroyNode(Node * n) {
 	}
 
 	if (n -> window != (Window)NULL) {
+		/*
+			 Lookup * entry;
+			 for (entry = lookup; entry != NULL; entry = entry -> previous) {
+			 if (n  == (entry -> previous) -> node) {
+			 entry -> previous = (entry -> previous) -> previous;
+			 }
+			 }
+			 */
 		XUnmapWindow(display, n -> window);
 	}
 	free(n);
@@ -70,7 +81,26 @@ void destroyNode(Node * n) {
 
 void unparentNode(Node *node) {
 	if (node -> parent == NULL) { return; }
+	fprintf(stderr, "unparent called");
 
+
+	if (node == activeNode) {		
+		if (isClient(node -> next)) { 
+			activeNode = node -> next; 
+		} else if (isClient(node -> previous)) { 
+			activeNode = node -> previous; 
+		} else {
+			Node * n = (node -> parent) -> child;
+			while (isClient(n) == False || n == node) {
+				n = n -> next;
+			}
+			activeNode = n;
+		}
+
+	}
+	//activeNode = lookup -> node;
+
+	fprintf(stderr, "GOT HERE");
 
 	//Move the node's parent's child if were it to our next node (maybe NULL)
 	if (node -> parent -> child == node) {
@@ -82,7 +112,7 @@ void unparentNode(Node *node) {
 	if (node -> previous != NULL) { (node -> previous) -> next = node -> next; }
 
 	//Set our parent to NULL
-	node -> parent = NULL;
+	node -> parent = NULL; node -> next = NULL; node -> previous = NULL;
 }
 
 void parentNode(Node *node, Node *parent) {
@@ -155,6 +185,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 }
 
 Bool isClient(Node * node) {
+	if (node == NULL) { return False; }
 	if (node -> window != (Window) NULL)
 		return True;
 	return False;
@@ -164,7 +195,7 @@ Bool isClient(Node * node) {
 Node * getNodeByWindow(Window * window) {
 	Lookup *entry;
 	int win = *window;
-	for (entry= lookup; entry != NULL; entry = entry -> previous) {
+	for (entry = lookup; entry != NULL; entry = entry -> previous) {
 		if (win == entry -> window)
 			return entry -> node;
 	}
