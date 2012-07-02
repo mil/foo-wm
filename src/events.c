@@ -8,29 +8,30 @@
 #include "events.h"
 #include "tree.h"
 #include "window.h"
-#include "client.h"
 
 
 void eMapRequest(XEvent *event) {
-	Client *newClient; 
-	newClient             = malloc(sizeof(Client));
-	newClient -> window   = event -> xmaprequest.window;
 	fprintf(stderr, "Got a map request\n");
+	Node *newNode;
+	newNode = malloc(sizeof(Node));
+	newNode -> window = event -> xmaprequest.window;
 
-	parentClient(newClient, currentContainer);
+	if (activeNode == NULL) {
+	} else {
+		fprintf(stderr, "The activeNode's layout is %d", activeNode -> layout);
+		parentNode(newNode, activeNode);
+	}
 
-	//Update view
-	placeContainer(
-			rootContainer, 0, 0, 
-			DisplayWidth  (display, activeScreen),
-			DisplayHeight (display, activeScreen)
+	//Update the view
+	placeNode(
+			viewNode, 0, 0, 
+			DisplayWidth(display, activeScreen),
+			DisplayHeight(display, activeScreen)
 			);
-
-	focusClient(newClient);
 
 	//Add Client and window to lookup list
 	Lookup *entry = malloc(sizeof(Lookup));
-	entry -> client = newClient;
+	entry -> node= newNode;
 	int win = event -> xmaprequest.window; 
 	entry -> window = win;
 	entry -> previous = lookup;
@@ -40,12 +41,14 @@ void eMapRequest(XEvent *event) {
 void eDestroyNotify(XEvent *event) {
 	fprintf(stderr, "DESTROY NOTIFY RECIEVED");
 
-	Client *c = getClientByWindow(&(event -> xdestroywindow.window));
-	destroyClient(c);
+	Node *n = getNodeByWindow(&(event -> xdestroywindow.window));
+	if (n == NULL) { return; }
+	fprintf(stderr, "YO it aint null mofo\n");
+	destroyNode(n);
 
 	//Update view
-	placeContainer(
-			rootContainer, 0, 0, 
+	placeNode(
+			viewNode, 0, 0, 
 			DisplayWidth  (display, activeScreen),
 			DisplayHeight (display, activeScreen)
 			);
@@ -53,6 +56,8 @@ void eDestroyNotify(XEvent *event) {
 
 void eConfigureRequest(XEvent *event) {
 	fprintf(stderr, "Receiveced a Resize Request EVENT\n");
+
+	/*
 	Client *c = getClientByWindow(&(event -> xconfigurerequest.window));
 	XConfigureRequestEvent *configure = &(event -> xconfigurerequest);
 
@@ -62,6 +67,8 @@ void eConfigureRequest(XEvent *event) {
 	XConfigureWindow(display, c -> window, configure -> value_mask, &changes);
 	XMoveResizeWindow(display, c-> window, c -> x, c -> y, c -> width, c -> height);
 	XMapWindow(display, c -> window);
+
+	*/
 	
 }
 
@@ -71,8 +78,10 @@ void eButtonPress(XEvent *event) {
 	//Root Window
 	if (event -> xbutton.subwindow == None) { return; }
 
+	/*
 	Client *c = getClientByWindow(&(event -> xbutton.subwindow));
 	focusClient(c);
+	*/
 }
 
 void handleXEvent(XEvent *event) {
@@ -84,4 +93,3 @@ void handleXEvent(XEvent *event) {
 		default:                                           break;
 	}
 }
-

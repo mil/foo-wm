@@ -1,8 +1,7 @@
-void crawlContainer(Container * container, int level);
+void crawlNode(Node * node, int level);
 void dumpTree();
-int parentClient(Client * child, Container * parent);
-void destroyClient(Client * c);
-void destroyContainer(Container * c);
-int parentContainer(Container * child, Container * parent);
-int placeContainer(Container * container, int x, int y, int width, int height);
-Client * getClientByWindow(Window * window);
+void destroyNode(Node * n);
+void unparentNode(Node * node);
+void parentNode(Node * node, Node * parent);
+void placeNode(Node * node, int x, int y, int width, int height);
+Node * getNodeByWindow(Window * window);

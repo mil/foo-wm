@@ -1,1 +1,0 @@
-void focusClient(Client *client);

@@ -1,4 +1,20 @@
 #include <X11/Xlib.h>
+typedef struct Node Node;
+struct Node {
+	int layout;
+	int x, y, width, height;
+
+	Node *parent;
+	Node *next;
+	Node *previous;
+
+	/* If a Container */
+	Node *child;
+	Node *focus;
+
+	/* If a Client */
+	Window window;
+};
 
 
 typedef struct Client Client;
@@ -31,6 +47,6 @@ struct Container {
 typedef struct Lookup Lookup;
 struct Lookup {
 	int window;
-	Client *client;
+	Node *node;
 	Lookup *previous;
 };

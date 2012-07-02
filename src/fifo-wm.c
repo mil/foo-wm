@@ -52,12 +52,17 @@ void handleEvents() {
 int main() {
 	layout = CONTAINER_DEFAULT_LAYOUT;
 	padding = CONTAINER_PADDING;
-	spawn = 0;
 
+	/*
 	rootContainer = malloc(sizeof(Container));
 	rootContainer -> layout = layout;
 
 	currentContainer = rootContainer;
+	*/
+
+	activeNode           = malloc(sizeof(Node));
+	activeNode -> layout = layout;
+	viewNode = activeNode;
 
 	display = XOpenDisplay(NULL);
 	assert(display);

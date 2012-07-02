@@ -15,5 +15,8 @@ struct timeval tv;
 long unfocusedColor;
 long focusedColor; 
 
+Node *activeNode; //Active Input / New clients launch as brother
+Node *viewNode; // Currently viewed node on the screen
+
 void handleCommand(char* request);
 void handleEvents();

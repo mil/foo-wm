@@ -5,232 +5,131 @@
 #include "fifo-wm.h"
 #include "tree.h"
 
-/* Tracks the current container */
-void crawlContainer(Container * container, int level) {
-	Container *c;
-	for (c = container; c != NULL; c = c -> next) {
+void crawlNode(Node * node, int level) {
+	Node *n;
+	for (n = node; n != NULL; n = n -> next) {
 		int j;
-		for (j = level; j > 0; j--) { fprintf(stderr, "  | "); }
-		char *or = c -> layout == 0 ? "Vertical" : "Horizontal";
-		fprintf(stderr, "=> Container %p (%s)", c, or);
-		if (c == currentContainer) { fprintf(stderr, " [ACTIVE CONTAINER]"); }
-		fprintf(stderr, "\n");
+		for (j = level; j > 0; j--) { fprintf(stderr, "|\t"); }
 
-		if (c -> client != NULL) {
-			Client *d;
-			for (d = c -> client; d != NULL; d = d -> next) {
-				int h;
-				for (h = level + 1; h > 0; h--) { fprintf(stderr, "  | "); }
-
-				fprintf(stderr, "-> Client %p", d);
-				if (d == c -> focus) { fprintf(stderr, " [ACTIVE]"); }
-				fprintf(stderr, "\n");
-			}
-		}
-		if (c -> child != NULL) {
-			crawlContainer(c -> child, level + 1);
+		if (n -> child == NULL) { 
+			fprintf(stderr, "Client\n");
+		} else {
+			char *or = n -> layout == 0 ? "Vertical" : "Horizontal";
+			fprintf(stderr, "Container %s\n", or);
+			crawlNode(n -> child, level + 1);
 		}
 	}
 }
-
 
 void dumpTree() {
 	fprintf(stderr, "Printing the tree\n");
-	crawlContainer(rootContainer, 0);
+	crawlNode(viewNode, 0);
 }
 
-void unparentClient(Client *c) {
-	if (c -> parent != NULL) {
+void destroyNode(Node * n) {
+	if (n == NULL) { return; }
 
-		if (c -> next != NULL) {
-			(c -> next)   -> previous = c -> previous;
-			(c -> parent) -> focus = c -> next;
-		}
-
-		if (c -> previous != NULL) {
-			(c -> previous) -> next = c -> next;
-			(c -> parent) -> focus = c -> previous;
-		}
-		XUnmapWindow(display, c -> window);
-		c -> parent = NULL;
-	}
-}
-
-void unparentContainer(Container *c) {
-	if (c -> parent == NULL) { return; }
-
-	//Pop the container out of its linked list
-	if (c -> next == NULL && c -> previous == NULL) {
-		(c -> parent) -> child = NULL;
-	} else {
-		if (c -> next != NULL)     { (c -> next) -> previous = c -> previous; }
-		if (c -> previous != NULL) { (c -> previous) -> next = c -> next;     }
+	//Recursivly destroy all children of the node
+	Node * child;
+	for (child = n -> child; child != NULL; child -> next) {
+		destroyNode(child);
 	}
 
+	//Unparent the node
+	unparentNode(n);
 
-	//Destroy Children Clients
-	if (c -> client != NULL) {
-			Client *client;
-			for (client = c -> client; client != NULL; client = client -> next) {
-				unparentClient(client);
-			}
-		}
-
-		//Destroy Children Containers
-		if (c -> child != NULL) {
-			Container *container;
-			for (container = c -> child; container != NULL; container = container -> next) {
-				unparentContainer(container);
-			}
-		}
-
-	c -> parent = NULL;
-}
-
-void destroyContainer(Container *c) {
-	if (c != NULL) {
-		fprintf(stderr, "Destorying Container %p\n", c);
-		unparentContainer(c);
+	if (n -> window != (Window)NULL) {
+		XUnmapWindow(display, n -> window);
 	}
+	free(n);
 }
 
-void destroyClient(Client *c) {
-	//Check if client alone, if so destroy the container
-	if (c == NULL) { return; }
 
-	fprintf(stderr, "c->next = %p\nc->previous = %p\n", c->next, c->previous);
-	if (c -> next == NULL && (c -> parent) -> client == c) {
-		destroyContainer(c -> parent);
-	} else {
-		fprintf(stderr, "Destroying Client %p\n", c);
-		unparentClient(c);
-		XUnmapWindow(display, c -> window);
-		free(c);
+void unparentNode(Node *node) {
+	if (node -> parent == NULL) { return; }
+
+	if ((node -> parent) -> focus == node) {
+		if (node-> next != NULL) { (node -> parent) -> focus = node -> next; }
+		if (node-> previous != NULL) { (node -> parent) -> focus = node -> previous; }
 	}
+
+	if (node -> next != NULL) {
+		(node -> next) -> previous = node -> previous;
+	}
+
+	if (node -> previous != NULL) {
+		(node -> previous) -> next = node -> next;
+	}
+
 }
 
-
-
-int parentClient(Client * child, Container * parent) {
+void parentNode(Node *node, Node *parent) {
 	/* First client to be added to container */
-	if (parent == NULL) { return 0; }
+	if (parent == NULL) { return; }
 
-	//Moving the client
-	unparentClient(child);
-	child -> parent = parent;
+	//Unparent then set the parent to new parent
+	unparentNode(node);
 
-	if (parent -> client == NULL) {
-		fprintf(stderr, "Addng client\n");
-		parent -> client = child;
+	node -> parent = parent;
+	parent -> focus = node;
 
-	} else {
-		Client *c = parent -> client;
-		while (c -> next != NULL) { c = c -> next; }
-		c -> next = child;
-		fprintf(stderr, "c->next set to %p\n", c->next);
-		child -> previous = c;
-		child -> parent = parent;
-	}
-
-	return 1;
-}
-
-int parentContainer(Container * child, Container * parent) {
-	if (parent == NULL) { return 0; }
-
-	child -> parent = parent;
-
+	//Find last in children of parent, add to end
 	if (parent -> child == NULL) {
-		parent -> child = child;
-	
+		parent -> child = node;
 	} else {
-		Container *c = parent -> child;
-		while (c -> next != NULL) { c = c -> next; }
-		c -> next = child;
-		child -> previous = c;
-		child -> parent = parent;
+		Node *n = parent -> child;
+		while (n -> next != NULL) { n = n -> next; }
+		node -> previous = n;
+		n -> next = node;
 	}
-
-	return 1;
 }
 
-int placeContainer(Container * container, int x, int y, int width, int height) {
-	container -> x = x; container -> y = y;
-	container -> width = width; container -> height = height;
 
-	//Count up children
-	int children = 0;
-	Client *a = malloc(sizeof(Client));
-	Container *b = malloc(sizeof(Container));
-	for (a = container -> client; a != NULL; a = a -> next) { children++; }
-	for (b = container -> child;  b != NULL; b = b -> next) { children++; }
+void placeNode(Node * node, int x, int y, int width, int height) {
+	node -> x = x; node -> y = y;
+	node -> width = width; node -> height = height;
+	fprintf(stderr, "Place Node XY:[%d, %d], WH:[%d, %d]\n", x, y, width, height);
+
+	//if (node -> window != (Window)NULL) {
+	if (node -> focus == NULL) {
+		XMapWindow(display, node -> window);
+		XMoveResizeWindow(display, node -> window, x, y, width, height);
+		XSetWindowBorderWidth(display, node -> window, 1);
+		if ((node -> parent) -> focus == node) {
+			XSetWindowBorder(display, node -> window, focusedColor);
+		} else {
+			XSetWindowBorder(display, node -> window, unfocusedColor);
+		}
 
 
-	/* Recursive call to placeContainer */
-	int i = 0;
-	for (b = container -> child; b != NULL; b = b -> next, i++) {
-		switch (container -> layout) {
-			case 0:
-				placeContainer(b,
-						x + (i * (width/children)) + padding, y + padding,
-						(width / children) - (padding * 2), height - (padding * 2));
-				break;
+	} else {
+		//Count up children prior to loop
+		int children = 0; int i = 0; Node *a;
+		for (a = node -> child; a != NULL; a = a -> next) { children++; }
+		for (a = node -> child; a != NULL; a = a -> next, i++) {
+			switch (node -> layout) {
+				case 0:
+					a -> x = x + (i * (width / children)); a -> y = y + padding;
+					a -> width = width / children; a -> height = height;
+					break;
 
-			case 1:
-				placeContainer(b,
-						x, y + (i * (height/children)),
-						width, (height / children));
-				break;
-
-			default:
-				break;
+				case 1:
+					a -> x = x; a -> y = y + (i * (height / children));
+					a -> width = width; a -> height = height / children;
+					break;
+			}
+			placeNode(a, a -> x, a -> y, a -> width, a -> height);
 		}
 	}
-
-
-	for (a = container -> client; a != NULL; a = a -> next, i++) {
-
-		XMapWindow(display, a -> window);
-		XSetWindowBorderWidth(display, a -> window, 1);
-		if (container -> focus == a)
-			XSetWindowBorder(display, a -> window, focusedColor);
-		else
-			XSetWindowBorder(display, a -> window, unfocusedColor);
-
-
-		switch (container -> layout) {
-			case 0:
-				a -> x = x + (i * (width / children));
-				a -> y = y + padding;
-				a -> width = width / children;
-				a -> height = height;
-				break;
-			case 1:
-				a -> x = x;
-				a -> y = y + (i * (height / children));
-				a -> width = width;
-				a -> height = height / children;
-				break;
-			default:
-				break;
-		}
-		XMoveResizeWindow(display, a -> window, 
-						a -> x, a -> y, a -> width, a-> height);
-
-	}
-
-	free(a), free(b);
-	return 0;
 }
-
 
 //Returns the client associated with given window
-Client * getClientByWindow(Window * window) {
-	Lookup *node;
+Node * getNodeByWindow(Window * window) {
+	Lookup *entry;
 	int win = *window;
-	for (node = lookup; node != NULL; node = node ->  previous) {
-		if (win == node -> window)
-			return node -> client;
+	for (entry= lookup; entry != NULL; entry = entry -> previous) {
+		if (win == entry -> window)
+			return entry -> node;
 	}
 
 	return NULL;

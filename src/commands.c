@@ -5,11 +5,11 @@
 #include "fifo-wm.h"
 #include "commands.h"
 #include "tree.h"
-#include "client.h"
 
 
 void focus(int direction) {
 	//Direction: 0 - Previous, 1 - Next, 2 - Parent
+	/*
 	if (direction == 0) {
 		if ((currentContainer -> focus) -> next != NULL) {
 			focusClient((currentContainer -> focus) -> next);
@@ -34,8 +34,7 @@ void focus(int direction) {
 				currentContainer -> width, currentContainer -> height);
 		}
 	}
-
-
+	*/
 }
 
 void handleCommand(char* request) {
@@ -51,21 +50,15 @@ void handleCommand(char* request) {
 		fprintf(stderr, "Adding Token %s\n", token);
 	}
 
-
 	if (!strcmp(tokens[0], "dump")) {
 		dumpTree();
 	} else if (!strcmp(tokens[0], "layout")) {
 		fprintf(stderr, "Setting layout to: %s", tokens[1]);
-		if (!strcmp(tokens[1], "vertical")) {	
-			currentContainer -> layout = 0;
-
-		} else if (!strcmp(tokens[1], "horizontal")) {
-			currentContainer -> layout = 1;
-		}
-		placeContainer(currentContainer, 
-				currentContainer -> x, currentContainer -> y, 
-				currentContainer -> width, currentContainer -> height);
-
+		if (!strcmp(tokens[1], "vertical")) {	activeNode -> layout = 0; 
+		} else if (!strcmp(tokens[1], "horizontal")) { activeNode -> layout = 1; }
+		placeNode(activeNode,
+				activeNode -> x,     activeNode -> y,
+				activeNode -> width, activeNode -> height);
 
 	} else if (!strcmp(tokens[0], "focus")) {
 		if (!strcmp(tokens[1], "next"))
@@ -76,24 +69,34 @@ void handleCommand(char* request) {
 			focus(2);
 
 	} else if (!strcmp(tokens[0], "containerize")) {
-		if (
-				(((currentContainer -> focus) -> previous != NULL) ||
-				 ((currentContainer -> focus) -> next != NULL)) ||
-				(currentContainer -> child != NULL)
-			 ) {
-			fprintf(stderr, "Containerizing!");
-			Container * newContainer = malloc(sizeof(Container));
-			parentClient((currentContainer -> focus) , newContainer);
-			parentContainer(newContainer, currentContainer);
-			currentContainer = newContainer;
-			placeContainer(currentContainer, 
-				currentContainer -> x, currentContainer -> y, 
-				currentContainer -> width, currentContainer -> height);
+		if ((activeNode -> focus) -> previous != NULL) {
+			fprintf(stderr,"Containerizing");
+			Node * newContainer = malloc(sizeof(Node));	
+			parentNode(activeNode -> focus, newContainer);
+			parentNode(newContainer, activeNode);
+			activeNode = newContainer;
+			placeNode(viewNode, 0, 0,
+					DisplayWidth(display, activeScreen),
+					DisplayHeight(display, activeScreen));
+		}	else {
+			fprintf(stderr, "Containerize called but alone in contianer");
+		}
 
-		} else {
-			fprintf(stderr, "Containerize called but already alone in a container...");
+	} else if (!strcmp(tokens[0], "view")) {
+		if (!strcmp(tokens[1], "parent")) {
+			viewNode = viewNode -> parent;
+			placeNode(viewNode, 0, 0,
+					DisplayWidth(display, activeScreen),
+					DisplayHeight(display, activeScreen));
+
+		} else if (!strcmp(tokens[1], "child")) {
+			viewNode = activeNode;
+			placeNode(viewNode, 0, 0,
+					DisplayWidth(display, activeScreen),
+					DisplayHeight(display, activeScreen));
 		}
 	} else if (!strcmp(tokens[0], "kill")) {
+		/*
 		if (!strcmp(tokens[1], "client")) {
 
 
@@ -113,5 +116,7 @@ void handleCommand(char* request) {
 			destroyContainer(currentContainer);
 			dumpTree();
 		}
+
+		*/
 	}
 }
