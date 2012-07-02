@@ -54,11 +54,11 @@ void handleCommand(char* request) {
 		dumpTree();
 	} else if (!strcmp(tokens[0], "layout")) {
 		fprintf(stderr, "Setting layout to: %s", tokens[1]);
-		if (!strcmp(tokens[1], "vertical")) {	activeNode -> layout = 0; 
-		} else if (!strcmp(tokens[1], "horizontal")) { activeNode -> layout = 1; }
-		placeNode(activeNode,
-				activeNode -> x,     activeNode -> y,
-				activeNode -> width, activeNode -> height);
+		if (!strcmp(tokens[1], "vertical")) {	(activeNode -> parent) ->  layout = 0; 
+		} else if (!strcmp(tokens[1], "horizontal")) { (activeNode -> parent) -> layout = 1; }
+		placeNode(activeNode -> parent,
+				(activeNode -> parent) -> x,     (activeNode -> parent) -> y,
+				(activeNode -> parent) -> width, (activeNode -> parent) -> height);
 
 	} else if (!strcmp(tokens[0], "focus")) {
 		if (!strcmp(tokens[1], "next"))
@@ -69,12 +69,14 @@ void handleCommand(char* request) {
 			focus(2);
 
 	} else if (!strcmp(tokens[0], "containerize")) {
-		if ((activeNode -> focus) -> previous != NULL) {
+		if (activeNode -> previous != NULL) {
 			fprintf(stderr,"Containerizing");
 			Node * newContainer = malloc(sizeof(Node));	
-			parentNode(activeNode -> focus, newContainer);
-			parentNode(newContainer, activeNode);
-			activeNode = newContainer;
+			Node * nodeParent = activeNode -> parent;
+
+			parentNode(activeNode, newContainer);
+			parentNode(newContainer, nodeParent);
+
 			placeNode(viewNode, 0, 0,
 					DisplayWidth(display, activeScreen),
 					DisplayHeight(display, activeScreen));
@@ -94,9 +96,10 @@ void handleCommand(char* request) {
 			}
 
 		} else if (!strcmp(tokens[1], "child")) {
+
 			if (activeNode != viewNode) {
-			Node *n = activeNode;
-			while (n -> parent != viewNode && n != NULL) { n = n -> parent; }
+				Node *n = activeNode;
+				while (n -> parent != viewNode && n != NULL) { n = n -> parent; }
 
 				viewNode = n;
 

@@ -12,7 +12,9 @@ void crawlNode(Node * node, int level) {
 		for (j = level; j > 0; j--) { fprintf(stderr, "|\t"); }
 
 		if (isClient(n -> child)) {
-			fprintf(stderr, "Client\n");
+			fprintf(stderr, "Client");
+			if (n -> child == activeNode) { fprintf(stderr, " [FOCUS]"); }
+			fprintf(stderr, "\n");
 		} else {
 			char *or = n -> layout == 0 ? "Vertical" : "Horizontal";
 			fprintf(stderr, "Container %s\n", or);
@@ -29,10 +31,9 @@ void dumpTree() {
 
 //Will only work on nodes with windows for now
 void focusNode(Node * n) {
-	if ((n -> parent) -> focus == n) { return; }
+	if (activeNode == n) { return; }
 
-	(n -> parent) -> focus = n;
-
+	activeNode = n;
 	XRaiseWindow(display, n -> window);
 	XSetInputFocus(display, n -> window, RevertToPointerRoot, CurrentTime);
 
@@ -50,7 +51,6 @@ void destroyNode(Node * n) {
 		destroyNode(n -> parent);
 		return;
 	}
-
 
 	//Unparent the node
 	unparentNode(n);
@@ -72,31 +72,25 @@ void unparentNode(Node *node) {
 	if (node -> parent == NULL) { return; }
 
 
-	if ((node -> parent) -> focus == node) {
-		if (node-> next != NULL) { (node -> parent) -> focus = node -> next; }
-		if (node-> previous != NULL) { (node -> parent) -> focus = node -> previous; }
+	//Move the node's parent's child if were it to our next node (maybe NULL)
+	if (node -> parent -> child == node) {
+		(node -> parent) -> child = node -> next;
 	}
 
-	if (node -> next != NULL) {
-		(node -> next) -> previous = node -> previous;
-		if (node == activeNode) { }
-	}
+	//Move the next and previous pointers to cut out the node
+	if (node -> next != NULL) { (node -> next) -> previous = node -> previous; }
+	if (node -> previous != NULL) { (node -> previous) -> next = node -> next; }
 
-	if (node -> previous != NULL) {
-		(node -> previous) -> next = node -> next;
-	}
-
+	//Set our parent to NULL
+	node -> parent = NULL;
 }
 
 void parentNode(Node *node, Node *parent) {
-	/* First client to be added to container */
-	if (parent == NULL) { return; }
+	if (parent == NULL) { return; } //Cant add to NULL
 
-	//Unparent then set the parent to new parent
-	unparentNode(node);
+	unparentNode(node); //Unparent then set the parent to new parent
 
 	node -> parent = parent;
-	parent -> focus = node;
 
 	//Find last in children of parent, add to end
 	if (parent -> child == NULL) {
@@ -128,11 +122,11 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 	fprintf(stderr, "Place Node XY:[%d, %d], WH:[%d, %d]\n", x, y, width, height);
 
 	//if (node -> window != (Window)NULL) {
-	if (node -> focus == NULL) {
+	if (isClient(node)) {
 		XMapWindow(display, node -> window);
 		XMoveResizeWindow(display, node -> window, x, y, width, height);
 		XSetWindowBorderWidth(display, node -> window, 1);
-		if ((node -> parent) -> focus == node) {
+		if (activeNode == node) {
 			XSetWindowBorder(display, node -> window, focusedColor);
 		} else {
 			XSetWindowBorder(display, node -> window, unfocusedColor);

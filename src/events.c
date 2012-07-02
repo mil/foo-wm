@@ -17,17 +17,21 @@ void eMapRequest(XEvent *event) {
 	newNode -> window = event -> xmaprequest.window;
 
 	if (activeNode == NULL) {
+		parentNode(newNode, viewNode);
 	} else {
-		parentNode(newNode, activeNode);
+		parentNode(newNode, activeNode -> parent);
 	}
+
+	focusNode(newNode);
 
 
 	//Update the view
-	placeNode(
-			activeNode, activeNode -> x, activeNode -> y, 
-			activeNode -> width, activeNode -> height);
+	placeNode( activeNode -> parent, 
+			(activeNode -> parent) -> x, 
+			(activeNode -> parent) -> y, 
+			(activeNode -> parent) -> width, 
+			(activeNode -> parent) -> height);
 
-	focusNode(newNode);
 
 
 	//Add Client and window to lookup list

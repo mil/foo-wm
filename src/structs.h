@@ -10,7 +10,7 @@ struct Node {
 
 	/* If a Container */
 	Node *child;
-	Node *focus;
+	//Node *focus;
 
 	/* If a Client */
 	Window window;

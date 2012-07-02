@@ -76,20 +76,13 @@ int main() {
 			KeyPressMask | ButtonPressMask
 			);
 
+	viewNode = malloc(sizeof(Node));
+	viewNode -> layout = layout;
+	viewNode -> x = 0; viewNode -> y = 0;
+	viewNode -> width = DisplayWidth(display, activeScreen);
+	viewNode -> height = DisplayHeight(display, activeScreen);
 
 	XSetErrorHandler((XErrorHandler)(xError));
-
-
-	activeNode           = malloc(sizeof(Node));
-	activeNode -> layout = layout;
-	activeNode -> x = 0; activeNode -> y = 0;
-	activeNode -> width = DisplayWidth(display, activeScreen);
-	activeNode -> height = DisplayHeight(display, activeScreen);
-
-	viewNode = activeNode;
-
-
-
 	XFlush(display);
 	handleEvents();
 
