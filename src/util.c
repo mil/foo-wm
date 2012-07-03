@@ -1,5 +1,6 @@
 #include <X11/Xlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "fifo-wm.h"
 #include "util.h"
@@ -15,10 +16,13 @@ unsigned long getColor(const char *colstr) {
 
 
 int xError(XErrorEvent *e) {
-	char err[500];
-
-	XGetErrorText(display, e -> request_code, err, 500);
 	fprintf(stderr, "XErrorEvent of Request Code: %d and Error Code of %d\n", e -> request_code, e -> error_code);
-	fprintf(stderr, "%s\n", err);
 	return 0;
+}
+
+Node * allocateNode() {
+	Node *n = malloc(sizeof(Node));
+	n -> previous = NULL; n -> next = NULL;
+	n -> parent = NULL; n -> child = NULL;
+	return n;
 }

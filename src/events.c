@@ -8,12 +8,12 @@
 #include "events.h"
 #include "tree.h"
 #include "window.h"
+#include "util.h"
 
 
 void eMapRequest(XEvent *event) {
 	fprintf(stderr, "Got a map request\n");
-	Node *newNode;
-	newNode = malloc(sizeof(Node));
+	Node *newNode = allocateNode();
 	newNode -> window = event -> xmaprequest.window;
 
 	if (activeNode == NULL) {

@@ -70,14 +70,6 @@ void destroyNode(Node * n) {
 	dumpTree();
 	//Recursivly destroy all children of the node
 	if (n -> window != (Window)NULL) {
-		/*
-			 Lookup * entry;
-			 for (entry = lookup; entry != NULL; entry = entry -> previous) {
-			 if (n  == (entry -> previous) -> node) {
-			 entry -> previous = (entry -> previous) -> previous;
-			 }
-			 }
-			 */
 		XUnmapWindow(display, n -> window);
 	} else {
 		fprintf(stderr, "The child is %p\n", n -> child);
@@ -192,7 +184,6 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 }
 
 Bool isClient(Node * node) {
-	fprintf(stderr,"Checking if %p is a client", node);
 	if (node == NULL) { return False; }
 	if (node -> window != (Window) NULL) { return True;
 	} else { return False; }
@@ -212,19 +203,13 @@ Node * getNodeByWindow(Window * window) {
 }
 
 Node * getClosestNode(Node * node) {
-	fprintf(stderr, "\nWITHIN !! GetClosest node called on %p\n", node);
 	Node * pNode = node;
 	Node * nNode = node;
 	while (pNode -> previous != NULL || nNode -> next != NULL) {
 		if (pNode -> previous != NULL) { pNode = pNode -> previous; }
 		if (nNode -> next != NULL    ) { nNode = nNode -> next;     }
-
 		if (isClient(nNode) && nNode != node) { return nNode;       }
-
-		fprintf(stderr,"pNode is %p", pNode);
 		if (isClient(pNode) && pNode != node) { return pNode;       }
-
-
 	}
 	//If not returned by here must look for more nodes in the parent, recur
 	if (node -> parent == NULL) { return NULL; } else {

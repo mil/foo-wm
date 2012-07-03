@@ -5,6 +5,7 @@
 #include "fifo-wm.h"
 #include "commands.h"
 #include "tree.h"
+#include "util.h"
 
 
 void focus(int direction) {
@@ -75,6 +76,8 @@ void handleCommand(char* request) {
 		if (activeNode -> previous != NULL) {
 			fprintf(stderr,"Containerizing");
 			Node * newContainer = malloc(sizeof(Node));	
+			newContainer -> next = NULL; newContainer -> previous = NULL;
+			newContainer -> parent = NULL; newContainer -> child = NULL;
 			Node * nodeParent = activeNode -> parent;
 
 			parentNode(activeNode, newContainer);
