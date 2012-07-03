@@ -71,12 +71,12 @@ void destroyNode(Node * n) {
 		XUnmapWindow(display, n -> window);
 	} else {
 		fprintf(stderr, "The child is %p\n", n -> child);
-		Node * child;
-		/*
-		for (child = n -> child; child != NULL; child = child -> next) {
-			destroyNode(child);
+		if (n -> child  -> next != NULL) {
+			Node * child;
+			for (child = n -> child; child != NULL; child = child -> next) {
+				destroyNode(child);
+			}
 		}
-		*/
 
 	}
 	free(n);
@@ -88,24 +88,7 @@ void unparentNode(Node *node) {
 	if (node == NULL || node -> parent == NULL) { return; }
 	fprintf(stderr, "unparent called");
 
-
-	if (node == activeNode) {		
-		if (isClient(node -> next)) { 
-			activeNode = node -> next; 
-		} else if (isClient(node -> previous)) { 
-			activeNode = node -> previous; 
-		} else {
-			Node * n = (node -> parent) -> child;
-			while (isClient(n) == False || n == node) {
-				n = n -> next;
-			}
-			activeNode = n;
-		}
-
-	}
-	//activeNode = lookup -> node;
-
-	fprintf(stderr, "GOT HERE");
+	activeNode = getClosestNode(node);
 
 	if ((node -> parent) -> child == node) {
 		(node -> parent) -> child = node -> next;

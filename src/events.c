@@ -54,7 +54,7 @@ void eDestroyNotify(XEvent *event) {
 	if (n == NULL) { return; }
 
 	fprintf(stderr," Getting cloest node to %p\n", n);
-	activeNode = getClosestNode(n);
+	//activeNode = getClosestNode(n);
 	fprintf(stderr, "Got the cloest node, is: %p\n", activeNode);
 
 	destroyNode(n);
