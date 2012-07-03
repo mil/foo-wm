@@ -55,9 +55,9 @@ void destroyNode(Node * n) {
 	if (n == NULL) { return; }
 
 	if ( (n -> next == NULL &&
-			(n -> parent -> child == n && n -> previous == NULL)) &&
+				(n -> parent -> child == n && n -> previous == NULL)) &&
 			n -> parent -> parent != NULL
-			) {
+		 ) {
 		fprintf(stderr, "Calling destroy node on parent\n");
 		destroyNode(n -> parent);
 		return;
@@ -183,6 +183,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 	}
 }
 
+
 Bool isClient(Node * node) {
 	if (node == NULL) { return False; }
 	if (node -> window != (Window) NULL) { return True;
@@ -213,7 +214,7 @@ Node * getClosestNode(Node * node) {
 	}
 	//If not returned by here must look for more nodes in the parent, recur
 	if (node -> parent == NULL) { return NULL; } else {
-	fprintf(stderr,"Calling get on %p\n", node -> parent);
+		fprintf(stderr,"Calling get on %p\n", node -> parent);
 		Node *j;
 		j = getClosestNode(node -> parent);
 		if (j != node) { return j; } else { return NULL; }

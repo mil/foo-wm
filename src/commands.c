@@ -114,13 +114,16 @@ void handleCommand(char* request) {
 			dumpTree();
 			fprintf(stderr, "Destroy Client %p\n", activeNode);
 
-			destroyNode(activeNode);
+			if (isClient(activeNode)) {
+				destroyNode(activeNode);
 
-			dumpTree();
 
-			placeNode(viewNode, 
-					viewNode -> x, viewNode -> y, 
-					viewNode -> width, viewNode -> height);
+				dumpTree();
+
+				placeNode(viewNode, 
+						viewNode -> x, viewNode -> y, 
+						viewNode -> width, viewNode -> height);
+			}
 		} else if (!strcmp(tokens[1], "container")) {
 			dumpTree();
 			fprintf(stderr, "Destroy Container %p\n", activeNode -> parent);

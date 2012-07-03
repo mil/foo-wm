@@ -16,7 +16,7 @@ void eMapRequest(XEvent *event) {
 	Node *newNode = allocateNode();
 	newNode -> window = event -> xmaprequest.window;
 
-	if (activeNode == NULL) {
+	if (activeNode == NULL || !isClient(activeNode)) {
 		parentNode(newNode, viewNode);
 	} else {
 		parentNode(newNode, activeNode -> parent);
@@ -53,14 +53,8 @@ void eDestroyNotify(XEvent *event) {
 	Node *n = getNodeByWindow(&(event -> xdestroywindow.window));
 	if (n == NULL) { return; }
 
-	fprintf(stderr," Getting cloest node to %p\n", n);
-	//activeNode = getClosestNode(n);
-	fprintf(stderr, "Got the cloest node, is: %p\n", activeNode);
-
+	activeNode = getClosestNode(n);
 	destroyNode(n);
-	fprintf(stderr, "Passed the destroyu node\n");
-	fprintf(stderr, "Yo my viewnode is %p", viewNode);
-	
 
 	//Update view
 	placeNode( viewNode, rootX, rootY, rootWidth, rootHeight);

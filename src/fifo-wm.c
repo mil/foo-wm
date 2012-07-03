@@ -83,13 +83,10 @@ int main() {
 			KeyPressMask | ButtonPressMask
 			);
 
-	viewNode = malloc(sizeof(Node));
+	viewNode = allocateNode();
 	viewNode -> layout = layout;
 	viewNode -> x = rootX; viewNode -> y = rootY;
-	viewNode -> width = rootWidth;
-	viewNode -> height = rootHeight;
-	viewNode -> previous = NULL; viewNode -> next = NULL;
-	viewNode -> parent = NULL; viewNode -> child = NULL;
+	viewNode -> width = rootWidth; viewNode -> height = rootHeight;
 
 	XSetErrorHandler((XErrorHandler)(xError));
 	XFlush(display);
