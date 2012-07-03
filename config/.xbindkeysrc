@@ -42,12 +42,12 @@
 	Mod4 + q
 
 "echo 'view parent set' > /home/mil/fifos/wm-fifo"
-	m:0x40 + c:20
-	Mod4 + minus
+	m:0x40 + c:31
+	Mod4 + i 
 
 "echo 'view child set' > /home/mil/fifos/wm-fifo"
-	m:0x40 + c:21
-	Mod4 + equal
+	m:0x40 + c:30
+	Mod4 + u
 
 
 "dmenu-suggestions.rb | dmenu -h 60 -x 100 -y 400 -w 1200 -fn 'Envy Code R-20' -sb '#ffffff' -nf '#00ffd5' -nb '#1f1f1f' -sf '#000000' -b -p 'Command:' | xargs -0 -I INPUT handler INPUT"

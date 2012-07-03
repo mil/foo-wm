@@ -10,7 +10,7 @@ void crawlNode(Node * node, int level) {
 	for (j = level; j > 0; j--) { fprintf(stderr, "|\t"); }
 
 	if (isClient(node)) {
-		fprintf(stderr, "Client");
+		fprintf(stderr, "Client (%p)", node);
 		if (node == activeNode) { fprintf(stderr, " [FOCUS]"); }
 		fprintf(stderr, "\n");
 
@@ -48,8 +48,8 @@ void focusNode(Node * n) {
 void destroyNode(Node * n) {
 	if (n == NULL) { return; }
 
-
-	if (n -> parent -> child == n && n -> previous == NULL) {
+	if ( n -> next == NULL &&
+			(n -> parent -> child == n && n -> previous == NULL)) {
 		destroyNode(n -> parent);
 		return;
 	}
@@ -57,12 +57,8 @@ void destroyNode(Node * n) {
 	//Unparent the node
 	unparentNode(n);
 
+	fprintf(stderr, "Sucessfull destroy node\n");
 	//Recursivly destroy all children of the node
-	Node * child;
-	for (child = n -> child; child != NULL; child -> next) {
-		destroyNode(child);
-	}
-
 	if (n -> window != (Window)NULL) {
 		/*
 			 Lookup * entry;
@@ -73,13 +69,23 @@ void destroyNode(Node * n) {
 			 }
 			 */
 		XUnmapWindow(display, n -> window);
+	} else {
+		fprintf(stderr, "The child is %p\n", n -> child);
+		Node * child;
+		/*
+		for (child = n -> child; child != NULL; child = child -> next) {
+			destroyNode(child);
+		}
+		*/
+
 	}
 	free(n);
+
 }
 
 
 void unparentNode(Node *node) {
-	if (node -> parent == NULL) { return; }
+	if (node == NULL || node -> parent == NULL) { return; }
 	fprintf(stderr, "unparent called");
 
 
@@ -101,8 +107,7 @@ void unparentNode(Node *node) {
 
 	fprintf(stderr, "GOT HERE");
 
-	//Move the node's parent's child if were it to our next node (maybe NULL)
-	if (node -> parent -> child == node) {
+	if ((node -> parent) -> child == node) {
 		(node -> parent) -> child = node -> next;
 	}
 
@@ -202,19 +207,21 @@ Node * getNodeByWindow(Window * window) {
 }
 
 Node * getClosestNode(Node * node) {
+	fprintf(stderr, "\nWITHIN !! GetClosest node called on %p\n", node);
 	Node * previousNode = node;
 	Node * nextNode = node;
-	while (previousNode != NULL || nextNode != NULL) {
+	while (previousNode -> previous != NULL || nextNode -> next != NULL) {
 		if (previousNode -> previous != NULL) {
 			previousNode = previousNode -> previous;
 		}
 		if (nextNode -> next != NULL) {
 			nextNode = nextNode -> next;
 		}
-		if (isClient(nextNode)    ) { return nextNode;     }
-		if (isClient(previousNode)) { return previousNode; }
+		if (isClient(nextNode) && nextNode != node) { return nextNode;     }
+		if (isClient(previousNode) && previousNode != node) { return previousNode; }
 	}
 	
 	//If not returned by here must look for more nodes in the parent, recur
+	fprintf(stderr,"Calling get on %p\n", node -> parent);
 	return getClosestNode(node -> parent);
 }

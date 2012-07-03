@@ -53,11 +53,13 @@ void eDestroyNotify(XEvent *event) {
 	Node *n = getNodeByWindow(&(event -> xdestroywindow.window));
 	if (n == NULL) { return; }
 
+	fprintf(stderr," Getting cloest node to %p\n", n);
 	activeNode = getClosestNode(n);
-
-	fprintf(stderr, "Got the cloest node: %p", activeNode);
+	fprintf(stderr, "Got the cloest node, is: %p\n", activeNode);
 
 	destroyNode(n);
+	fprintf(stderr, "Passed the destroyu node\n");
+	fprintf(stderr, "Yo my viewnode is %p", viewNode);
 
 	//Update view
 	placeNode( viewNode, rootX, rootY, rootWidth, rootHeight);
