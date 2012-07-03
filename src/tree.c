@@ -33,10 +33,13 @@ void dumpTree() {
 
 //Will only work on nodes with windows for now
 void focusNode(Node * n) {
-	//if (activeNode == n) { return; }
+	if (activeNode == n) { return; }
 	if (!isClient(n)) { 
 		fprintf(stderr, "Trying to focus a node thats not a client !\n"); 
 		return;
+	}
+	if (isClient(activeNode)) {
+		XSetWindowBorder(display, activeNode -> window, unfocusedColor);
 	}
 
 	activeNode = n;
@@ -189,6 +192,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 }
 
 Bool isClient(Node * node) {
+	fprintf(stderr,"Checking if %p is a client", node);
 	if (node == NULL) { return False; }
 	if (node -> window != (Window) NULL) { return True;
 	} else { return False; }
@@ -214,10 +218,14 @@ Node * getClosestNode(Node * node) {
 	while (pNode -> previous != NULL || nNode -> next != NULL) {
 		if (pNode -> previous != NULL) { pNode = pNode -> previous; }
 		if (nNode -> next != NULL    ) { nNode = nNode -> next;     }
+
 		if (isClient(nNode) && nNode != node) { return nNode;       }
+
+		fprintf(stderr,"pNode is %p", pNode);
 		if (isClient(pNode) && pNode != node) { return pNode;       }
+
+
 	}
-	
 	//If not returned by here must look for more nodes in the parent, recur
 	if (node -> parent == NULL) { return NULL; } else {
 	fprintf(stderr,"Calling get on %p\n", node -> parent);

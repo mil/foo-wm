@@ -12,14 +12,17 @@ void focus(int direction) {
 	if (direction == 0) {
 		if (activeNode -> next != NULL) {
 			focusNode(activeNode -> next);
-		} else if (activeNode -> previous != NULL) {
-			focusNode(activeNode -> previous);
+		} else {
+			focusNode(activeNode -> parent -> child);
 		}
 	} else if (direction == 1) {
 		if (activeNode -> previous != NULL) {
 			focusNode(activeNode -> previous);
-		} else if (activeNode -> next != NULL) {
-			focusNode(activeNode -> next);
+		} else {
+			Node *last = activeNode -> parent -> child;
+			while (last -> next != NULL) { last = last -> next; }
+			focusNode(last);
+
 		}
 	} else if (direction == 2) {
 		/*
@@ -104,27 +107,22 @@ void handleCommand(char* request) {
 			}
 		}
 	} else if (!strcmp(tokens[0], "kill")) {
-		/*
 		if (!strcmp(tokens[1], "client")) {
-
-
 			dumpTree();
-			fprintf(stderr, "Destroy Client %p\n", currentContainer -> focus);
+			fprintf(stderr, "Destroy Client %p\n", activeNode);
 
-			destroyClient(currentContainer -> focus);
+			destroyNode(activeNode);
 
 			dumpTree();
 
-			placeContainer(currentContainer, 
-					currentContainer -> x, currentContainer -> y, 
-					currentContainer -> width, currentContainer -> height);
+			placeNode(viewNode, 
+					viewNode -> x, viewNode -> y, 
+					viewNode -> width, viewNode -> height);
 		} else if (!strcmp(tokens[1], "container")) {
 			dumpTree();
-			fprintf(stderr, "Destroy Container %p\n", currentContainer);
-			destroyContainer(currentContainer);
+			fprintf(stderr, "Destroy Container %p\n", activeNode -> parent);
+			//destroyContainer(currentContainer);
 			dumpTree();
 		}
-
-		*/
 	}
 }
