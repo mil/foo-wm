@@ -7,6 +7,7 @@ int screen, activeScreen;
 int padding;
 int layout;
 int spawn;
+int border;
 Display	*display;
 Window root; 
 struct timeval tv;

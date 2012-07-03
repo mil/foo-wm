@@ -60,6 +60,7 @@ void eDestroyNotify(XEvent *event) {
 	destroyNode(n);
 	fprintf(stderr, "Passed the destroyu node\n");
 	fprintf(stderr, "Yo my viewnode is %p", viewNode);
+	
 
 	//Update view
 	placeNode( viewNode, rootX, rootY, rootWidth, rootHeight);

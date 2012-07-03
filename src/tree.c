@@ -6,8 +6,7 @@
 #include "tree.h"
 
 void crawlNode(Node * node, int level) {
-	int j;
-	for (j = level; j > 0; j--) { fprintf(stderr, "|\t"); }
+	int j; for (j = level; j > 0; j--) { fprintf(stderr, "|\t"); }
 
 	if (isClient(node)) {
 		fprintf(stderr, "Client (%p)", node);
@@ -16,7 +15,7 @@ void crawlNode(Node * node, int level) {
 
 	} else {
 		char *or = node -> layout == 0 ? "Vertical" : "Horizontal";
-		fprintf(stderr, "Container %s\n", or);
+		fprintf(stderr, "Container (%p) %s\n", node, or);
 
 		Node *n;
 		for (n = node -> child; n != NULL; n = n -> next) {
@@ -27,29 +26,36 @@ void crawlNode(Node * node, int level) {
 
 void dumpTree() {
 	fprintf(stderr, "Printing the tree\n");
+	fprintf(stderr, "----------------------------------\n");
 	crawlNode(viewNode, 0);
+	fprintf(stderr, "----------------------------------\n");
 }
 
 //Will only work on nodes with windows for now
 void focusNode(Node * n) {
-	if (activeNode == n) { return; }
-	if (isClient(n)) { fprintf(stderr, "Focusing a node thats not a client !\n"); }
+	//if (activeNode == n) { return; }
+	if (!isClient(n)) { 
+		fprintf(stderr, "Trying to focus a node thats not a client !\n"); 
+		return;
+	}
 
 	activeNode = n;
 	XRaiseWindow(display, n -> window);
 	XSetInputFocus(display, n -> window, RevertToPointerRoot, CurrentTime);
-
-	placeNode(n -> parent,
-			(n -> parent) -> x, (n -> parent) -> y,
-			(n -> parent) -> width, (n -> parent) -> height);
-
+	XSetWindowBorder(display, n -> window, focusedColor);
 }
 
 void destroyNode(Node * n) {
+
+	fprintf(stderr, "PRE DESTROY\n");
+	dumpTree();
 	if (n == NULL) { return; }
 
-	if ( n -> next == NULL &&
-			(n -> parent -> child == n && n -> previous == NULL)) {
+	if ( (n -> next == NULL &&
+			(n -> parent -> child == n && n -> previous == NULL)) &&
+			n -> parent -> parent != NULL
+			) {
+		fprintf(stderr, "Calling destroy node on parent\n");
 		destroyNode(n -> parent);
 		return;
 	}
@@ -58,6 +64,7 @@ void destroyNode(Node * n) {
 	unparentNode(n);
 
 	fprintf(stderr, "Sucessfull destroy node\n");
+	dumpTree();
 	//Recursivly destroy all children of the node
 	if (n -> window != (Window)NULL) {
 		/*
@@ -79,8 +86,10 @@ void destroyNode(Node * n) {
 		}
 
 	}
-	free(n);
+	fprintf(stderr, "POST DESTROY\n");
+	dumpTree();
 
+	free(n);
 }
 
 
@@ -88,8 +97,9 @@ void unparentNode(Node *node) {
 	if (node == NULL || node -> parent == NULL) { return; }
 	fprintf(stderr, "unparent called");
 
-	activeNode = getClosestNode(node);
+	focusNode(getClosestNode(node));
 
+	//Move parent's child pointer if were it....
 	if ((node -> parent) -> child == node) {
 		(node -> parent) -> child = node -> next;
 	}
@@ -106,7 +116,6 @@ void parentNode(Node *node, Node *parent) {
 	if (parent == NULL) { return; } //Cant add to NULL
 
 	unparentNode(node); //Unparent then set the parent to new parent
-
 	node -> parent = parent;
 
 	//Find last in children of parent, add to end
@@ -125,10 +134,8 @@ void unmapNode(Node * node) {
 	for (n = node -> child; n != NULL; n = n -> next) {
 		if (n -> window != (Window) NULL) {
 			XUnmapWindow(display, n -> window);
-		} else {
-			if (n -> child != NULL) {
-				unmapNode(n -> child);
-			}
+		} else if (n -> child != NULL) {
+			unmapNode(n -> child);
 		}
 	}
 }
@@ -138,13 +145,19 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 	node -> width = width; node -> height = height;
 	fprintf(stderr, "Place Node XY:[%d, %d], WH:[%d, %d]\n", x, y, width, height);
 
-	//if (node -> window != (Window)NULL) {
 	if (isClient(node)) {
 		XMapWindow(display, node -> window);
-		XMoveResizeWindow(display, node -> window, x, y, width, height);
-		XSetWindowBorderWidth(display, node -> window, 1);
+		XRaiseWindow(display, node -> window);
+
+		XMoveResizeWindow(display, node -> window, 
+				x, 
+				y, 
+				width - (border*2), 
+				height - (border *2));
+		XSetWindowBorderWidth(display, node -> window, border);
 		if (activeNode == node) {
 			XSetWindowBorder(display, node -> window, focusedColor);
+			focusNode(node);
 		} else {
 			XSetWindowBorder(display, node -> window, unfocusedColor);
 		}
@@ -157,13 +170,17 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 		for (a = node -> child; a != NULL; a = a -> next, i++) {
 			switch (node -> layout) {
 				case 0:
-					a -> x = x + (i * (width / children)); a -> y = y + padding;
-					a -> width = width / children; a -> height = height;
+					a -> x = x + (i * (width / children)) + padding; 
+					a -> y = y + padding;
+					a -> width = (width / children) - (padding*2); 
+					a -> height = height - (padding*2);
 					break;
 
 				case 1:
-					a -> x = x; a -> y = y + (i * (height / children));
-					a -> width = width; a -> height = height / children;
+					a -> x = x + padding; 
+					a -> y = y + (i * (height / children)) + padding;
+					a -> width = width - (padding * 2); 
+					a -> height = (height / children) - (padding * 2);
 					break;
 			}
 			placeNode(a, a -> x, a -> y, a -> width, a -> height);
@@ -178,6 +195,7 @@ Bool isClient(Node * node) {
 }
 
 //Returns the client associated with given window
+
 Node * getNodeByWindow(Window * window) {
 	Lookup *entry;
 	int win = *window;
@@ -191,20 +209,20 @@ Node * getNodeByWindow(Window * window) {
 
 Node * getClosestNode(Node * node) {
 	fprintf(stderr, "\nWITHIN !! GetClosest node called on %p\n", node);
-	Node * previousNode = node;
-	Node * nextNode = node;
-	while (previousNode -> previous != NULL || nextNode -> next != NULL) {
-		if (previousNode -> previous != NULL) {
-			previousNode = previousNode -> previous;
-		}
-		if (nextNode -> next != NULL) {
-			nextNode = nextNode -> next;
-		}
-		if (isClient(nextNode) && nextNode != node) { return nextNode;     }
-		if (isClient(previousNode) && previousNode != node) { return previousNode; }
+	Node * pNode = node;
+	Node * nNode = node;
+	while (pNode -> previous != NULL || nNode -> next != NULL) {
+		if (pNode -> previous != NULL) { pNode = pNode -> previous; }
+		if (nNode -> next != NULL    ) { nNode = nNode -> next;     }
+		if (isClient(nNode) && nNode != node) { return nNode;       }
+		if (isClient(pNode) && pNode != node) { return pNode;       }
 	}
 	
 	//If not returned by here must look for more nodes in the parent, recur
+	if (node -> parent == NULL) { return NULL; } else {
 	fprintf(stderr,"Calling get on %p\n", node -> parent);
-	return getClosestNode(node -> parent);
+		Node *j;
+		j = getClosestNode(node -> parent);
+		if (j != node) { return j; } else { return NULL; }
+	}
 }

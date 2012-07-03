@@ -68,6 +68,7 @@ int main() {
 
 	focusedColor = getColor(CLIENT_FOCUSED_COLOR);
 	unfocusedColor = getColor(CLIENT_UNFOCUSED_COLOR);
+	border = BORDER_WIDTH;
 
 
 

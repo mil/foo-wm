@@ -9,20 +9,20 @@
 
 void focus(int direction) {
 	//Direction: 0 - Previous, 1 - Next, 2 - Parent
-	/*
 	if (direction == 0) {
-		if ((currentContainer -> focus) -> next != NULL) {
-			focusClient((currentContainer -> focus) -> next);
-		} else if ((currentContainer -> focus) -> previous != NULL) {
-			focusClient((currentContainer -> focus) -> previous);
+		if (activeNode -> next != NULL) {
+			focusNode(activeNode -> next);
+		} else if (activeNode -> previous != NULL) {
+			focusNode(activeNode -> previous);
 		}
 	} else if (direction == 1) {
-		if ((currentContainer -> focus) -> previous != NULL) {
-			focusClient((currentContainer -> focus) -> previous);
-		} else if ((currentContainer -> focus) -> next != NULL) {
-			focusClient((currentContainer -> focus) -> next);
+		if (activeNode -> previous != NULL) {
+			focusNode(activeNode -> previous);
+		} else if (activeNode -> next != NULL) {
+			focusNode(activeNode -> next);
 		}
 	} else if (direction == 2) {
+		/*
 		if (currentContainer -> parent != NULL) {
 			currentContainer = currentContainer -> parent;
 		} else {
@@ -33,8 +33,8 @@ void focus(int direction) {
 				currentContainer -> x, currentContainer -> y, 
 				currentContainer -> width, currentContainer -> height);
 		}
+		*/
 	}
-	*/
 }
 
 void handleCommand(char* request) {
@@ -98,8 +98,8 @@ void handleCommand(char* request) {
 				Node *n = activeNode;
 				while (n -> parent != viewNode && n != NULL) { n = n -> parent; }
 
+				unmapNode(viewNode);
 				viewNode = n;
-
 				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 			}
 		}
