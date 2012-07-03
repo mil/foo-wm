@@ -52,14 +52,15 @@ void eDestroyNotify(XEvent *event) {
 
 	Node *n = getNodeByWindow(&(event -> xdestroywindow.window));
 	if (n == NULL) { return; }
+
+	activeNode = getClosestNode(n);
+
+	fprintf(stderr, "Got the cloest node: %p", activeNode);
+
 	destroyNode(n);
 
 	//Update view
-	placeNode(
-			viewNode, 0, 0, 
-			DisplayWidth  (display, activeScreen),
-			DisplayHeight (display, activeScreen)
-			);
+	placeNode( viewNode, rootX, rootY, rootWidth, rootHeight);
 }
 
 void eConfigureRequest(XEvent *event) {

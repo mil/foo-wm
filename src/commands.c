@@ -78,9 +78,7 @@ void handleCommand(char* request) {
 			parentNode(newContainer, nodeParent);
 			activeNode = newContainer -> child;
 
-			placeNode(viewNode, 0, 0,
-					DisplayWidth(display, activeScreen),
-					DisplayHeight(display, activeScreen));
+			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 		}	else {
 			fprintf(stderr, "Containerize called but alone in contianer");
 		}
@@ -91,9 +89,7 @@ void handleCommand(char* request) {
 			if (viewNode -> parent != NULL) {
 				unmapNode(viewNode);
 				viewNode = viewNode -> parent;
-				placeNode(viewNode, 0, 0,
-						DisplayWidth(display, activeScreen),
-						DisplayHeight(display, activeScreen));
+				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 			}
 
 		} else if (!strcmp(tokens[1], "child")) {
@@ -104,9 +100,7 @@ void handleCommand(char* request) {
 
 				viewNode = n;
 
-				placeNode(viewNode, 0, 0,
-						DisplayWidth(display, activeScreen),
-						DisplayHeight(display, activeScreen));
+				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 			}
 		}
 	} else if (!strcmp(tokens[0], "kill")) {

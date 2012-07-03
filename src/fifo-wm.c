@@ -59,6 +59,12 @@ int main() {
 	root = RootWindow(display, activeScreen);
 	activeScreen = DefaultScreen(display);
 
+	rootX = 0 + SCREEN_PADDING_LEFT;
+	rootWidth = DisplayWidth(display, activeScreen) - SCREEN_PADDING_LEFT - SCREEN_PADDING_RIGHT;
+
+	rootY = 0 + SCREEN_PADDING_TOP;
+	rootHeight = DisplayHeight(display, activeScreen) - SCREEN_PADDING_TOP - SCREEN_PADDING_BOTTOM;
+
 
 	focusedColor = getColor(CLIENT_FOCUSED_COLOR);
 	unfocusedColor = getColor(CLIENT_UNFOCUSED_COLOR);
@@ -78,9 +84,9 @@ int main() {
 
 	viewNode = malloc(sizeof(Node));
 	viewNode -> layout = layout;
-	viewNode -> x = 0; viewNode -> y = 0;
-	viewNode -> width = DisplayWidth(display, activeScreen);
-	viewNode -> height = DisplayHeight(display, activeScreen);
+	viewNode -> x = rootX; viewNode -> y = rootY;
+	viewNode -> width = rootWidth;
+	viewNode -> height = rootHeight;
 
 	XSetErrorHandler((XErrorHandler)(xError));
 	XFlush(display);

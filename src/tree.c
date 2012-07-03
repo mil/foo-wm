@@ -22,7 +22,6 @@ void crawlNode(Node * node, int level) {
 		for (n = node -> child; n != NULL; n = n -> next) {
 			crawlNode(n, level + 1);	
 		}
-
 	}
 }
 
@@ -186,9 +185,8 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 
 Bool isClient(Node * node) {
 	if (node == NULL) { return False; }
-	if (node -> window != (Window) NULL)
-		return True;
-	return False;
+	if (node -> window != (Window) NULL) { return True;
+	} else { return False; }
 }
 
 //Returns the client associated with given window
@@ -201,4 +199,22 @@ Node * getNodeByWindow(Window * window) {
 	}
 
 	return NULL;
+}
+
+Node * getClosestNode(Node * node) {
+	Node * previousNode = node;
+	Node * nextNode = node;
+	while (previousNode != NULL || nextNode != NULL) {
+		if (previousNode -> previous != NULL) {
+			previousNode = previousNode -> previous;
+		}
+		if (nextNode -> next != NULL) {
+			nextNode = nextNode -> next;
+		}
+		if (isClient(nextNode)    ) { return nextNode;     }
+		if (isClient(previousNode)) { return previousNode; }
+	}
+	
+	//If not returned by here must look for more nodes in the parent, recur
+	return getClosestNode(node -> parent);
 }
