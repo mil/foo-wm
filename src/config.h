@@ -6,7 +6,7 @@
 #define CLIENT_UNFOCUSED_COLOR "rgb:00/ff/ee"
 
 // Containers
-#define CONTAINER_DEFAULT_LAYOUT (0)
+#define CONTAINER_DEFAULT_LAYOUT (2)
 #define CONTAINER_PADDING (1)
 #define BORDER_WIDTH (3)
 

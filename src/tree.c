@@ -169,26 +169,24 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 		/* Determine the number of rows and cols */
 		int rows; int cols;
 		switch (node -> layout) {
-			case 0:
-				cols = 1;
-				rows = children;
-				break;
-			case 1:
-				cols = children;
-				rows = 1;
-				break;
-			case 2:
-				gridDimensions(children, &rows, &cols);
-				break;
+			case 0: cols = 1; rows = children; break;
+			case 1: cols = children; rows = 1; break;
+			case 2: gridDimensions(children, &rows, &cols); break;
 		}
-		//fprintf(stderr, "Rows = %d\nCols = %d\n", rows, cols);
 
 
 		for (a = node -> child; a != NULL; a = a -> next, i++) {
-			a -> x = x + (i % cols) * (width/cols);
-			a -> y = y + ((int)(i / cols)) * (height/rows);
-			a -> width = width / cols;
-			a -> height = height / rows;
+			a -> x = x + (i % cols) * (width/cols) + padding;
+			a -> y = y + ((int)(i / cols)) * (height/rows) + padding;
+			a -> width = width / cols - (padding * 2);
+			a -> height = height / rows - (padding * 2);
+
+			if (node -> layout == 2) {
+				//Two nodes, edge case for formula
+				if (children == 2) { a -> height = height - (padding * 2); }
+				//Scretch the last child
+				if (i + 1 == children) { a -> width = width - a -> x - (padding * 2); }
+			}
 
 			fprintf(stderr, "Calling place node with X[%d] and Y[%d]\n", a -> x, a -> y);
 			placeNode(a, a -> x, a -> y, a -> width, a -> height);
