@@ -117,10 +117,11 @@ void unparentNode(Node *node) {
 
 
 void brotherNode(Node *node, Node * brother, int position) {
+	node -> parent = brother -> parent;
+
 	if (position == 0) {
 		node -> next = brother;
 		if (brother -> previous == NULL) { //Pop in the front
-			node -> parent = brother -> parent;
 			node -> parent -> child = node;
 		} else {
 			//Shift previous pointer
