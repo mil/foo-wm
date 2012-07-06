@@ -1,6 +1,8 @@
 #include <X11/Xlib.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
+
 
 #include "fifo-wm.h"
 #include "util.h"
@@ -40,4 +42,17 @@ void gridDimensions(int children, int * rows, int * cols) {
 		*rows = r;
 		*cols = c;
 	}
+}
+
+
+//Returns the client associated with given windowv
+Node * getNodeByWindow(Window * window) {
+	Lookup *entry;
+	int win = *window;
+	for (entry = lookup; entry != NULL; entry = entry -> previous) {
+		if (win == entry -> window)
+			return entry -> node;
+	}
+
+	return NULL;
 }

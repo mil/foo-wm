@@ -1,5 +1,7 @@
 #include <X11/Xlib.h>
+#include <sys/time.h>
 #include "structs.h"
+
 
 Lookup * lookup;
 

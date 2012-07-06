@@ -1,10 +1,10 @@
 #include <X11/Xlib.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
 #include "fifo-wm.h"
 #include "tree.h"
+#include "util.h"
 #include "window.h"
 
 void crawlNode(Node * node, int level) {
@@ -148,8 +148,8 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 		XRaiseWindow(display, node -> window);
 
 		XMoveResizeWindow(display, node -> window, 
-				x, 
-				y, 
+				(x < 0) ? 0 : x, 
+				(y < 0) ? 0 : y, 
 				width - (border*2), 
 				height - (border *2));
 		XSetWindowBorderWidth(display, node -> window, border);
@@ -185,10 +185,8 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 				//Two nodes, edge case for formula
 				if (children == 2) { a -> height = height - (padding * 2); }
 				//Scretch the last child
-				if (i + 1 == children) { a -> width = width - a -> x - (padding * 2); }
+				if (i + 1 == children) { a -> width = x + width - a -> x - (padding * 2); }
 			}
-
-			fprintf(stderr, "Calling place node with X[%d] and Y[%d]\n", a -> x, a -> y);
 			placeNode(a, a -> x, a -> y, a -> width, a -> height);
 		}
 	}
@@ -200,20 +198,6 @@ Bool isClient(Node * node) {
 	if (node -> window != (Window) NULL) { return True;
 	} else { return False; }
 }
-
-//Returns the client associated with given window
-
-Node * getNodeByWindow(Window * window) {
-	Lookup *entry;
-	int win = *window;
-	for (entry = lookup; entry != NULL; entry = entry -> previous) {
-		if (win == entry -> window)
-			return entry -> node;
-	}
-
-	return NULL;
-}
-
 
 /* Gets the next brother client to node, in given direction 
  * [Container] - [Client X] - [Container] - [Container] - [Client Y]
@@ -257,4 +241,5 @@ Node * getClosestClient(Node * node) {
 			return returnNode; 
 		}
 	}
+	return NULL;
 }

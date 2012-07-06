@@ -8,9 +8,9 @@
 // Containers
 #define CONTAINER_DEFAULT_LAYOUT (2)
 #define CONTAINER_PADDING (1)
-#define BORDER_WIDTH (3)
+#define BORDER_WIDTH (1)
 
-#define SCREEN_PADDING_TOP    (18)
+#define SCREEN_PADDING_TOP    (20)
 #define SCREEN_PADDING_LEFT   (2)
 #define SCREEN_PADDING_BOTTOM (2)
 #define SCREEN_PADDING_RIGHT  (2)
