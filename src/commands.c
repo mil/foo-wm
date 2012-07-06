@@ -9,36 +9,47 @@
 
 
 void focus(int direction) {
-	//Direction: 0 - Previous, 1 - Next, 2 - Parent
-	if (direction == 0) {
-		if (activeNode -> next != NULL) {
-			focusNode(activeNode -> next);
-		} else {
-			focusNode(activeNode -> parent -> child);
-		}
-	} else if (direction == 1) {
-		if (activeNode -> previous != NULL) {
-			focusNode(activeNode -> previous);
-		} else {
-			Node *last = activeNode -> parent -> child;
-			while (last -> next != NULL) { last = last -> next; }
-			focusNode(last);
+	/*
+	//Direction: 0 - Left, 1 - Up, 2 - Right, 3 - Down
+	switch (activeNode -> parent -> layout) {
 
-		}
-	} else if (direction == 2) {
-		/*
-		if (currentContainer -> parent != NULL) {
-			currentContainer = currentContainer -> parent;
-		} else {
-			Container * newContainer = malloc(sizeof(Container));
-			parentContainer(currentContainer, newContainer);
-			currentContainer = newContainer;
-			placeContainer(currentContainer, 
-				currentContainer -> x, currentContainer -> y, 
-				currentContainer -> width, currentContainer -> height);
-		}
-		*/
+	//Vertical Container
+		case 0:
+			switch (direction) {
+				case 0: //Get client from parent to the left
+
+					break;
+				case 1: //Get the client upward
+					break;
+
+				case 2: //Get client from parent to the right
+					break;
+				
+				case 3: //Get client downward
+					break;
+			}
+
+			break;
+
+	//Horizontal Container
+		case 1: 
+			switch (direction)  {
+				case 0: //Get client to the left
+					break;
+
+				case 1: //Get client from container upwards
+					break;
+
+				case 2: //Get client to the right
+					break;
+
+				case 3: //Get client from container dowwards
+
+					break;
+			}
+			break;
 	}
+	*/
 }
 
 void handleCommand(char* request) {
@@ -65,28 +76,32 @@ void handleCommand(char* request) {
 				(activeNode -> parent) -> width, (activeNode -> parent) -> height);
 
 	} else if (!strcmp(tokens[0], "focus")) {
-		if (!strcmp(tokens[1], "next"))
+		if (!strcmp(tokens[1], "left"))
 			focus(0);
-		else if (!strcmp(tokens[1], "previous"))
+		else if (!strcmp(tokens[1], "up"))
 			focus(1);
-		else if (!strcmp(tokens[1], "parent"))
+		else if (!strcmp(tokens[1], "right"))
 			focus(2);
+		else if (!strcmp(tokens[1], "down"))
+			focus(3);
 
 	} else if (!strcmp(tokens[0], "containerize")) {
-		if (activeNode -> previous != NULL) {
-			fprintf(stderr,"Containerizing");
-			Node * newContainer = malloc(sizeof(Node));	
-			newContainer -> next = NULL; newContainer -> previous = NULL;
-			newContainer -> parent = NULL; newContainer -> child = NULL;
-			Node * nodeParent = activeNode -> parent;
+		if (!strcmp(tokens[1], "client")) {
+			if (activeNode -> previous != NULL) {
+				fprintf(stderr,"Containerizing");
+				Node * newContainer = allocateNode();
+				Node * nodeParent = activeNode -> parent;
 
-			parentNode(activeNode, newContainer);
-			parentNode(newContainer, nodeParent);
-			activeNode = newContainer -> child;
+				parentNode(activeNode, newContainer);
+				parentNode(newContainer, nodeParent);
+				activeNode = newContainer -> child;
+				
+				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+				focusNode(newContainer -> child);
 
-			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-		}	else {
-			fprintf(stderr, "Containerize called but alone in contianer");
+			}	else {
+				fprintf(stderr, "Containerize called but alone in contianer");
+			}
 		}
 
 	} else if (!strcmp(tokens[0], "view")) {

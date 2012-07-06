@@ -53,7 +53,7 @@ void eDestroyNotify(XEvent *event) {
 	Node *n = getNodeByWindow(&(event -> xdestroywindow.window));
 	if (n == NULL) { return; }
 
-	activeNode = getClosestNode(n);
+	activeNode = getClosestClient(n);
 	destroyNode(n);
 
 	//Update view

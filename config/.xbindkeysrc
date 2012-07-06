@@ -21,9 +21,10 @@
 	Mod4 + b
 
 
-"echo 'containerize set' > /home/mil/fifos/wm-fifo"
+"echo 'containerize client set' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:33
 	Mod4 + p
+
 
 "echo 'focus next set' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:44

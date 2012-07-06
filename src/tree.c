@@ -4,6 +4,7 @@
 
 #include "fifo-wm.h"
 #include "tree.h"
+#include "window.h"
 
 void crawlNode(Node * node, int level) {
 	int j; for (j = level; j > 0; j--) { fprintf(stderr, "|\t"); }
@@ -46,6 +47,7 @@ void focusNode(Node * n) {
 	XRaiseWindow(display, n -> window);
 	XSetInputFocus(display, n -> window, RevertToPointerRoot, CurrentTime);
 	XSetWindowBorder(display, n -> window, focusedColor);
+	centerPointer(&n -> window);
 }
 
 void destroyNode(Node * n) {
@@ -92,7 +94,7 @@ void unparentNode(Node *node) {
 	if (node == NULL || node -> parent == NULL) { return; }
 	fprintf(stderr, "unparent called");
 
-	focusNode(getClosestNode(node));
+	focusNode(getClosestClient(node));
 
 	//Move parent's child pointer if were it....
 	if ((node -> parent) -> child == node) {
@@ -203,20 +205,47 @@ Node * getNodeByWindow(Window * window) {
 	return NULL;
 }
 
-Node * getClosestNode(Node * node) {
-	Node * pNode = node;
-	Node * nNode = node;
+
+/* Gets the next brother client to node, in given direction 
+ * [Container] - [Client X] - [Container] - [Container] - [Client Y]
+ * Given Client X, function would loop until hitting Client Y
+ * */
+Node * getBrotherClient(Node * node, int direction) {
+	Node *pNode = node;
+	Node *nNode = node;
+
 	while (pNode -> previous != NULL || nNode -> next != NULL) {
 		if (pNode -> previous != NULL) { pNode = pNode -> previous; }
 		if (nNode -> next != NULL    ) { nNode = nNode -> next;     }
-		if (isClient(nNode) && nNode != node) { return nNode;       }
-		if (isClient(pNode) && pNode != node) { return pNode;       }
+		switch (direction) {
+			case 0:
+				if (isClient(pNode) && pNode != node) { return pNode; }
+				if (isClient(nNode) && nNode != node) { return nNode; }
+				break;
+			case 1:
+				if (isClient(nNode) && nNode != node) { return nNode; }
+				if (isClient(pNode) && pNode != node) { return pNode; }
+				break;
+		}
 	}
-	//If not returned by here must look for more nodes in the parent, recur
-	if (node -> parent == NULL) { return NULL; } else {
-		fprintf(stderr,"Calling get on %p\n", node -> parent);
-		Node *j;
-		j = getClosestNode(node -> parent);
-		if (j != node) { return j; } else { return NULL; }
+	return NULL;
+}
+
+Node * getClosestClient(Node * node) {
+	Node * returnNode = NULL;
+	Node * currentNode = node;
+
+	/* Calls getBrotherClient going up the tree until a client is found */
+	while (returnNode == NULL) {
+		returnNode = getBrotherClient(currentNode, 1);
+		if (returnNode == NULL) {
+			if (currentNode -> parent != NULL) { //Try one level up
+				currentNode = currentNode -> parent;
+			} else { //We didn't find a brother and we have no parent, end game
+				return NULL;
+			}
+		} else {  //We found a client 
+			return returnNode; 
+		}
 	}
 }
