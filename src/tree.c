@@ -12,7 +12,7 @@ void crawlNode(Node * node, int level) {
 
 	if (isClient(node)) {
 		fprintf(stderr, "Client (%p)", node);
-		if (node == activeNode) { fprintf(stderr, " [FOCUS]"); }
+		if (node == focusedNode) { fprintf(stderr, " [FOCUS]"); }
 		fprintf(stderr, "\n");
 
 	} else {
@@ -40,21 +40,26 @@ void dumpTree() {
 
 //Will only work on nodes with windows for now
 void focusNode(Node * n) {
-	if (activeNode == n) { return; }
+	if (focusedNode == n) { return; }
 	if (!isClient(n)) { 
 		fprintf(stderr, "Trying to focus a node thats not a client !\n"); 
 		return;
 	}
-	if (isClient(activeNode)) {
-		XSetWindowBorder(display, activeNode -> window, unfocusedColor);
+	if (isClient(focusedNode)) {
+		XSetWindowBorder(display, focusedNode -> window, unfocusedColor);
 	}
 
-	activeNode = n;
+	focusedNode = n;
 	XRaiseWindow(display, n -> window);
 	XSetInputFocus(display, n -> window, RevertToPointerRoot, CurrentTime);
 	XSetWindowBorder(display, n -> window, focusedColor);
 	centerPointer(&n -> window);
 }
+
+void selectNode(Node * n) {
+
+}
+
 
 void destroyNode(Node * n) {
 
@@ -180,7 +185,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 				width - (border*2), 
 				height - (border *2));
 		XSetWindowBorderWidth(display, node -> window, border);
-		if (activeNode == node) {
+		if (focusedNode == node) {
 			XSetWindowBorder(display, node -> window, focusedColor);
 			focusNode(node);
 		} else {

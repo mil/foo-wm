@@ -11,7 +11,7 @@
 void focus(int direction) {
 	/*
 	//Direction: 0 - Left, 1 - Up, 2 - Right, 3 - Down
-	switch (activeNode -> parent -> layout) {
+	switch (focusedNode -> parent -> layout) {
 
 	//Vertical Container
 		case 0:
@@ -70,16 +70,16 @@ void handleCommand(char* request) {
 	} else if (!strcmp(tokens[0], "layout")) {
 		fprintf(stderr, "Setting layout to: %s", tokens[1]);
 		if (!strcmp(tokens[1], "vertical")) {
-			activeNode -> parent ->  layout = 0; 
+			focusedNode -> parent ->  layout = 0; 
 		} else if (!strcmp(tokens[1], "horizontal")) { 
-			activeNode -> parent -> layout = 1; 
+			focusedNode -> parent -> layout = 1; 
 		} else if (!strcmp(tokens[1], "grid")) {
-			activeNode -> parent -> layout = 2;
+			focusedNode -> parent -> layout = 2;
 		}
 
-		placeNode(activeNode -> parent,
-				(activeNode -> parent) -> x,     (activeNode -> parent) -> y,
-				(activeNode -> parent) -> width, (activeNode -> parent) -> height);
+		placeNode(focusedNode -> parent,
+				(focusedNode -> parent) -> x,     (focusedNode -> parent) -> y,
+				(focusedNode -> parent) -> width, (focusedNode -> parent) -> height);
 
 	} else if (!strcmp(tokens[0], "focus")) {
 		if (!strcmp(tokens[1], "left"))
@@ -90,27 +90,42 @@ void handleCommand(char* request) {
 			focus(2);
 		else if (!strcmp(tokens[1], "down"))
 			focus(3);
+	
+	} else if (!strcmp(tokens[0], "select")) {
+			if (!strcmp(tokens[1], "parent")) {
+				if (selectedNode == NULL) {
+					selectNode(focusedNode -> parent);
+				} else {
+					if (selectedNode -> parent != NULL) {
+						selectNode(selectedNode);
+					}
+				}
+			} else if (!strcmp(tokens[1], "next")) {
+
+			} else if (!strcmp(tokens[1], "previous")) {
+
+			}
 
 	} else if (!strcmp(tokens[0], "containerize")) {
 		if (!strcmp(tokens[1], "client")) {
-			if (!(activeNode -> previous == NULL && activeNode -> next == NULL)) {
+			if (!(focusedNode -> previous == NULL && focusedNode -> next == NULL)) {
 				fprintf(stderr,"Containerizing");
 				Node * newContainer = allocateNode();
-				Node * nodeParent = activeNode -> parent;
+				newContainer -> layout = layout;
 
 				/* Save a node and position to insert for when we reparent */
 				Node *insertNode; int insertPosition;
-				if (activeNode -> previous != NULL) {
-					insertNode = activeNode -> previous; insertPosition = 1;
-				} else if (activeNode -> next != NULL) {
-					insertNode = activeNode -> next; insertPosition = 0;
+				if (focusedNode -> previous != NULL) {
+					insertNode = focusedNode -> previous; insertPosition = 1;
+				} else if (focusedNode -> next != NULL) {
+					insertNode = focusedNode -> next; insertPosition = 0;
 				}
 
-				//Unparents activeNode and reparents into newContainer
-				parentNode(activeNode, newContainer);
+				//Unparents focusedNode and reparents into newContainer
+				parentNode(focusedNode, newContainer);
 				brotherNode(newContainer, insertNode, insertPosition);
 
-				activeNode = newContainer -> child;
+				focusedNode = newContainer -> child;
 			
 				//Rerender the viewnode
 				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
@@ -120,6 +135,7 @@ void handleCommand(char* request) {
 				fprintf(stderr, "Containerize called but alone in contianer");
 			}
 		}
+
 
 	} else if (!strcmp(tokens[0], "view")) {
 
@@ -132,8 +148,8 @@ void handleCommand(char* request) {
 
 		} else if (!strcmp(tokens[1], "child")) {
 
-			if (activeNode != viewNode) {
-				Node *n = activeNode;
+			if (focusedNode != viewNode) {
+				Node *n = focusedNode;
 				while (n -> parent != viewNode && n != NULL) { n = n -> parent; }
 
 				unmapNode(viewNode);
@@ -144,10 +160,10 @@ void handleCommand(char* request) {
 	} else if (!strcmp(tokens[0], "kill")) {
 		if (!strcmp(tokens[1], "client")) {
 			dumpTree();
-			fprintf(stderr, "Destroy Client %p\n", activeNode);
+			fprintf(stderr, "Destroy Client %p\n", focusedNode);
 
-			if (isClient(activeNode)) {
-				destroyNode(activeNode);
+			if (isClient(focusedNode)) {
+				destroyNode(focusedNode);
 
 
 				dumpTree();
@@ -158,7 +174,7 @@ void handleCommand(char* request) {
 			}
 		} else if (!strcmp(tokens[1], "container")) {
 			dumpTree();
-			fprintf(stderr, "Destroy Container %p\n", activeNode -> parent);
+			fprintf(stderr, "Destroy Container %p\n", focusedNode -> parent);
 			//destroyContainer(currentContainer);
 			dumpTree();
 		}

@@ -16,25 +16,25 @@ void eMapRequest(XEvent *event) {
 	Node *newNode = allocateNode();
 	newNode -> window = event -> xmaprequest.window;
 
-	if (activeNode == NULL || !isClient(activeNode)) {
+	if (focusedNode == NULL || !isClient(focusedNode)) {
 		parentNode(newNode, viewNode);
 	} else {
-		parentNode(newNode, activeNode -> parent);
+		brotherNode(newNode, focusedNode, 1);
 	}
 
 
-	fprintf(stderr, "The focused node (BEFORE) is %p\n", activeNode);
+	fprintf(stderr, "The focused node (BEFORE) is %p\n", focusedNode);
 	focusNode(newNode);
-	fprintf(stderr, "The focused node (AFTER) is %p\n", activeNode);
+	fprintf(stderr, "The focused node (AFTER) is %p\n", focusedNode);
 
 
 
 	//Update the view
-	placeNode( activeNode -> parent, 
-			(activeNode -> parent) -> x, 
-			(activeNode -> parent) -> y, 
-			(activeNode -> parent) -> width, 
-			(activeNode -> parent) -> height);
+	placeNode( focusedNode -> parent, 
+			(focusedNode -> parent) -> x, 
+			(focusedNode -> parent) -> y, 
+			(focusedNode -> parent) -> width, 
+			(focusedNode -> parent) -> height);
 
 
 
@@ -53,7 +53,7 @@ void eDestroyNotify(XEvent *event) {
 	Node *n = getNodeByWindow(&(event -> xdestroywindow.window));
 	if (n == NULL) { return; }
 
-	activeNode = getClosestClient(n);
+	focusedNode = getClosestClient(n);
 	destroyNode(n);
 
 	//Update view

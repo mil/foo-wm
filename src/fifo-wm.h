@@ -8,7 +8,6 @@ Lookup * lookup;
 int screen, activeScreen;
 int padding;
 int layout;
-int spawn;
 int border;
 Display	*display;
 Window root; 
@@ -18,8 +17,10 @@ long focusedColor;
 
 int rootX, rootY, rootWidth, rootHeight;
 
-Node *activeNode; //Active Input / New clients launch as brother
-Node *viewNode; // Currently viewed node on the screen
+/* focusedNode  :: Currently focused client node (recieves input)
+ * selectedNode :: Currently selected node (for containerize, move, etc....)
+ * viewNode     :: Currently viewed node (screenspace) */
+Node *focusedNode, *selectedNode, *viewNode; 
 
 void handleCommand(char* request);
 void handleEvents();
