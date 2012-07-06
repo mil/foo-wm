@@ -2,6 +2,7 @@ void crawlNode(Node * node, int level);
 void dumpTree();
 void destroyNode(Node * n);
 void unparentNode(Node * node);
+void brotherNode(Node *node, Node * brother, int position);
 void parentNode(Node * node, Node * parent);
 void focusNode(Node * node);
 void unmapNode(Node * node);

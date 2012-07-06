@@ -93,15 +93,26 @@ void handleCommand(char* request) {
 
 	} else if (!strcmp(tokens[0], "containerize")) {
 		if (!strcmp(tokens[1], "client")) {
-			if (activeNode -> previous != NULL) {
+			if (!(activeNode -> previous == NULL && activeNode -> next == NULL)) {
 				fprintf(stderr,"Containerizing");
 				Node * newContainer = allocateNode();
 				Node * nodeParent = activeNode -> parent;
 
+				/* Save a node and position to insert for when we reparent */
+				Node *insertNode; int insertPosition;
+				if (activeNode -> previous != NULL) {
+					insertNode = activeNode -> previous; insertPosition = 1;
+				} else if (activeNode -> next != NULL) {
+					insertNode = activeNode -> next; insertPosition = 0;
+				}
+
+				//Unparents activeNode and reparents into newContainer
 				parentNode(activeNode, newContainer);
-				parentNode(newContainer, nodeParent);
+				brotherNode(newContainer, insertNode, insertPosition);
+
 				activeNode = newContainer -> child;
-				
+			
+				//Rerender the viewnode
 				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 				focusNode(newContainer -> child);
 

@@ -16,8 +16,13 @@ void crawlNode(Node * node, int level) {
 		fprintf(stderr, "\n");
 
 	} else {
-		char *or = node -> layout == 0 ? "Vertical" : "Horizontal";
-		fprintf(stderr, "Container (%p) %s\n", node, or);
+		char *label;
+		switch (node -> layout) {
+			case 0: label = "Vertical"; break;
+			case 1: label = "Horizontal"; break;
+			case 2: label = "Grid"; break;
+		}
+		fprintf(stderr, "Container (%p) %s\n", node, label);
 
 		Node *n;
 		for (n = node -> child; n != NULL; n = n -> next) {
@@ -110,6 +115,26 @@ void unparentNode(Node *node) {
 	node -> parent = NULL; node -> next = NULL; node -> previous = NULL;
 }
 
+
+void brotherNode(Node *node, Node * brother, int position) {
+	if (position == 0) {
+		node -> next = brother;
+		if (brother -> previous == NULL) { //Pop in the front
+			node -> parent = brother -> parent;
+			node -> parent -> child = node;
+		} else {
+			//Shift previous pointer
+			node -> previous = brother -> previous;
+			brother -> previous = node;
+		}
+	} else if (position == 1) {
+		node -> previous = brother;
+		node -> next = brother -> next;
+		brother -> next = node;
+	}
+}
+
+
 void parentNode(Node *node, Node *parent) {
 	if (parent == NULL) { return; } //Cant add to NULL
 
@@ -126,6 +151,7 @@ void parentNode(Node *node, Node *parent) {
 		n -> next = node;
 	}
 }
+
 
 void unmapNode(Node * node) {
 	Node *n;
