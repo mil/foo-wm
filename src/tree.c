@@ -1,6 +1,7 @@
 #include <X11/Xlib.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "fifo-wm.h"
 #include "tree.h"
@@ -164,22 +165,32 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 		//Count up children prior to loop
 		int children = 0; int i = 0; Node *a;
 		for (a = node -> child; a != NULL; a = a -> next) { children++; }
-		for (a = node -> child; a != NULL; a = a -> next, i++) {
-			switch (node -> layout) {
-				case 0:
-					a -> x = x + (i * (width / children)) + padding; 
-					a -> y = y + padding;
-					a -> width = (width / children) - (padding*2); 
-					a -> height = height - (padding*2);
-					break;
 
-				case 1:
-					a -> x = x + padding; 
-					a -> y = y + (i * (height / children)) + padding;
-					a -> width = width - (padding * 2); 
-					a -> height = (height / children) - (padding * 2);
-					break;
-			}
+		/* Determine the number of rows and cols */
+		int rows; int cols;
+		switch (node -> layout) {
+			case 0:
+				cols = 1;
+				rows = children;
+				break;
+			case 1:
+				cols = children;
+				rows = 1;
+				break;
+			case 2:
+				gridDimensions(children, &rows, &cols);
+				break;
+		}
+		//fprintf(stderr, "Rows = %d\nCols = %d\n", rows, cols);
+
+
+		for (a = node -> child; a != NULL; a = a -> next, i++) {
+			a -> x = x + (i % cols) * (width/cols);
+			a -> y = y + ((int)(i / cols)) * (height/rows);
+			a -> width = width / cols;
+			a -> height = height / rows;
+
+			fprintf(stderr, "Calling place node with X[%d] and Y[%d]\n", a -> x, a -> y);
 			placeNode(a, a -> x, a -> y, a -> width, a -> height);
 		}
 	}

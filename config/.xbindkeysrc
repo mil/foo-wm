@@ -20,6 +20,10 @@
 	m:0x40 + c:56
 	Mod4 + b
 
+"echo 'layout grid set' > /home/mil/fifos/wm-fifo"
+	m:0x40 + c:42
+	Mod4 + g
+
 
 "echo 'containerize client set' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:33

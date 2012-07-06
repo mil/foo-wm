@@ -26,3 +26,18 @@ Node * allocateNode() {
 	n -> parent = NULL; n -> child = NULL;
 	return n;
 }
+
+void gridDimensions(int children, int * rows, int * cols) {
+	int square = (int) sqrt(children);
+	int r = square;
+
+	while (((children % r) != 0)) { r++; }
+	int c = children / r;
+
+	if ((r == 1 && c != 1) || (c == 1 && r != 1)) {
+		gridDimensions(children + 1, rows, cols);
+	} else {
+		*rows = r;
+		*cols = c;
+	}
+}

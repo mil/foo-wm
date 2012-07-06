@@ -69,8 +69,14 @@ void handleCommand(char* request) {
 		dumpTree();
 	} else if (!strcmp(tokens[0], "layout")) {
 		fprintf(stderr, "Setting layout to: %s", tokens[1]);
-		if (!strcmp(tokens[1], "vertical")) {	(activeNode -> parent) ->  layout = 0; 
-		} else if (!strcmp(tokens[1], "horizontal")) { (activeNode -> parent) -> layout = 1; }
+		if (!strcmp(tokens[1], "vertical")) {
+			activeNode -> parent ->  layout = 0; 
+		} else if (!strcmp(tokens[1], "horizontal")) { 
+			activeNode -> parent -> layout = 1; 
+		} else if (!strcmp(tokens[1], "grid")) {
+			activeNode -> parent -> layout = 2;
+		}
+
 		placeNode(activeNode -> parent,
 				(activeNode -> parent) -> x,     (activeNode -> parent) -> y,
 				(activeNode -> parent) -> width, (activeNode -> parent) -> height);
