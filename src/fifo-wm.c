@@ -24,6 +24,7 @@ void handleEvents() {
 
 	int result = 0;
 
+	struct timeval tv;
 	tv.tv_sec = 200;  
 
 	fifoFd = open(FIFO, O_RDONLY | O_NONBLOCK);

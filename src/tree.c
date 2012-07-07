@@ -12,7 +12,7 @@ void crawlNode(Node * node, int level) {
 
 	if (isClient(node)) {
 		fprintf(stderr, "Client (%p)", node);
-		if (node == focusedNode) { fprintf(stderr, " [FOCUS]"); }
+		if (node == focusedNode) { fprintf(stderr, " [Focused]"); }
 		fprintf(stderr, "\n");
 
 	} else {
@@ -22,7 +22,11 @@ void crawlNode(Node * node, int level) {
 			case 1: label = "Horizontal"; break;
 			case 2: label = "Grid"; break;
 		}
-		fprintf(stderr, "Container (%p) %s\n", node, label);
+		fprintf(stderr, "Container (%p) %s", node, label);
+		if (node == selectedNode) { fprintf(stderr, " [Selected]"); }
+		fprintf(stderr, "\n");
+
+
 
 		Node *n;
 		for (n = node -> child; n != NULL; n = n -> next) {
@@ -49,6 +53,8 @@ void focusNode(Node * n) {
 		XSetWindowBorder(display, focusedNode -> window, unfocusedColor);
 	}
 
+	selectedNode = NULL;
+
 	focusedNode = n;
 	XRaiseWindow(display, n -> window);
 	XSetInputFocus(display, n -> window, RevertToPointerRoot, CurrentTime);
@@ -56,21 +62,28 @@ void focusNode(Node * n) {
 	centerPointer(&n -> window);
 }
 
-void selectNode(Node * n) {
+void selectNode(Node * n, Bool setSelected) {
+	if (setSelected == True) selectedNode = n;
 
+	Node *i;
+	for (i = n -> child; i != NULL; i = i -> next) {
+		if (isClient(i) == True) {
+			fprintf(stderr, "Node %p", n);
+			XSetWindowBorder(display, i->window, focusedColor);	
+		} else {
+			selectNode(i, False);
+		}
+	}
 }
 
 
 void destroyNode(Node * n) {
-
 	fprintf(stderr, "PRE DESTROY\n");
 	dumpTree();
 	if (n == NULL) { return; }
 
-	if ( (n -> next == NULL &&
-				(n -> parent -> child == n && n -> previous == NULL)) &&
-			n -> parent -> parent != NULL
-		 ) {
+	if ( n -> next == NULL     && n -> parent -> child == n && 
+			 n -> previous == NULL && n -> parent -> parent != NULL) {
 		fprintf(stderr, "Calling destroy node on parent\n");
 		destroyNode(n -> parent);
 		return;
@@ -108,13 +121,12 @@ void unparentNode(Node *node) {
 	focusNode(getClosestClient(node));
 
 	//Move parent's child pointer if were it....
-	if ((node -> parent) -> child == node) {
-		(node -> parent) -> child = node -> next;
-	}
+	if (node -> parent -> child == node) 
+		node -> parent -> child = node -> next;
 
 	//Move the next and previous pointers to cut out the node
-	if (node -> next != NULL) { (node -> next) -> previous = node -> previous; }
-	if (node -> previous != NULL) { (node -> previous) -> next = node -> next; }
+	if (node -> next != NULL)     node -> next -> previous = node -> previous;
+	if (node -> previous != NULL) node -> previous -> next = node -> next;
 
 	//Set our parent to NULL
 	node -> parent = NULL; node -> next = NULL; node -> previous = NULL;
@@ -161,13 +173,9 @@ void parentNode(Node *node, Node *parent) {
 
 void unmapNode(Node * node) {
 	Node *n;
-	for (n = node -> child; n != NULL; n = n -> next) {
-		if (n -> window != (Window) NULL) {
-			XUnmapWindow(display, n -> window);
-		} else if (n -> child != NULL) {
-			unmapNode(n -> child);
-		}
-	}
+	for (n = node -> child; n != NULL; n = n -> next)
+		if (n -> window != (Window) NULL) XUnmapWindow(display, n -> window);
+		else if (n -> child != NULL)      unmapNode(n -> child);
 }
 
 void placeNode(Node * node, int x, int y, int width, int height) {
@@ -201,8 +209,8 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 		/* Determine the number of rows and cols */
 		int rows; int cols;
 		switch (node -> layout) {
-			case 0: cols = 1; rows = children; break;
-			case 1: cols = children; rows = 1; break;
+			case 0: cols = children; rows = 1; break;
+			case 1: cols = 1; rows = children; break;
 			case 2: gridDimensions(children, &rows, &cols); break;
 		}
 
@@ -215,9 +223,9 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 
 			if (node -> layout == 2) {
 				//Two nodes, edge case for formula
-				if (children == 2) { a -> height = height - (padding * 2); }
-				//Scretch the last child
-				if (i + 1 == children) { a -> width = x + width - a -> x - (padding * 2); }
+				if (children == 2)      a -> height = height - (padding * 2);
+				//Strecth the last child
+				if (i + 1 == children)  a -> width = x + width - a -> x - (padding * 2);
 			}
 			placeNode(a, a -> x, a -> y, a -> width, a -> height);
 		}
@@ -226,9 +234,9 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 
 
 Bool isClient(Node * node) {
-	if (node == NULL) { return False; }
-	if (node -> window != (Window) NULL) { return True;
-	} else { return False; }
+	if (node == NULL)                    return False;
+	if (node -> window != (Window) NULL) return True;
+	return False;	
 }
 
 /* Gets the next brother client to node, in given direction 
@@ -240,16 +248,16 @@ Node * getBrotherClient(Node * node, int direction) {
 	Node *nNode = node;
 
 	while (pNode -> previous != NULL || nNode -> next != NULL) {
-		if (pNode -> previous != NULL) { pNode = pNode -> previous; }
-		if (nNode -> next != NULL    ) { nNode = nNode -> next;     }
+		if (pNode -> previous != NULL) pNode = pNode -> previous;
+		if (nNode -> next != NULL    ) nNode = nNode -> next;
 		switch (direction) {
 			case 0:
-				if (isClient(pNode) && pNode != node) { return pNode; }
-				if (isClient(nNode) && nNode != node) { return nNode; }
+				if (isClient(pNode) && pNode != node) return pNode;
+				if (isClient(nNode) && nNode != node) return nNode;
 				break;
 			case 1:
-				if (isClient(nNode) && nNode != node) { return nNode; }
-				if (isClient(pNode) && pNode != node) { return pNode; }
+				if (isClient(nNode) && nNode != node) return nNode;
+				if (isClient(pNode) && pNode != node) return pNode;
 				break;
 		}
 	}
@@ -264,11 +272,8 @@ Node * getClosestClient(Node * node) {
 	while (returnNode == NULL) {
 		returnNode = getBrotherClient(currentNode, 1);
 		if (returnNode == NULL) {
-			if (currentNode -> parent != NULL) { //Try one level up
-				currentNode = currentNode -> parent;
-			} else { //We didn't find a brother and we have no parent, end game
-				return NULL;
-			}
+			if (currentNode -> parent != NULL) currentNode = currentNode -> parent;
+			else                               return NULL;
 		} else {  //We found a client 
 			return returnNode; 
 		}

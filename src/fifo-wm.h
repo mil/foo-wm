@@ -3,24 +3,24 @@
 #include "structs.h"
 
 
-Lookup * lookup;
-
-int screen, activeScreen;
-int padding;
-int layout;
-int border;
+//X Server
 Display	*display;
-Window root; 
-struct timeval tv;
-long unfocusedColor;
-long focusedColor; 
-
+int screen, activeScreen;
 int rootX, rootY, rootWidth, rootHeight;
+Window root; 
 
 /* focusedNode  :: Currently focused client node (recieves input)
  * selectedNode :: Currently selected node (for containerize, move, etc....)
  * viewNode     :: Currently viewed node (screenspace) */
 Node *focusedNode, *selectedNode, *viewNode; 
+
+/* X Window -> Node Lookup Table */
+Lookup * lookup;
+
+//Customizations
+int padding, layout, border;
+long unfocusedColor, focusedColor; 
+
 
 void handleCommand(char* request);
 void handleEvents();

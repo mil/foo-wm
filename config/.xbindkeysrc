@@ -38,6 +38,10 @@
 	m:0x40 + c:45
 	Mod4 + k
 
+"echo 'select parent set' > /home/mil/fifos/wm-fifo"
+	m:0x40 + c:32
+	Mod4 + o
+
 "echo 'dump tree' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:28
 	Mod4 + t
