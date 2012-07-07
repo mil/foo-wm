@@ -80,6 +80,8 @@ void containerize() {
 					insertNode = focusedNode -> previous; insertPosition = 1;
 				} else if (focusedNode -> next != NULL) {
 					insertNode = focusedNode -> next;     insertPosition = 0;
+				} else {
+					fprintf(stderr, "NO INSERT NODE\n");
 				}
 
 				parentNode(focusedNode, newContainer);

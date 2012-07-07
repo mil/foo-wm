@@ -14,6 +14,7 @@ void crawlNode(Node * node, int level) {
 		fprintf(stderr, "Client (%p)", node);
 		if (node == focusedNode) fprintf(stderr, " [Focused]");
 		if (node == viewNode)    fprintf(stderr, " [View]");
+		//fprintf(stderr, " || N[%p] P[%p]", node -> next, node -> previous);
 		fprintf(stderr, "\n");
 
 	} else {
@@ -26,15 +27,15 @@ void crawlNode(Node * node, int level) {
 		fprintf(stderr, "Container (%p) %s", node, label);
 		if (node == selectedNode) fprintf(stderr, " [Selected]");
 		if (node == viewNode)     fprintf(stderr, " [View]");
+		//fprintf(stderr, " || N[%p] P[%p]", node -> next, node -> previous);
 		fprintf(stderr, "\n");
-
-
 
 		Node *n;
 		for (n = node -> child; n != NULL; n = n -> next) {
 			crawlNode(n, level + 1);	
 		}
 	}
+
 }
 
 void dumpTree() {
@@ -151,6 +152,7 @@ void brotherNode(Node *node, Node * brother, int position) {
 	} else if (position == 1) {
 		node -> previous = brother;
 		node -> next = brother -> next;
+		if (node -> next != NULL) node -> next -> previous = node;
 		brother -> next = node;
 	}
 }
