@@ -30,8 +30,6 @@ void eMapRequest(XEvent *event) {
 
 		//Brother new node to current focus then focus new node
 		brotherNode(newNode, focusedNode, 1);
-		focusNode(newNode);
-
 		//Rerender parent of (old focus & new node)
 		placeNode( focusedNode -> parent, 
 				(focusedNode -> parent) -> x, 
@@ -44,13 +42,13 @@ void eMapRequest(XEvent *event) {
 		fprintf(stderr,"Mapping based on viewNode\n");
 
 		parentNode(newNode, viewNode);
-		focusNode(newNode);
 		placeNode( viewNode,
 				viewNode -> x, viewNode -> y,
 				viewNode -> width, viewNode -> height);
 
 	}
 
+	focusNode(newNode);
 
 
 	//Add Client and window to lookup list

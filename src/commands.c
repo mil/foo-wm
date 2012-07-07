@@ -59,10 +59,10 @@ void containerize() {
 
 	} else if (focusedNode != NULL) { /* Working iwth a focused Client */
 		Node * newContainer    = allocateNode();
-
 		/* Containerizing a client that is one of many in an existing container */
 		if (focusedNode -> previous != NULL || focusedNode -> next != NULL) {
 			Node *insertNode; int insertPosition;
+			fprintf(stderr, "Containerizing, using some ref brother\n");
 			if (focusedNode -> previous != NULL) {
 				insertNode = focusedNode -> previous; insertPosition = 1;
 			} else if (focusedNode -> next != NULL) {
@@ -70,6 +70,10 @@ void containerize() {
 			}
 
 			parentNode(focusedNode, newContainer);
+
+			dumpTree();
+			fprintf(stderr, "Going to brother %p %d", insertNode, insertPosition);
+			
 			brotherNode(newContainer, insertNode, insertPosition);
 			
 			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);

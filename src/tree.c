@@ -122,7 +122,6 @@ void unparentNode(Node *node) {
 	if (node == NULL || node -> parent == NULL) return;
 
 	fprintf(stderr, "unparent called");
-	//focusNode(getClosestClient(node));
 
 	//Move parent's child pointer if were it....
 	if (node -> parent -> child == node) 
@@ -158,7 +157,9 @@ void brotherNode(Node *node, Node * brother, int position) {
 
 
 void parentNode(Node *node, Node *parent) {
+	fprintf(stderr, "Pareting node %p into parent %p\n", node, parent);
 	if (parent == NULL) { return; } //Cant add to NULL
+	fprintf(stderr, "Made it here\n");
 
 	unparentNode(node); //Unparent then set the parent to new parent
 	node -> parent = parent;
