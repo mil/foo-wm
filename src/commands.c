@@ -53,20 +53,17 @@ void focus(int direction) {
 }
 
 void containerize() {
-	if (focusedNode -> previous != NULL || focusedNode -> next != NULL) {
-		fprintf(stderr,"Containerizing");
-		Node * newContainer = allocateNode();
+
+	//Figure out if were containerizing the focus or select
+	Node *child = (selectedNode == NULL) ? 
+		focusedNode : selectedNode;
+
+	//Check if alone in container
+	if (child -> previous != NULL || child -> next != NULL) {
+		Node * newContainer    = allocateNode();
 		newContainer -> layout = layout;
 
-		Node *child;
-		if (selectedNode != NULL) {
-			child = selectedNode;
-		} else {
-			child = focusedNode;
-		}
-		fprintf(stderr, "Child is %p\n", child);
 
-		/* Save a node and position to insert for when we reparent */
 		Node *insertNode; int insertPosition;
 		if (child -> previous != NULL) {
 			insertNode = child -> previous; insertPosition = 1;
@@ -74,21 +71,20 @@ void containerize() {
 			insertNode = child -> next; insertPosition = 0;
 		}
 
-		//Unparents focusedNode and reparents into newContainer
+		//Parent the child into the new container
 		parentNode(child, newContainer);
+
+		//Brother the new container next to the insert node
 		brotherNode(newContainer, insertNode, insertPosition);
 
-		if (selectedNode == NULL) {
+		if (selectedNode == NULL)
 			focusedNode = newContainer -> child;
-		}
 
 		//Rerender the viewnode
 		placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 
-
-		if (selectedNode == NULL) {
+		if (selectedNode == NULL)
 			focusNode(newContainer -> child);
-		}
 
 	}	else {
 		fprintf(stderr, "Containerize called but alone in contianer");

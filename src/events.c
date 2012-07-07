@@ -16,27 +16,35 @@ void eMapRequest(XEvent *event) {
 	Node *newNode = allocateNode();
 	newNode -> window = event -> xmaprequest.window;
 
-	if (focusedNode == NULL || !isClient(focusedNode)) {
-		parentNode(newNode, viewNode);
+	if (selectedNode != NULL) {
+		parentNode(newNode, selectedNode);
+
+		placeNode(selectedNode,
+				selectedNode -> x, selectedNode -> y, 
+				selectedNode -> width, selectedNode -> height);
+
+
 	} else {
-		brotherNode(newNode, focusedNode, 1);
+
+		if (focusedNode == NULL || !isClient(focusedNode)) {
+			parentNode(newNode, viewNode);
+		} else {
+			brotherNode(newNode, focusedNode, 1);
+		}
+
+
+		focusNode(newNode);
+		//Update the view
+		if (focusedNode -> parent == NULL) return;
+		placeNode( focusedNode -> parent, 
+				(focusedNode -> parent) -> x, 
+				(focusedNode -> parent) -> y, 
+				(focusedNode -> parent) -> width, 
+				(focusedNode -> parent) -> height);
+
+
+
 	}
-
-
-	fprintf(stderr, "The focused node (BEFORE) is %p\n", focusedNode);
-	focusNode(newNode);
-	fprintf(stderr, "The focused node (AFTER) is %p\n", focusedNode);
-
-
-
-	//Update the view
-	placeNode( focusedNode -> parent, 
-			(focusedNode -> parent) -> x, 
-			(focusedNode -> parent) -> y, 
-			(focusedNode -> parent) -> width, 
-			(focusedNode -> parent) -> height);
-
-
 
 	//Add Client and window to lookup list
 	Lookup *entry = malloc(sizeof(Lookup));
@@ -66,10 +74,12 @@ void eConfigureRequest(XEvent *event) {
 	Node *n = getNodeByWindow(&(event -> xconfigurerequest.window));
 	if (n != NULL) {
 		XUnmapWindow(display, n -> window);
-		XMoveResizeWindow(display, n -> window, n -> x, n -> y, n -> width, n -> height);
+		XMoveResizeWindow(display, n -> window, 
+				n -> x, n -> y, 
+				n -> width, n -> height);
 		XMapWindow(display, n -> window);
 	}
-	
+
 }
 
 void eResizeRequest(XEvent *event) {

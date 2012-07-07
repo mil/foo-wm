@@ -44,17 +44,16 @@ void dumpTree() {
 
 //Will only work on nodes with windows for now
 void focusNode(Node * n) {
-	if (focusedNode == n) { return; }
+	if (focusedNode == n) return;
 	if (!isClient(n)) { 
 		fprintf(stderr, "Trying to focus a node thats not a client !\n"); 
 		return;
 	}
-	if (isClient(focusedNode)) {
+
+	if (isClient(focusedNode)) 
 		XSetWindowBorder(display, focusedNode -> window, unfocusedColor);
-	}
 
 	selectedNode = NULL;
-
 	focusedNode = n;
 	XRaiseWindow(display, n -> window);
 	XSetInputFocus(display, n -> window, RevertToPointerRoot, CurrentTime);
@@ -80,7 +79,9 @@ void selectNode(Node * n, Bool setSelected) {
 void destroyNode(Node * n) {
 	fprintf(stderr, "PRE DESTROY\n");
 	dumpTree();
-	if (n == NULL) { return; }
+
+	if (n == NULL) return;
+	if (n -> parent == NULL) return;
 
 	if ( n -> next == NULL     && n -> parent -> child == n && 
 			 n -> previous == NULL && n -> parent -> parent != NULL) {
@@ -95,7 +96,7 @@ void destroyNode(Node * n) {
 	fprintf(stderr, "Sucessfull destroy node\n");
 	dumpTree();
 	//Recursivly destroy all children of the node
-	if (n -> window != (Window)NULL) {
+	if (isClient(n)) {
 		XUnmapWindow(display, n -> window);
 	} else {
 		fprintf(stderr, "The child is %p\n", n -> child);
@@ -115,10 +116,10 @@ void destroyNode(Node * n) {
 
 
 void unparentNode(Node *node) {
-	if (node == NULL || node -> parent == NULL) { return; }
-	fprintf(stderr, "unparent called");
+	if (node == NULL || node -> parent == NULL) return;
 
-	focusNode(getClosestClient(node));
+	fprintf(stderr, "unparent called");
+	//focusNode(getClosestClient(node));
 
 	//Move parent's child pointer if were it....
 	if (node -> parent -> child == node) 
@@ -179,6 +180,7 @@ void unmapNode(Node * node) {
 }
 
 void placeNode(Node * node, int x, int y, int width, int height) {
+	if (node == NULL) return;
 	node -> x = x; node -> y = y;
 	node -> width = width; node -> height = height;
 	fprintf(stderr, "Place Node XY:[%d, %d], WH:[%d, %d]\n", x, y, width, height);

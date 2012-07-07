@@ -27,20 +27,21 @@ void handleEvents() {
 	struct timeval tv;
 	tv.tv_sec = 200;  
 
-	fifoFd = open(FIFO, O_RDONLY | O_NONBLOCK);
+	//Must open RDWR so select works properly
+	fifoFd = open(FIFO, O_RDWR | O_NONBLOCK);
 	for (;;) {
 		FD_ZERO(&descriptors); 
 		FD_SET(xFd, &descriptors); 
 		FD_SET(fifoFd, &descriptors);
 
-		while (select(fifoFd + 1, &descriptors, 0, 0, &tv)) {
+		if (select(fifoFd + 1, &descriptors, 0, 0, &tv)) {
 
-			if ((result = read(fifoFd, commands, 200)) > 0) {
+			if ((result = read(fifoFd, commands, sizeof(commands))) > 0) {
 				commands[result] = '\0';
 				handleCommand(commands);
 			}
 
-			while (XPending(display) > 0) {
+			while (XPending(display)) {
 				XNextEvent(display, &event);
 				handleXEvent(&event);
 			}
