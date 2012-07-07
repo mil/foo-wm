@@ -184,6 +184,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 	fprintf(stderr, "Place Node XY:[%d, %d], WH:[%d, %d]\n", x, y, width, height);
 
 	if (isClient(node)) {
+		fprintf(stderr,"Rendering window\n");
 		XMapWindow(display, node -> window);
 		XRaiseWindow(display, node -> window);
 
@@ -204,6 +205,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 	} else {
 		//Count up children prior to loop
 		int children = 0; int i = 0; Node *a;
+		if (node -> child == NULL) return;
 		for (a = node -> child; a != NULL; a = a -> next) { children++; }
 
 		/* Determine the number of rows and cols */
@@ -213,7 +215,6 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 			case 1: cols = 1; rows = children; break;
 			case 2: gridDimensions(children, &rows, &cols); break;
 		}
-
 
 		for (a = node -> child; a != NULL; a = a -> next, i++) {
 			a -> x = x + (i % cols) * (width/cols) + padding;
