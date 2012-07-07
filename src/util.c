@@ -25,7 +25,8 @@ int xError(XErrorEvent *e) {
 Node * allocateNode() {
 	Node *n = malloc(sizeof(Node));
 	n -> previous = NULL; n -> next = NULL;
-	n -> parent = NULL; n -> child = NULL;
+	n -> parent = NULL;   n -> child = NULL;
+	n -> layout = layout;
 	return n;
 }
 

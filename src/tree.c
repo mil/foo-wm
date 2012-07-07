@@ -12,7 +12,8 @@ void crawlNode(Node * node, int level) {
 
 	if (isClient(node)) {
 		fprintf(stderr, "Client (%p)", node);
-		if (node == focusedNode) { fprintf(stderr, " [Focused]"); }
+		if (node == focusedNode) fprintf(stderr, " [Focused]");
+		if (node == viewNode)    fprintf(stderr, " [View]");
 		fprintf(stderr, "\n");
 
 	} else {
@@ -23,7 +24,8 @@ void crawlNode(Node * node, int level) {
 			case 2: label = "Grid"; break;
 		}
 		fprintf(stderr, "Container (%p) %s", node, label);
-		if (node == selectedNode) { fprintf(stderr, " [Selected]"); }
+		if (node == selectedNode) fprintf(stderr, " [Selected]");
+		if (node == viewNode)     fprintf(stderr, " [View]");
 		fprintf(stderr, "\n");
 
 
@@ -111,6 +113,7 @@ void destroyNode(Node * n) {
 	fprintf(stderr, "POST DESTROY\n");
 	dumpTree();
 
+	if (n == focusedNode) focusedNode = NULL;
 	free(n);
 }
 
@@ -198,11 +201,9 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 		XSetWindowBorderWidth(display, node -> window, border);
 		if (focusedNode == node) {
 			XSetWindowBorder(display, node -> window, focusedColor);
-			focusNode(node);
 		} else {
 			XSetWindowBorder(display, node -> window, unfocusedColor);
 		}
-
 
 	} else {
 		//Count up children prior to loop

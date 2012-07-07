@@ -1,9 +1,8 @@
-containerize
 dump
-layout horizontal
+layout grid 
+layout horizontal 
 layout vertical
-focus next
-focus previous
-focus parent
+view child 
+view parent
+containerize
 kill client
-kill container

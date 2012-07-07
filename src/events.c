@@ -17,6 +17,7 @@ void eMapRequest(XEvent *event) {
 	newNode -> window = event -> xmaprequest.window;
 
 	if (selectedNode != NULL) {
+		fprintf(stderr,"Mapping based on selectedNode\n");
 		parentNode(newNode, selectedNode);
 
 		placeNode(selectedNode,
@@ -24,27 +25,33 @@ void eMapRequest(XEvent *event) {
 				selectedNode -> width, selectedNode -> height);
 
 
-	} else {
+	} else if (focusedNode != NULL) {
+		fprintf(stderr,"Mapping based on focusedNode\n");
 
-		if (focusedNode == NULL || !isClient(focusedNode)) {
-			parentNode(newNode, viewNode);
-		} else {
-			brotherNode(newNode, focusedNode, 1);
-		}
-
-
+		//Brother new node to current focus then focus new node
+		brotherNode(newNode, focusedNode, 1);
 		focusNode(newNode);
-		//Update the view
-		if (focusedNode -> parent == NULL) return;
+
+		//Rerender parent of (old focus & new node)
 		placeNode( focusedNode -> parent, 
 				(focusedNode -> parent) -> x, 
 				(focusedNode -> parent) -> y, 
 				(focusedNode -> parent) -> width, 
 				(focusedNode -> parent) -> height);
 
+	} else {
+		//All we have to map on is the view node
+		fprintf(stderr,"Mapping based on viewNode\n");
 
+		parentNode(newNode, viewNode);
+		focusNode(newNode);
+		placeNode( viewNode,
+				viewNode -> x, viewNode -> y,
+				viewNode -> width, viewNode -> height);
 
 	}
+
+
 
 	//Add Client and window to lookup list
 	Lookup *entry = malloc(sizeof(Lookup));

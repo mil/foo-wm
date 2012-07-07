@@ -54,52 +54,48 @@ void focus(int direction) {
 
 void containerize() {
 
-	//Figure out if were containerizing the focus or select
-	Node *child = (selectedNode == NULL) ? 
-		focusedNode : selectedNode;
+	if (selectedNode != NULL) {
 
-	//Check if alone in container
-	if (child -> previous != NULL || child -> next != NULL) {
+
+	} else if (focusedNode != NULL) { /* Working iwth a focused Client */
 		Node * newContainer    = allocateNode();
-		newContainer -> layout = layout;
 
+		/* Containerizing a client that is one of many in an existing container */
+		if (focusedNode -> previous != NULL || focusedNode -> next != NULL) {
+			Node *insertNode; int insertPosition;
+			if (focusedNode -> previous != NULL) {
+				insertNode = focusedNode -> previous; insertPosition = 1;
+			} else if (focusedNode -> next != NULL) {
+				insertNode = focusedNode -> next;     insertPosition = 0;
+			}
 
-		Node *insertNode; int insertPosition;
-		if (child -> previous != NULL) {
-			insertNode = child -> previous; insertPosition = 1;
-		} else if (child -> next != NULL) {
-			insertNode = child -> next; insertPosition = 0;
+			parentNode(focusedNode, newContainer);
+			brotherNode(newContainer, insertNode, insertPosition);
+			
+			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+
+		} else { /* Containerizing client that is alone in container */
+
 		}
-
-		//Parent the child into the new container
-		parentNode(child, newContainer);
-
-		//Brother the new container next to the insert node
-		brotherNode(newContainer, insertNode, insertPosition);
-
-		if (selectedNode == NULL)
-			focusedNode = newContainer -> child;
-
-		//Rerender the viewnode
-		placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-
-		if (selectedNode == NULL)
-			focusNode(newContainer -> child);
-
-	}	else {
-		fprintf(stderr, "Containerize called but alone in contianer");
+	} else {
+		//Defaulted with just a view node
 	}
 }
 
 void kill() {
 	dumpTree();
-	fprintf(stderr, "Destroy Client %p\n", focusedNode);
+	fprintf(stderr, "Destroying Client %p\n", focusedNode);
 
 	if (isClient(focusedNode)) {
+
+		/* Save closest client and destroy node */
+		Node *newFocus = getClosestClient(focusedNode);
 		destroyNode(focusedNode);
 
 		dumpTree();
 
+		/* Give the closeset client of destroyed node focus and rerender */
+		focusNode(newFocus);
 		placeNode(viewNode, 
 				viewNode -> x, viewNode -> y, 
 				viewNode -> width, viewNode -> height);
