@@ -46,15 +46,3 @@ void gridDimensions(int children, int * rows, int * cols) {
 	}
 }
 
-
-//Returns the client associated with given windowv
-Node * getNodeByWindow(Window * window) {
-	Lookup *entry;
-	int win = *window;
-	for (entry = lookup; entry != NULL; entry = entry -> previous) {
-		if (win == entry -> window)
-			return entry -> node;
-	}
-
-	return NULL;
-}

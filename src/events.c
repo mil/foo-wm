@@ -8,6 +8,7 @@
 #include "events.h"
 #include "tree.h"
 #include "window.h"
+#include "lookup.h"
 #include "util.h"
 
 
@@ -32,10 +33,10 @@ void eMapRequest(XEvent *event) {
 		brotherNode(newNode, focusedNode, 1);
 		//Rerender parent of (old focus & new node)
 		placeNode( focusedNode -> parent, 
-				(focusedNode -> parent) -> x, 
-				(focusedNode -> parent) -> y, 
-				(focusedNode -> parent) -> width, 
-				(focusedNode -> parent) -> height);
+				focusedNode -> parent -> x, 
+				focusedNode -> parent -> y, 
+				focusedNode -> parent -> width, 
+				focusedNode -> parent -> height);
 
 	} else {
 		//All we have to map on is the view node
@@ -50,14 +51,8 @@ void eMapRequest(XEvent *event) {
 
 	focusNode(newNode);
 
-
-	//Add Client and window to lookup list
-	Lookup *entry = malloc(sizeof(Lookup));
-	entry -> node= newNode;
-	int win = event -> xmaprequest.window; 
-	entry -> window = win;
-	entry -> previous = lookup;
-	lookup = entry;
+	//Add a lookup entry
+	addLookupEntry(newNode, &newNode -> window);
 }
 
 void eDestroyNotify(XEvent *event) {

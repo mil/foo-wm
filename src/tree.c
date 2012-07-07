@@ -98,9 +98,9 @@ void destroyNode(Node * n) {
 
 	fprintf(stderr, "Sucessfull destroy node\n");
 	dumpTree();
-	//Recursivly destroy all children of the node
+	//Recursivly unmap all children of the node
 	if (isClient(n)) {
-		XUnmapWindow(display, n -> window);
+		XDestroyWindow(display, n -> window);
 	} else {
 		fprintf(stderr, "The child is %p\n", n -> child);
 		if (n -> child  -> next != NULL) {
@@ -111,6 +111,7 @@ void destroyNode(Node * n) {
 		}
 
 	}
+
 	fprintf(stderr, "POST DESTROY\n");
 	dumpTree();
 
@@ -179,10 +180,13 @@ void parentNode(Node *node, Node *parent) {
 
 
 void unmapNode(Node * node) {
-	Node *n;
-	for (n = node -> child; n != NULL; n = n -> next)
-		if (n -> window != (Window) NULL) XUnmapWindow(display, n -> window);
-		else if (n -> child != NULL)      unmapNode(n -> child);
+	if (isClient(node)) {
+		XUnmapWindow(display, node -> window);
+	} else {
+		Node *n;
+		for (n = node -> child; n != NULL; n = n -> next)
+			unmapNode(n);
+	}
 }
 
 void placeNode(Node * node, int x, int y, int width, int height) {
