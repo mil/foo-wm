@@ -7,6 +7,7 @@
 #include "fifo-wm.h"
 #include "events.h"
 #include "tree.h"
+#include "commands.h"
 #include "window.h"
 #include "lookup.h"
 #include "util.h"
@@ -28,15 +29,24 @@ void eMapRequest(XEvent *event) {
 
 	} else if (focusedNode != NULL) {
 		fprintf(stderr,"Mapping based on focusedNode\n");
-
-		//Brother new node to current focus then focus new node
-		brotherNode(newNode, focusedNode, 1);
-		//Rerender parent of (old focus & new node)
-		placeNode( focusedNode -> parent, 
-				focusedNode -> parent -> x, 
-				focusedNode -> parent -> y, 
-				focusedNode -> parent -> width, 
-				focusedNode -> parent -> height);
+		if (focusedNode == viewNode && isClient(viewNode)) {
+				fprintf(stderr, "Just viewing a single client");
+				containerize();
+				viewNode = focusedNode -> parent;
+				parentNode(newNode, viewNode);
+				placeNode(viewNode,
+						rootX, rootY,
+						rootWidth, rootHeight);
+		} else {
+			//Brother new node to current focus then focus new node
+			brotherNode(newNode, focusedNode, 1);
+			//Rerender parent of (old focus & new node)
+			placeNode( focusedNode -> parent, 
+					focusedNode -> parent -> x, 
+					focusedNode -> parent -> y, 
+					focusedNode -> parent -> width, 
+					focusedNode -> parent -> height);
+		}
 
 	} else {
 		//All we have to map on is the view node

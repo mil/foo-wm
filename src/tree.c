@@ -42,7 +42,7 @@ void crawlNode(Node * node, int level) {
 void dumpTree() {
 	fprintf(stderr, "Printing the tree\n");
 	fprintf(stderr, "----------------------------------\n");
-	crawlNode(viewNode, 0);
+	crawlNode(rootNode, 0);
 	fprintf(stderr, "----------------------------------\n");
 }
 
@@ -87,6 +87,8 @@ void destroyNode(Node * n) {
 	if (n == NULL) return;
 	if (n -> parent == NULL) return;
 
+	//Asking to destroy a node who once disowned would leave an empty node
+	//Recall destroyNode on parent
 	if ( n -> next == NULL     && n -> parent -> child == n && 
 			 n -> previous == NULL && n -> parent -> parent != NULL) {
 		fprintf(stderr, "Calling destroy node on parent\n");
@@ -97,8 +99,6 @@ void destroyNode(Node * n) {
 	//Unparent the node
 	unparentNode(n);
 
-	fprintf(stderr, "Sucessfull destroy node\n");
-	dumpTree();
 	//Recursivly unmap all children of the node
 	if (isClient(n)) {
 		removeLookupEntry(&n -> window);
@@ -113,9 +113,6 @@ void destroyNode(Node * n) {
 		}
 
 	}
-
-	fprintf(stderr, "POST DESTROY\n");
-	dumpTree();
 
 	if (n == focusedNode) focusedNode = NULL;
 	free(n);

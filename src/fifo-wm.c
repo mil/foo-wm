@@ -89,6 +89,8 @@ int main() {
 	viewNode -> layout = layout;
 	viewNode -> x = rootX; viewNode -> y = rootY;
 	viewNode -> width = rootWidth; viewNode -> height = rootHeight;
+	
+	rootNode = viewNode;
 
 	XSetErrorHandler((XErrorHandler)(xError));
 	XFlush(display);

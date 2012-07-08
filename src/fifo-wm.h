@@ -11,8 +11,9 @@ Window root;
 
 /* focusedNode  :: Currently focused client node (recieves input)
  * selectedNode :: Currently selected node (for containerize, move, etc....)
- * viewNode     :: Currently viewed node (screenspace) */
-Node *focusedNode, *selectedNode, *viewNode; 
+ * viewNode     :: Currently viewed node (screenspace) 
+ * rootNode     :: Node at the top of the tree*/
+Node *focusedNode, *selectedNode, *viewNode, *rootNode;
 
 /* X Window -> Node Lookup Table */
 Lookup * lookup;
