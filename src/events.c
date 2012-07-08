@@ -69,8 +69,13 @@ void eDestroyNotify(XEvent *event) {
 	Node *n = getNodeByWindow(&(event -> xdestroywindow.window));
 	if (n == NULL) { return; }
 
+	if (n == viewNode) { 
+		viewNode = n -> parent; 
+		fprintf(stderr, "Equals view node\n");
+	}
 	destroyNode(n);
 	placeNode( viewNode, rootX, rootY, rootWidth, rootHeight);
+
 }
 
 void eConfigureRequest(XEvent *event) {

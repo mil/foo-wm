@@ -105,6 +105,21 @@ void containerize() {
 
 			/* Save closest client and destroy node */
 			Node *newFocus = getClosestClient(focusedNode);
+
+			if (focusedNode == viewNode) { viewNode = viewNode -> parent; }
+			
+			if (
+					focusedNode -> next == NULL && focusedNode -> previous == NULL
+					&& viewNode == focusedNode -> parent) {
+				if (focusedNode -> parent -> parent != NULL) {
+					fprintf(stderr, "Parent's parent exists\n");
+					viewNode = focusedNode -> parent -> parent;
+				} else {
+					fprintf(stderr, "Parent's parent does not exist\n");
+					viewNode = focusedNode -> parent;
+				}
+			}
+
 			destroyNode(focusedNode);
 
 			dumpTree();
