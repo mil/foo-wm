@@ -4,6 +4,7 @@
 
 #include "fifo-wm.h"
 #include "tree.h"
+#include "lookup.h"
 #include "util.h"
 #include "window.h"
 
@@ -100,6 +101,7 @@ void destroyNode(Node * n) {
 	dumpTree();
 	//Recursivly unmap all children of the node
 	if (isClient(n)) {
+		removeLookupEntry(&n -> window);
 		XDestroyWindow(display, n -> window);
 	} else {
 		fprintf(stderr, "The child is %p\n", n -> child);

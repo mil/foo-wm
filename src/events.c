@@ -49,10 +49,8 @@ void eMapRequest(XEvent *event) {
 
 	}
 
-	focusNode(newNode);
-
-	//Add a lookup entry
 	addLookupEntry(newNode, &newNode -> window);
+	focusNode(newNode);
 }
 
 void eDestroyNotify(XEvent *event) {
@@ -61,10 +59,7 @@ void eDestroyNotify(XEvent *event) {
 	Node *n = getNodeByWindow(&(event -> xdestroywindow.window));
 	if (n == NULL) { return; }
 
-	focusedNode = getClosestClient(n);
 	destroyNode(n);
-
-	//Update view
 	placeNode( viewNode, rootX, rootY, rootWidth, rootHeight);
 }
 
