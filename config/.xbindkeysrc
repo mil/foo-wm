@@ -12,49 +12,49 @@
 	Shift+Mod4 + q
 
 ### WM
-"echo 'layout vertical set' > /home/mil/fifos/wm-fifo"
+"echo 'layout vertical' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:55
 	Mod4 + v
 
-"echo 'layout horizontal set' > /home/mil/fifos/wm-fifo"
+"echo 'layout horizontal' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:56
 	Mod4 + b
 
-"echo 'layout grid set' > /home/mil/fifos/wm-fifo"
+"echo 'layout grid' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:42
 	Mod4 + g
 
 
-"echo 'containerize client set' > /home/mil/fifos/wm-fifo"
+"echo 'containerize client' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:33
 	Mod4 + p
 
 
-"echo 'focus next set' > /home/mil/fifos/wm-fifo"
+"echo 'focus next' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:44
 	Mod4 + j
 
-"echo 'focus previous set' > /home/mil/fifos/wm-fifo"
+"echo 'focus previous' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:45
 	Mod4 + k
 
-"echo 'select parent set' > /home/mil/fifos/wm-fifo"
+"echo 'select parent' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:32
 	Mod4 + o
 
-"echo 'dump tree' > /home/mil/fifos/wm-fifo"
+"echo 'dump' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:28
 	Mod4 + t
 
-"echo 'kill client set' > /home/mil/fifos/wm-fifo"
+"echo 'kill client' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:24
 	Mod4 + q
 
-"echo 'view parent set' > /home/mil/fifos/wm-fifo"
+"echo 'view parent' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:31
 	Mod4 + i 
 
-"echo 'view child set' > /home/mil/fifos/wm-fifo"
+"echo 'view child' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:30
 	Mod4 + u
 

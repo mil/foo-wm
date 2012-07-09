@@ -1,2 +1,2 @@
 #!/bin/bash
-echo $@ set > /home/mil/fifos/wm-fifo
+echo $@ > /home/mil/fifos/wm-fifo

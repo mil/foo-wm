@@ -8,7 +8,7 @@ FIFO Commands
 -------------
 The FIFO specified in src/config.h must be made with `mkfifo wm-fifo`. Once the FIFO is created you may use several commands to interact with the window manager by simply echoing to the FIFO like so:
 
-`echo "dump tree" > wm-fifo`
+`echo "dump" > wm-fifo`
 
 Commands that may be sent to the FIFO are listed below:
 
@@ -23,7 +23,7 @@ Dumps a tree view of the root container to STDERR.
 		Client
 ```
 
-### layout [vertical/horizontal/grid/max]
+### layout [vertical/horizontal/grid/tabbed/max]
 Updates the layout of the current container. Currenly only vertical and horizontal layouts are supported, although future layouts planned include: floating, max, and tabbed.
 
 ### view [parent/child]
@@ -39,7 +39,8 @@ Using focus cycle allows you to cycle through client in your current container.
 #### focus direction [left/up/right/down]
 
 
-### select 
+### select [parent]
+Selects the parent container
 
 
 ### containerize
