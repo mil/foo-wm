@@ -24,6 +24,10 @@
 	m:0x40 + c:42
 	Mod4 + g
 
+"echo 'layout max' > /home/mil/fifos/wm-fifo"
+	m:0x40 + c:41
+	Mod4 + f
+
 
 "echo 'containerize client' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:33
