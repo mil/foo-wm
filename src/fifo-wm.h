@@ -19,7 +19,8 @@ Node *focusedNode, *selectedNode, *viewNode, *rootNode;
 Lookup * lookup;
 
 //Customizations
-int padding, layout, border;
+int clientPadding, containerPadding;
+int layout, border;
 long unfocusedColor, focusedColor; 
 
 

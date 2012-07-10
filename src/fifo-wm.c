@@ -53,7 +53,8 @@ void handleEvents() {
 
 int main() {
 	layout = CONTAINER_DEFAULT_LAYOUT;
-	padding = CONTAINER_PADDING;
+	containerPadding = CONTAINER_PADDING;
+	clientPadding = CLIENT_PADDING;
 
 	display = XOpenDisplay(NULL);
 	assert(display);
@@ -61,16 +62,17 @@ int main() {
 	root = RootWindow(display, activeScreen);
 	activeScreen = DefaultScreen(display);
 
+	/* Setup Screen Padding */
 	rootX = 0 + SCREEN_PADDING_LEFT;
 	rootWidth = DisplayWidth(display, activeScreen) - SCREEN_PADDING_LEFT - SCREEN_PADDING_RIGHT;
-
 	rootY = 0 + SCREEN_PADDING_TOP;
 	rootHeight = DisplayHeight(display, activeScreen) - SCREEN_PADDING_TOP - SCREEN_PADDING_BOTTOM;
 
 
+	/* Setup Clients Defaults */
 	focusedColor = getColor(CLIENT_FOCUSED_COLOR);
 	unfocusedColor = getColor(CLIENT_UNFOCUSED_COLOR);
-	border = BORDER_WIDTH;
+	border = CLIENT_BORDER_WIDTH;
 
 
 

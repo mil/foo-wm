@@ -91,7 +91,7 @@ void destroyNode(Node * n) {
 	//Asking to destroy a node who once disowned would leave an empty node
 	//Recall destroyNode on parent
 	if ( n -> next == NULL     && n -> parent -> child == n && 
-			 n -> previous == NULL && n -> parent -> parent != NULL) {
+			n -> previous == NULL && n -> parent -> parent != NULL) {
 		fprintf(stderr, "Calling destroy node on parent\n");
 		destroyNode(n -> parent);
 		return;
@@ -228,31 +228,28 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 		}
 
 		Bool callPlace;
+		int pad;
 		for (a = node -> child; a != NULL; a = a -> next, i++) {
-			fprintf(stderr, "yoyo");
+			if (isClient(a)) pad = clientPadding;
+			else pad = containerPadding;
+
 			callPlace = True;
 			if (node -> layout == 3) {
-				fprintf(stderr, "MAXED");
-
-				if (focusedNode == a) {
-					i = 0; 
-				} else {
-					fprintf(stderr, "RETURNING?");
-					callPlace = False;
-				}
+				if (focusedNode == a) i = 0; 
+				else callPlace = False;
 			}
 
 			if (callPlace != False) {	
-				a -> x = x + (i % cols) * (width/cols) + padding;
-				a -> y = y + ((int)(i / cols)) * (height/rows) + padding;
-				a -> width = width / cols - (padding * 2);
-				a -> height = height / rows - (padding * 2);
+				a -> x = x + (i % cols) * (width/cols) + pad;
+				a -> y = y + ((int)(i / cols)) * (height/rows) + pad;
+				a -> width = width / cols - (pad * 2);
+				a -> height = height / rows - (pad * 2);
 
 				if (node -> layout == 2) {
 					//Two nodes, edge case for formula
-					if (children == 2)      a -> height = height - (padding * 2);
-					//Strecth the last child
-					if (i + 1 == children)  a -> width = x + width - a -> x - (padding * 2);
+					if (children == 2)      a -> height = height - (pad * 2);
+					//Stretch the last child
+					if (i + 1 == children)  a -> width = x + width - a -> x - (pad * 2);
 				}
 				placeNode(a, a -> x, a -> y, a -> width, a -> height);
 			}
