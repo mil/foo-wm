@@ -1,7 +1,6 @@
 #include <X11/Xlib.h>
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "fifo-wm.h"
 #include "tree.h"
 #include "lookup.h"
@@ -24,7 +23,9 @@ void crawlNode(Node * node, int level) {
 			case 0: label = "Vertical"; break;
 			case 1: label = "Horizontal"; break;
 			case 2: label = "Grid"; break;
+			case 3: label = "Max"; break;
 		}
+
 		fprintf(stderr, "Container (%p) %s", node, label);
 		if (node == selectedNode) fprintf(stderr, " [Selected]");
 		if (node == viewNode)     fprintf(stderr, " [View]");
@@ -223,21 +224,38 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 			case 0: cols = children; rows = 1; break;
 			case 1: cols = 1; rows = children; break;
 			case 2: gridDimensions(children, &rows, &cols); break;
+			case 3: cols = 1; rows = 1; break;
 		}
 
+		Bool callPlace;
 		for (a = node -> child; a != NULL; a = a -> next, i++) {
-			a -> x = x + (i % cols) * (width/cols) + padding;
-			a -> y = y + ((int)(i / cols)) * (height/rows) + padding;
-			a -> width = width / cols - (padding * 2);
-			a -> height = height / rows - (padding * 2);
+			fprintf(stderr, "yoyo");
+			callPlace = True;
+			if (node -> layout == 3) {
+				fprintf(stderr, "MAXED");
 
-			if (node -> layout == 2) {
-				//Two nodes, edge case for formula
-				if (children == 2)      a -> height = height - (padding * 2);
-				//Strecth the last child
-				if (i + 1 == children)  a -> width = x + width - a -> x - (padding * 2);
+				if (focusedNode == a) {
+					i = 0; 
+				} else {
+					fprintf(stderr, "RETURNING?");
+					callPlace = False;
+				}
 			}
-			placeNode(a, a -> x, a -> y, a -> width, a -> height);
+
+			if (callPlace != False) {	
+				a -> x = x + (i % cols) * (width/cols) + padding;
+				a -> y = y + ((int)(i / cols)) * (height/rows) + padding;
+				a -> width = width / cols - (padding * 2);
+				a -> height = height / rows - (padding * 2);
+
+				if (node -> layout == 2) {
+					//Two nodes, edge case for formula
+					if (children == 2)      a -> height = height - (padding * 2);
+					//Strecth the last child
+					if (i + 1 == children)  a -> width = x + width - a -> x - (padding * 2);
+				}
+				placeNode(a, a -> x, a -> y, a -> width, a -> height);
+			}
 		}
 	}
 }

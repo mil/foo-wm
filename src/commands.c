@@ -36,9 +36,15 @@ void handleCommand(char* request) {
 		dumpTree();
 	} else if (!strcmp(tokens[0], "layout")) {
 		fprintf(stderr, "Setting layout to: %s", tokens[1]);
-		if (!strcmp(tokens[1], "vertical"))        focusedNode -> parent -> layout = 0; 
-		else if (!strcmp(tokens[1], "horizontal")) focusedNode -> parent -> layout = 1; 
-		else if (!strcmp(tokens[1], "grid"))       focusedNode -> parent -> layout = 2;
+		if (!strcmp(tokens[1], "vertical"))
+			focusedNode -> parent -> layout = 0; 
+		else if (!strcmp(tokens[1], "horizontal"))
+			focusedNode -> parent -> layout = 1; 
+		else if (!strcmp(tokens[1], "grid"))
+			focusedNode -> parent -> layout = 2;
+		else if (!strcmp(tokens[1], "max"))
+			focusedNode -> parent -> layout = 3;
+
 		placeNode(focusedNode -> parent,
 				(focusedNode -> parent) -> x,     (focusedNode -> parent) -> y,
 				(focusedNode -> parent) -> width, (focusedNode -> parent) -> height);
