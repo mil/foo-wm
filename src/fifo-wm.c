@@ -84,7 +84,7 @@ int main() {
 	XSelectInput(display, root, 
 			FocusChangeMask | PropertyChangeMask |
 			SubstructureNotifyMask | SubstructureRedirectMask | 
-			KeyPressMask | ButtonPressMask
+			KeyPressMask
 			);
 
 	viewNode = allocateNode();

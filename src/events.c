@@ -78,18 +78,26 @@ void eDestroyNotify(XEvent *event) {
 
 }
 
-void eConfigureRequest(XEvent *event) {
-	fprintf(stderr, "Receiveced a Resize Request EVENT\n");
+void eConfigureRequest(XEvent *e) {
 
-	Node *n = getNodeByWindow(&(event -> xconfigurerequest.window));
-	if (n != NULL) {
-		XUnmapWindow(display, n -> window);
-		XMoveResizeWindow(display, n -> window, 
-				n -> x, n -> y, 
-				n -> width, n -> height);
-		XMapWindow(display, n -> window);
-	}
+	/* Structed From DWM */
+	XConfigureRequestEvent *ev = &e->xconfigurerequest;
+	Node *configuredNode = getNodeByWindow(&ev->window);
+	if (configuredNode == NULL) return;
 
+	XWindowChanges wc;
+	wc.x = configuredNode -> x; 
+	wc.y = configuredNode -> y;
+	wc.width = ev->width;       
+	wc.height = ev->height;
+	wc.border_width = ev->border_width;
+	wc.sibling = ev->above;
+	wc.stack_mode = ev->detail;
+	XConfigureWindow(display, ev->window, ev->value_mask, &wc);
+
+	placeNode(configuredNode, 
+			configuredNode -> x, configuredNode -> y,
+			configuredNode -> width, configuredNode -> height);
 }
 
 void eResizeRequest(XEvent *event) {
@@ -97,7 +105,7 @@ void eResizeRequest(XEvent *event) {
 }
 
 void eButtonPress(XEvent *event) {
-	fprintf(stderr, "Button Event Window is %p\n", &(event -> xbutton.subwindow));
+	fprintf(stderr, "Button Event Window is %p\n", &(event -> xbutton.window));
 
 	//Root Window
 	if (event -> xbutton.subwindow == None) { return; }

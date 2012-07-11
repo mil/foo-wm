@@ -55,15 +55,23 @@ void focusNode(Node * n) {
 		return;
 	}
 
-	if (isClient(focusedNode)) 
+	if (isClient(focusedNode))
 		XSetWindowBorder(display, focusedNode -> window, unfocusedColor);
 
 	selectedNode = NULL;
 	focusedNode = n;
-	XRaiseWindow(display, n -> window);
-	XSetInputFocus(display, n -> window, RevertToPointerRoot, CurrentTime);
-	XSetWindowBorder(display, n -> window, focusedColor);
 	centerPointer(&n -> window);
+	XSetInputFocus(display, n -> window, RevertToParent, CurrentTime);
+	//XSelectInput(display, n -> window, ButtonPressMask | ButtonReleaseMask);
+	XSetWindowBorder(display, n -> window, focusedColor);
+	XRaiseWindow(display, n -> window);
+
+	/*
+	XGrabPointer(display, n -> window, False, 
+			ButtonPressMask, GrabModeAsync, GrabModeAsync,
+			None, None, CurrentTime);
+			*/
+
 }
 
 void selectNode(Node * n, Bool setSelected) {
