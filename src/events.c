@@ -18,6 +18,11 @@ void eMapRequest(XEvent *event) {
 	Node *newNode = allocateNode();
 	newNode -> window = event -> xmaprequest.window;
 
+	/* For Click to Focus */
+	XGrabButton(display, AnyButton, AnyModifier, newNode -> window,
+			True, ButtonPressMask | ButtonReleaseMask, GrabModeAsync, GrabModeSync,
+			None, None);
+
 	if (selectedNode != NULL) {
 		fprintf(stderr,"Mapping based on selectedNode\n");
 		parentNode(newNode, selectedNode);
@@ -30,13 +35,13 @@ void eMapRequest(XEvent *event) {
 	} else if (focusedNode != NULL) {
 		fprintf(stderr,"Mapping based on focusedNode\n");
 		if (focusedNode == viewNode && isClient(viewNode)) {
-				fprintf(stderr, "Just viewing a single client");
-				containerize();
-				viewNode = focusedNode -> parent;
-				parentNode(newNode, viewNode);
-				placeNode(viewNode,
-						rootX, rootY,
-						rootWidth, rootHeight);
+			fprintf(stderr, "Just viewing a single client");
+			containerize();
+			viewNode = focusedNode -> parent;
+			parentNode(newNode, viewNode);
+			placeNode(viewNode,
+					rootX, rootY,
+					rootWidth, rootHeight);
 		} else {
 			//Brother new node to current focus then focus new node
 			brotherNode(newNode, focusedNode, 1);
@@ -83,6 +88,7 @@ void eConfigureRequest(XEvent *e) {
 	/* Structed From DWM */
 	XConfigureRequestEvent *ev = &e->xconfigurerequest;
 	Node *configuredNode = getNodeByWindow(&ev->window);
+
 	if (configuredNode == NULL) return;
 
 	XWindowChanges wc;
@@ -98,6 +104,7 @@ void eConfigureRequest(XEvent *e) {
 	placeNode(configuredNode, 
 			configuredNode -> x, configuredNode -> y,
 			configuredNode -> width, configuredNode -> height);
+
 }
 
 void eResizeRequest(XEvent *event) {
@@ -107,11 +114,11 @@ void eResizeRequest(XEvent *event) {
 void eButtonPress(XEvent *event) {
 	fprintf(stderr, "Button Event Window is %p\n", &(event -> xbutton.window));
 
-	//Root Window
-	if (event -> xbutton.subwindow == None) { return; }
+	// Root Window
+	if (event -> xbutton.window == None) return;
 
-	Node *n = getNodeByWindow(&(event -> xbutton.subwindow));
-	focusNode(n);
+	// Click to Focus
+	focusNode(getNodeByWindow(&(event -> xbutton.window)));
 }
 
 void handleXEvent(XEvent *event) {

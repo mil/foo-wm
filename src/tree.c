@@ -55,22 +55,27 @@ void focusNode(Node * n) {
 		return;
 	}
 
+	/* Regrab the focused window (for pointer to click)
+	 * as it will no longer be focused */
+	if (focusedNode != NULL) {
+		XGrabButton(display, AnyButton, AnyModifier,
+				focusedNode -> window, True,
+				ButtonPressMask | ButtonReleaseMask,
+				GrabModeAsync, GrabModeAsync, None, None);
+	}
+
 	if (isClient(focusedNode))
 		XSetWindowBorder(display, focusedNode -> window, unfocusedColor);
 
 	selectedNode = NULL;
 	focusedNode = n;
 	centerPointer(&n -> window);
-	XSetInputFocus(display, n -> window, RevertToParent, CurrentTime);
-	//XSelectInput(display, n -> window, ButtonPressMask | ButtonReleaseMask);
-	XSetWindowBorder(display, n -> window, focusedColor);
+
+	/* Set the Input focus, and ungrab the window (no longer point to click */
+	XSetInputFocus(display, n -> window, RevertToParent, CurrentTime);	
+  XUngrabButton(display, AnyButton, AnyModifier, focusedNode->window);
 	XRaiseWindow(display, n -> window);
 
-	/*
-	XGrabPointer(display, n -> window, False, 
-			ButtonPressMask, GrabModeAsync, GrabModeAsync,
-			None, None, CurrentTime);
-			*/
 
 }
 

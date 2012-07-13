@@ -74,24 +74,13 @@ int main() {
 	unfocusedColor = getColor(CLIENT_UNFOCUSED_COLOR);
 	border = CLIENT_BORDER_WIDTH;
 
-
-
-	XGrabButton(
-			display, AnyButton, AnyModifier, 
-			root, True, ButtonPressMask | ButtonReleaseMask | PointerMotionMask | OwnerGrabButtonMask, 
-			GrabModeAsync, GrabModeAsync, None, None
-			);
-	XSelectInput(display, root, 
-			FocusChangeMask | PropertyChangeMask |
-			SubstructureNotifyMask | SubstructureRedirectMask | 
-			KeyPressMask
-			);
+	XSelectInput(display, root, SubstructureRedirectMask | SubstructureNotifyMask);
 
 	viewNode = allocateNode();
 	viewNode -> layout = layout;
 	viewNode -> x = rootX; viewNode -> y = rootY;
 	viewNode -> width = rootWidth; viewNode -> height = rootHeight;
-	
+
 	rootNode = viewNode;
 
 	XSetErrorHandler((XErrorHandler)(xError));
