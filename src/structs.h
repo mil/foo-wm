@@ -1,4 +1,7 @@
 #include <X11/Xlib.h>
+
+enum { VERTICAL, HORIZONTAL, GRID, MAX };
+
 typedef struct Node Node;
 struct Node {
 	int layout;
@@ -7,6 +10,7 @@ struct Node {
 	Node *parent;
 	Node *next;
 	Node *previous;
+	Node *focus;
 
 	/* If a Container */
 	Node *child;

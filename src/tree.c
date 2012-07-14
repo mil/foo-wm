@@ -67,6 +67,7 @@ void focusNode(Node * n) {
 	//Set the Focused Node and 
 	selectedNode = NULL;
 	focusedNode = n;
+	if (focusedNode -> parent != NULL) focusedNode -> parent -> focus = focusedNode;
 
 	// Set the Input focus, and ungrab the window (no longer point to click
 	XSetInputFocus(display, n -> window, RevertToParent, CurrentTime);	
@@ -221,7 +222,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 
 	} else {
 		//Count up children prior to loop
-		int children = 0; int i = 0; Node *a;
+		int children = 0; int i = 0; Node *a = NULL;
 		if (node -> child == NULL) return;
 		for (a = node -> child; a != NULL; a = a -> next) children++;
 
@@ -242,7 +243,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 
 			callPlace = True;
 			if (node -> layout == MAX) {
-				if (focusedNode == a) i = 0; 
+				if (a -> parent -> focus == a) i = 0; 
 				else callPlace = False;
 			}
 
