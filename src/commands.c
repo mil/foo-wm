@@ -50,10 +50,16 @@ void handleCommand(char* request) {
 				(focusedNode -> parent) -> width, (focusedNode -> parent) -> height);
 
 	} else if (!strcmp(tokens[0], "focus")) {
-		if      (!strcmp(tokens[1], "left"))  focus(0);
-		else if (!strcmp(tokens[1], "up"))    focus(1);
-		else if (!strcmp(tokens[1], "right")) focus(2);
-		else if (!strcmp(tokens[1], "down"))  focus(3);
+		if (!strcmp(tokens[1], "cycle")) {
+			if (!strcmp(tokens[2], "previous"))  cycleFocus(0);
+			else if (!strcmp(tokens[2], "next")) cycleFocus(1);	
+
+		} else if (!strcmp(tokens[1], "direction")) {
+			if      (!strcmp(tokens[2], "left"))  directionFocus(0);
+			else if (!strcmp(tokens[2], "up"))    directionFocus(1);
+			else if (!strcmp(tokens[2], "right")) directionFocus(2);
+			else if (!strcmp(tokens[2], "down"))  directionFocus(3);
+		}
 
 	} else if (!strcmp(tokens[0], "select")) {
 		if (!strcmp(tokens[1], "parent")) {
@@ -110,49 +116,48 @@ void handleCommand(char* request) {
 	}
 }
 
+/* Gets the brother client in given direction
+ * Does not loop */
+Node * getClient (Node *start, int direction) {
+	Node *n = (direction == 0) ? start -> previous : start -> next;
+	while (n != NULL) {
+		if (isClient(n)) return n;
 
-void focus(int direction) {
-	/*
-	//Direction: 0 - Left, 1 - Up, 2 - Right, 3 - Down
-	switch (focusedNode -> parent -> layout) {
+		if (direction == 0) {
+			if (n -> previous == NULL) return NULL;
+			else n = n -> previous;
 
-	//Vertical Container
-	case 0:
-	switch (direction) {
-	case 0: //Get client from parent to the left
+		} else if (direction == 1) {
+			if (n -> next == NULL) return NULL;
+			else n = n -> next;
+		}
+	}
+	return n;
+}
 
-	break;
-	case 1: //Get the client upward
-	break;
-
-	case 2: //Get client from parent to the right
-	break;
-
-	case 3: //Get client downward
-	break;
+void cycleFocus(int direction) {
+	Node *next = NULL;  Node *loopback = NULL;
+	if (direction == 0) {
+		next = getClient(focusedNode, 0);
+		if (!isClient(next)) {
+			loopback = focusedNode;
+			while (loopback -> next != NULL) loopback = loopback-> next;
+			if (isClient(loopback)) next = loopback;
+			else next = getClient(loopback, 0);
+		}
+	} else if (direction == 1) {
+		next = getClient(focusedNode, 1);
+		if (!isClient(next)) {
+			loopback = focusedNode -> parent -> child;
+			if (isClient(loopback)) next = loopback;
+			else next = getClient(loopback, 1);
+		}
 	}
 
-	break;
+	focusNode(next);
+}
 
-	//Horizontal Container
-	case 1: 
-	switch (direction)  {
-	case 0: //Get client to the left
-	break;
-
-	case 1: //Get client from container upwards
-	break;
-
-	case 2: //Get client to the right
-	break;
-
-	case 3: //Get client from container dowwards
-
-	break;
-	}
-	break;
-	}
-	*/
+void directionFocus(int direction) {
 }
 
 void containerize() {
@@ -234,7 +239,3 @@ void kill() {
 				viewNode -> width, viewNode -> height);
 	}
 }
-
-
-
-

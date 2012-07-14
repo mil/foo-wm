@@ -67,7 +67,14 @@ void focusNode(Node * n) {
 	//Set the Focused Node and 
 	selectedNode = NULL;
 	focusedNode = n;
-	if (focusedNode -> parent != NULL) focusedNode -> parent -> focus = focusedNode;
+	if (focusedNode -> parent != NULL)  {
+		focusedNode -> parent -> focus = focusedNode;
+		if (focusedNode -> parent -> layout == MAX)
+			placeNode(focusedNode -> parent, 
+					focusedNode -> parent -> x, focusedNode -> parent -> y,
+					focusedNode -> parent -> width, focusedNode -> parent -> height);
+	}
+
 
 	// Set the Input focus, and ungrab the window (no longer point to click
 	XSetInputFocus(display, n -> window, RevertToParent, CurrentTime);	
@@ -155,7 +162,7 @@ void brotherNode(Node *node, Node * brother, int position) {
 
 	if (position == 0) {
 		node -> next = brother;
-		if (brother -> previous == NULL) { //Pop in the front
+		if (!brother -> previous) { //Pop in the front
 			node -> parent -> child = node;
 		} else {
 			//Shift previous pointer
@@ -173,20 +180,19 @@ void brotherNode(Node *node, Node * brother, int position) {
 
 void parentNode(Node *node, Node *parent) {
 	fprintf(stderr, "Pareting node %p into parent %p\n", node, parent);
-	if (parent == NULL) { return; } //Cant add to NULL
-	fprintf(stderr, "Made it here\n");
+	if (!parent) return;  //Cant add to NULL
 
 	unparentNode(node); //Unparent then set the parent to new parent
 	node -> parent = parent;
 
 	//Find last in children of parent, add to end
-	if (parent -> child == NULL) {
-		parent -> child = node;
-	} else {
+	if (parent -> child) {
 		Node *n = parent -> child;
-		while (n -> next != NULL) { n = n -> next; }
+		while (n -> next != NULL) n = n -> next;
 		node -> previous = n;
 		n -> next = node;
+	} else {
+		parent -> child = node;
 	}
 }
 
@@ -232,7 +238,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 			case VERTICAL  : cols = children; rows = 1; break;
 			case HORIZONTAL: cols = 1; rows = children; break;
 			case GRID      : gridDimensions(children, &rows, &cols); break;
-			case MAX: cols = 1; rows = 1; break;
+			case MAX       : cols = 1; rows = 1; break;
 		}
 
 		Bool callPlace;
@@ -247,7 +253,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 				else callPlace = False;
 			}
 
-			if (callPlace != False) {	
+			if (callPlace) {	
 				a -> x = x + (i % cols) * (width/cols) + pad;
 				a -> y = y + ((int)(i / cols)) * (height/rows) + pad;
 				a -> width = width / cols - (pad * 2);
