@@ -34,11 +34,15 @@
 	Mod4 + p
 
 
-"echo 'focus next' > /home/mil/fifos/wm-fifo"
+"echo 'focus cycle next' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:44
 	Mod4 + j
 
-"echo 'focus previous' > /home/mil/fifos/wm-fifo"
+"echo 'focus cycle next' > /home/mil/fifos/wm-fifo"
+	m:0x40 + c:23
+	Mod4 + Tab
+
+"echo 'focus cycle previous' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:45
 	Mod4 + k
 
