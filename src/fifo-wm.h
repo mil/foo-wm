@@ -2,6 +2,7 @@
 #include <sys/time.h>
 #include "structs.h"
 
+enum { VERTICAL, HORIZONTAL, GRID, MAX };
 
 //X Server
 Display	*display;

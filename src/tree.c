@@ -201,9 +201,8 @@ void unmapNode(Node * node) {
 }
 
 void placeNode(Node * node, int x, int y, int width, int height) {
-	if (node == NULL) return;
-	node -> x = x; node -> y = y;
-	node -> width = width; node -> height = height;
+	if (!node) return;
+	node -> x = x; node -> y = y; node -> width = width; node -> height = height;
 	fprintf(stderr, "Place Node XY:[%d, %d], WH:[%d, %d]\n", x, y, width, height);
 
 	if (isClient(node)) {
@@ -214,28 +213,25 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 		XMoveResizeWindow(display, node -> window, 
 				(x < 0) ? 0 : x, 
 				(y < 0) ? 0 : y, 
-				width - (border*2), 
-				height - (border *2));
+				(width -  (border * 2)) > 0 ? (width - border * 2) : 1, 
+				(height - (border * 2)) > 0 ? (height- border * 2) : 1);
 		XSetWindowBorderWidth(display, node -> window, border);
-		if (focusedNode == node) {
-			XSetWindowBorder(display, node -> window, focusedColor);
-		} else {
-			XSetWindowBorder(display, node -> window, unfocusedColor);
-		}
+		XSetWindowBorder(display, node -> window, 
+				(focusedNode == node ? focusedColor : unfocusedColor));
 
 	} else {
 		//Count up children prior to loop
 		int children = 0; int i = 0; Node *a;
 		if (node -> child == NULL) return;
-		for (a = node -> child; a != NULL; a = a -> next) { children++; }
+		for (a = node -> child; a != NULL; a = a -> next) children++;
 
 		/* Determine the number of rows and cols */
 		int rows; int cols;
 		switch (node -> layout) {
-			case 0: cols = children; rows = 1; break;
-			case 1: cols = 1; rows = children; break;
-			case 2: gridDimensions(children, &rows, &cols); break;
-			case 3: cols = 1; rows = 1; break;
+			case VERTICAL  : cols = children; rows = 1; break;
+			case HORIZONTAL: cols = 1; rows = children; break;
+			case GRID      : gridDimensions(children, &rows, &cols); break;
+			case MAX: cols = 1; rows = 1; break;
 		}
 
 		Bool callPlace;
@@ -245,7 +241,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 			else pad = containerPadding;
 
 			callPlace = True;
-			if (node -> layout == 3) {
+			if (node -> layout == MAX) {
 				if (focusedNode == a) i = 0; 
 				else callPlace = False;
 			}
@@ -256,7 +252,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 				a -> width = width / cols - (pad * 2);
 				a -> height = height / rows - (pad * 2);
 
-				if (node -> layout == 2) {
+				if (node -> layout == GRID) {
 					//Two nodes, edge case for formula
 					if (children == 2)      a -> height = height - (pad * 2);
 					//Stretch the last child

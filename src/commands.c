@@ -84,6 +84,7 @@ void handleCommand(char* request) {
 				unmapNode(viewNode);
 				viewNode = viewNode -> parent;
 				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+				focusNode(focusedNode);
 			}
 
 		} else if (!strcmp(tokens[1], "child")) {
