@@ -37,13 +37,13 @@ void handleCommand(char* request) {
 	} else if (!strcmp(tokens[0], "layout")) {
 		fprintf(stderr, "Setting layout to: %s", tokens[1]);
 		if (!strcmp(tokens[1], "vertical"))
-			focusedNode -> parent -> layout = 0; 
+			focusedNode -> parent -> layout = VERTICAL; 
 		else if (!strcmp(tokens[1], "horizontal"))
-			focusedNode -> parent -> layout = 1; 
+			focusedNode -> parent -> layout = HORIZONTAL; 
 		else if (!strcmp(tokens[1], "grid"))
-			focusedNode -> parent -> layout = 2;
+			focusedNode -> parent -> layout = GRID;
 		else if (!strcmp(tokens[1], "max"))
-			focusedNode -> parent -> layout = 3;
+			focusedNode -> parent -> layout = MAX;
 
 		placeNode(focusedNode -> parent,
 				(focusedNode -> parent) -> x,     (focusedNode -> parent) -> y,
@@ -120,18 +120,11 @@ void handleCommand(char* request) {
  * Does not loop */
 Node * getClient (Node *start, int direction) {
 	Node *n = (direction == 0) ? start -> previous : start -> next;
-	while (n != NULL) {
-		if (isClient(n)) return n;
+	while (n)
+		if      (isClient(n))    return n;
+		else if (direction == 0) n = n -> previous;
+		else if (direction == 1) n = n -> next;
 
-		if (direction == 0) {
-			if (n -> previous == NULL) return NULL;
-			else n = n -> previous;
-
-		} else if (direction == 1) {
-			if (n -> next == NULL) return NULL;
-			else n = n -> next;
-		}
-	}
 	return n;
 }
 
