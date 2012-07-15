@@ -90,7 +90,7 @@ void handleCommand(char* request) {
 				unmapNode(viewNode);
 				viewNode = viewNode -> parent;
 				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-				focusNode(focusedNode);
+				focusNode(focusedNode, NULL);
 			}
 
 		} else if (!strcmp(tokens[1], "child")) {
@@ -154,7 +154,7 @@ void cycleFocus(int direction) {
 		}
 	}
 
-	focusNode(next);
+	focusNode(next, NULL);
 }
 
 void directionFocus(int direction) {
@@ -233,7 +233,7 @@ void kill() {
 		dumpTree();
 
 		/* Give the closeset client of destroyed node focus and rerender */
-		focusNode(newFocus);
+		focusNode(newFocus, NULL);
 		placeNode(viewNode, 
 				viewNode -> x, viewNode -> y, 
 				viewNode -> width, viewNode -> height);

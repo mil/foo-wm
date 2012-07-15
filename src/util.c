@@ -7,6 +7,7 @@
 #include "fifo-wm.h"
 #include "util.h"
 
+
 //Thank you DWM ;)
 unsigned long getColor(const char *colstr) {
 	Colormap cmap = DefaultColormap(display, activeScreen);

@@ -48,13 +48,12 @@ void dumpTree() {
 }
 
 //Will only work on nodes with windows for now
-void focusNode(Node * n) {
+void focusNode(Node * n, XEvent * event) {
 	if (focusedNode == n) return;
 	if (!isClient(n)) { 
 		fprintf(stderr, "Trying to focus a node thats not a client !\n"); 
 		return;
 	}
-
 	// Regrab old focusedNode for point to click and change border back
 	if (isClient(focusedNode)) {
 		XSetWindowBorder(display, focusedNode -> window, unfocusedColor);
@@ -81,7 +80,15 @@ void focusNode(Node * n) {
   XUngrabButton(display, AnyButton, AnyModifier, focusedNode->window);
 	XSetWindowBorder(display, focusedNode -> window, focusedColor);
 	XRaiseWindow(display, n -> window);
-	centerPointer(&n -> window);
+
+	//Passed an event
+	if (event) {
+		fprintf(stderr, "Focuing a node with an event\n");
+		XSendEvent(display, n -> window, True, ButtonPressMask, event);
+	} else {
+		fprintf(stderr, "Focuing a node without an event\n");
+		centerPointer(&n -> window);
+	}
 
 }
 
@@ -302,6 +309,7 @@ Node * getBrotherClient(Node * node, int direction) {
 	}
 	return NULL;
 }
+
 
 Node * getClosestClient(Node * node) {
 	Node * returnNode = NULL;

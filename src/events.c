@@ -65,7 +65,7 @@ void eMapRequest(XEvent *event) {
 	}
 
 	addLookupEntry(newNode, &newNode -> window);
-	focusNode(newNode);
+	focusNode(newNode, NULL);
 }
 
 void eDestroyNotify(XEvent *event) {
@@ -118,7 +118,7 @@ void eButtonPress(XEvent *event) {
 	if (event -> xbutton.window == None) return;
 
 	// Click to Focus
-	focusNode(getNodeByWindow(&(event -> xbutton.window)));
+	focusNode(getNodeByWindow(&(event -> xbutton.window)), event);
 }
 
 void handleXEvent(XEvent *event) {
