@@ -27,7 +27,7 @@ void handleCommand(char* request) {
 	char *tokens[5];
 
 	char *token; int i = 0;
-	while ((token = nextToken(&request)) != NULL) {
+	while ((token = nextToken(&request))) {
 		tokens[i] = token;
 		i++;
 	}
@@ -64,14 +64,12 @@ void handleCommand(char* request) {
 	} else if (!strcmp(tokens[0], "select")) {
 		if (!strcmp(tokens[1], "parent")) {
 			fprintf(stderr, "Selecting parent node\n");
-			if (selectedNode == NULL) {
+			if (!selectedNode) {
 				fprintf(stderr, "Selected Node is NULL\n");
 				selectNode(focusedNode -> parent, True);
-			} else {
-				if (selectedNode -> parent != NULL) {
+			} else if (selectedNode -> parent) {
 					fprintf(stderr, "Selecting from Parent\n");
 					selectNode(selectedNode -> parent, True);
-				}
 			}
 		} else if (!strcmp(tokens[1], "next")) {
 
@@ -86,7 +84,7 @@ void handleCommand(char* request) {
 	} else if (!strcmp(tokens[0], "view")) {
 
 		if (!strcmp(tokens[1], "parent")) {
-			if (viewNode -> parent != NULL) {
+			if (viewNode -> parent) {
 				unmapNode(viewNode);
 				viewNode = viewNode -> parent;
 				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
@@ -94,10 +92,10 @@ void handleCommand(char* request) {
 			}
 
 		} else if (!strcmp(tokens[1], "child")) {
-
 			if (focusedNode != viewNode) {
 				Node *n = focusedNode;
-				while (n -> parent != viewNode && n != NULL) { n = n -> parent; }
+				while (n && n -> parent != viewNode) n = n -> parent;
+				if (!n) return;
 
 				unmapNode(viewNode);
 				viewNode = n;
@@ -128,27 +126,62 @@ Node * getClient (Node *start, int direction) {
 	return n;
 }
 
+/*
 void cycleFocus(int direction) {
 	Node *next = NULL;  Node *loopback = NULL;
+
 	if (direction == 0) {
 		next = getClient(focusedNode, 0);
 		if (!isClient(next)) {
 			loopback = focusedNode;
 			while (loopback -> next != NULL) loopback = loopback-> next;
-			if (isClient(loopback)) next = loopback;
-			else next = getClient(loopback, 0);
+			next = isClient(loopback) ? loopback : getClient(loopback, 0);
 		}
 	} else if (direction == 1) {
 		next = getClient(focusedNode, 1);
 		if (!isClient(next)) {
 			loopback = focusedNode -> parent -> child;
-			if (isClient(loopback)) next = loopback;
-			else next = getClient(loopback, 1);
+			next = (isClient(loopback)) ? loopback : getClient(loopback, 1);
 		}
 	}
-
-	focusNode(next, NULL);
+	if (next) focusNode(next, NULL);
 }
+*/
+
+/* If there is a selectedNode, updates focus
+ * depending, there may be a new selectedNode & focusNode OR
+ * just a new focusNode and no selectedNode */
+void cycleFocus(int direction) {
+	Node * newSelect = NULL;
+	Node * newFocus  = NULL;
+	Node * focusOrigin = selectedNode ? selectedNode : focusedNode;
+
+
+	if (direction == 0) {
+		//Alright we have a prvious, now figure out focus & select
+		//First time around and were selecting a container!
+		//Loop to find client to focus to
+		if ((newFocus = focusOrigin -> previous)) {
+			if (!isClient(newFocus)) newSelect = newFocus;
+			while (!isClient(newFocus))
+				newFocus = (newFocus -> focus) ? 
+					newFocus -> focus : newFocus -> child;
+
+			//End of the linked list, will need a loopback
+		} else { 
+
+		}
+
+
+		fprintf(stderr, "The New Select is %p\nThe new focus is %p\n", newSelect, newFocus);
+
+		focusNode(newFocus, NULL);
+		selectNode(newSelect, True);
+	}
+
+
+}
+
 
 void directionFocus(int direction) {
 }
@@ -174,12 +207,12 @@ void containerize() {
 
 	} else if (focusedNode != NULL) { /* Working iwth a focused Client */
 		/* Containerizing a client that is one of many in an existing container */
-		if (focusedNode -> previous != NULL || focusedNode -> next != NULL) {
+		if (focusedNode -> previous || focusedNode -> next) {
 			Node *insertNode; int insertPosition;
 			fprintf(stderr, "Containerizing, using some ref brother\n");
-			if (focusedNode -> previous != NULL) {
+			if (focusedNode -> previous) {
 				insertNode = focusedNode -> previous; insertPosition = 1;
-			} else if (focusedNode -> next != NULL) {
+			} else if (focusedNode -> next) {
 				insertNode = focusedNode -> next;     insertPosition = 0;
 			} else {
 				fprintf(stderr, "NO INSERT NODE\n");
@@ -187,7 +220,6 @@ void containerize() {
 
 			parentNode(focusedNode, newContainer);
 			brotherNode(newContainer, insertNode, insertPosition);
-
 			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 
 		} else { /* Containerizing client that is alone in container */

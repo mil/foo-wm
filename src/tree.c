@@ -49,7 +49,7 @@ void dumpTree() {
 
 //Will only work on nodes with windows for now
 void focusNode(Node * n, XEvent * event) {
-	if (focusedNode == n) return;
+	if (!n || focusedNode == n) return;
 	if (!isClient(n)) { 
 		fprintf(stderr, "Trying to focus a node thats not a client !\n"); 
 		return;
@@ -93,17 +93,15 @@ void focusNode(Node * n, XEvent * event) {
 }
 
 void selectNode(Node * n, Bool setSelected) {
+	if (!n || selectedNode == n) return;
 	if (setSelected == True) selectedNode = n;
 
 	Node *i;
-	for (i = n -> child; i != NULL; i = i -> next) {
-		if (isClient(i) == True) {
-			fprintf(stderr, "Node %p", n);
+	for (i = n -> child; i != NULL; i = i -> next)
+		if (isClient(i) == True) 
 			XSetWindowBorder(display, i->window, focusedColor);	
-		} else {
+		else
 			selectNode(i, False);
-		}
-	}
 }
 
 

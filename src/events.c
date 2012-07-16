@@ -89,7 +89,7 @@ void eConfigureRequest(XEvent *e) {
 	XConfigureRequestEvent *ev = &e->xconfigurerequest;
 	Node *configuredNode = getNodeByWindow(&ev->window);
 
-	if (configuredNode == NULL) return;
+	if (!configuredNode) return;
 
 	XWindowChanges wc;
 	wc.x = configuredNode -> x; 
