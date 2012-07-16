@@ -70,8 +70,9 @@ int main() {
 
 
 	/* Setup Clients Defaults */
-	focusedColor = getColor(CLIENT_FOCUSED_COLOR);
+	focusedColor   = getColor(CLIENT_FOCUSED_COLOR);
 	unfocusedColor = getColor(CLIENT_UNFOCUSED_COLOR);
+	selectedColor  = getColor(CLIENT_SELECTED_COLOR);
 	border = CLIENT_BORDER_WIDTH;
 
 	XSelectInput(display, root, SubstructureRedirectMask | SubstructureNotifyMask);

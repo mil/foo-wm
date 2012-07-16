@@ -48,8 +48,7 @@ void handleCommand(char* request) {
 			setNode -> layout = MAX;
 
 		placeNode(setNode, 
-				setNode -> x, setNode -> y, 
-				setNode -> width, setNode -> height);
+				setNode -> x, setNode -> y, setNode -> width, setNode -> height);
 
 	} else if (!strcmp(tokens[0], "focus")) {
 		if (!strcmp(tokens[1], "cycle")) {
@@ -162,12 +161,12 @@ void containerize() {
 
 	Node * newContainer    = allocateNode();
 
-	if (selectedNode != NULL) {
+	if (selectedNode) {
 		if (selectedNode -> previous || selectedNode -> next) {
 			Node *insertNode; int insertPosition;
 			if (selectedNode -> previous) {
 				insertNode = selectedNode -> previous; insertPosition = NEXT;
-			} else if (focusedNode -> next) {
+			} else if (selectedNode -> next) {
 				insertNode = selectedNode -> next;     insertPosition = PREVIOUS;
 			}
 

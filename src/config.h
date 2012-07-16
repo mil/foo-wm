@@ -16,5 +16,6 @@
 // Windows
 #define CLIENT_FOCUSED_COLOR   "rgb:AB/DB/F5"
 #define CLIENT_UNFOCUSED_COLOR "rgb:54/54/54"
+#define CLIENT_SELECTED_COLOR  "rgb:FF/00/00"
 #define CLIENT_BORDER_WIDTH (1)
 #define CLIENT_PADDING (1)
