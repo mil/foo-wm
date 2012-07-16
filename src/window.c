@@ -14,3 +14,8 @@ void centerPointer(Window *window) {
 	//Warp to Center
 	XWarpPointer(display, None, *window, 0, 0, 0, 0, centerX,centerY);
 }
+
+void setCursor(Window *window, int cursor) {
+	cursor = XCreateFontCursor(display, cursor);
+	XDefineCursor(display, *window, cursor);
+}

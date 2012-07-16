@@ -98,7 +98,7 @@ void selectNode(Node * n, Bool setSelected) {
 	if (setSelected == True) selectedNode = n;
 
 	Node *i;
-	for (i = n -> child; i != NULL; i = i -> next)
+	for (i = n -> child; i; i = i -> next)
 		if (isClient(i) == True) 
 			XSetWindowBorder(display, i->window, selectedColor);	
 		else

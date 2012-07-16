@@ -67,14 +67,14 @@ void handleCommand(char* request) {
 			fprintf(stderr, "Selecting parent node\n");
 			if (!selectedNode) {
 				fprintf(stderr, "Selected Node is NULL\n");
-				selectNode(focusedNode -> parent, True);
+				if (focusedNode && focusedNode -> parent)
+					selectNode(focusedNode -> parent, True);
 			} else if (selectedNode -> parent) {
 					fprintf(stderr, "Selecting from Parent\n");
 					selectNode(selectedNode -> parent, True);
 			}
-		} else if (!strcmp(tokens[1], "next")) {
-
-		} else if (!strcmp(tokens[1], "previous")) {
+		} else if (!strcmp(tokens[1], "child")) {
+			fprintf(stderr, "Selectign on child node\n");
 
 		}
 

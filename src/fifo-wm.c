@@ -68,6 +68,8 @@ int main() {
 	rootY = 0 + SCREEN_PADDING_TOP;
 	rootHeight = DisplayHeight(display, activeScreen) - SCREEN_PADDING_TOP - SCREEN_PADDING_BOTTOM;
 
+	setCursor(&root, 68);
+
 
 	/* Setup Clients Defaults */
 	focusedColor   = getColor(CLIENT_FOCUSED_COLOR);
