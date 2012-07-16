@@ -2,7 +2,20 @@ fifo-wm: FIFO Window Manager
 ============================
 The premise is quite simple, a window manager which is configured and used exclusivly through talking to a FIFO. 
 
-This should be considered unusable pre-alpha software.
+This should be considered unusable pre-alpha software. I'm using fifo-wm on a daily basis though it doesn't have support for many basic window managment functions (ICCCM/EWMH). Regardless, here is some explanations of how things are currently set up.
+
+The Tree
+--------
+All windows are stored as nodes within a tree data structure. The tree is made up of two fundamental types of nodes. 
+
+1. A **client** node
+	- Hold 1 X Window
+	- A **client** always has a parent
+	- A **client** cannot have any children
+
+2. A **container** node
+	- 1 or more **client** nodes 
+	- 1 or more **container** nodes
 
 FIFO Commands
 -------------
@@ -27,7 +40,7 @@ Dumps a tree view of the root container to STDERR.
 Updates the layout of the current container. Currenly only vertical and horizontal layouts are supported, although future layouts planned include: floating, max, and tabbed.
 
 ### view [parent/child]
-Controls the view of the screen.
+Controls the view of the screen. [*parent*] sets the view to the parent of the current view. [*child*] sets the view to the next child approximating the focused node. Switching the focus node allows you to view / zoom in on different nodes.
 
 
 ### focus
@@ -45,3 +58,9 @@ Selects the parent container
 
 ### containerize
 If the current client is in a container with 2 or more other clients, containerize creates  new container and parents the current client into this new container.
+
+
+Inspiration
+------
+Inspirations include: 
+DWM, monsterwm, catwm, dminiwm, i3, herbstluftwm, wmii, and tinywm

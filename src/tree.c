@@ -12,6 +12,7 @@ void crawlNode(Node * node, int level) {
 
 	if (isClient(node)) {
 		fprintf(stderr, "Client (%p)", node);
+		if (node == selectedNode) fprintf(stderr, " [Selected]");
 		if (node == focusedNode) fprintf(stderr, " [Focused]");
 		if (node == viewNode)    fprintf(stderr, " [View]");
 		//fprintf(stderr, " || N[%p] P[%p]", node -> next, node -> previous);
@@ -193,7 +194,7 @@ void parentNode(Node *node, Node *parent) {
 	//Find last in children of parent, add to end
 	if (parent -> child) {
 		Node *n = parent -> child;
-		while (n -> next != NULL) n = n -> next;
+		while (n -> next) n = n -> next;
 		node -> previous = n;
 		n -> next = node;
 	} else {
@@ -207,7 +208,7 @@ void unmapNode(Node * node) {
 		XUnmapWindow(display, node -> window);
 	} else {
 		Node *n;
-		for (n = node -> child; n != NULL; n = n -> next)
+		for (n = node -> child; n; n = n -> next)
 			unmapNode(n);
 	}
 }
@@ -234,8 +235,8 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 	} else {
 		//Count up children prior to loop
 		int children = 0; int i = 0; Node *a = NULL;
-		if (node -> child == NULL) return;
-		for (a = node -> child; a != NULL; a = a -> next) children++;
+		if (!node -> child) return;
+		for (a = node -> child; a; a = a -> next) children++;
 
 		/* Determine the number of rows and cols */
 		int rows; int cols;
@@ -248,7 +249,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 
 		Bool callPlace;
 		int pad;
-		for (a = node -> child; a != NULL; a = a -> next, i++) {
+		for (a = node -> child; a; a = a -> next, i++) {
 			if (isClient(a)) pad = clientPadding;
 			else pad = containerPadding;
 
@@ -278,7 +279,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 
 
 Bool isClient(Node * node) {
-	if (node == NULL)                    return False;
+	if (!node) return False;
 	if (node -> window != (Window) NULL) return True;
 	return False;	
 }
