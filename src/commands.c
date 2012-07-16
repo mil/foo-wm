@@ -129,11 +129,11 @@ void cycleFocus(int direction) {
 	if (direction == PREVIOUS) {
 		if (!(newFocus = focusOrigin -> previous)) {
 			newFocus = focusOrigin;
-			while (newFocus -> next != NULL)
+			while (newFocus -> next)
 				newFocus = newFocus -> next;
 		}
 	} else {
-		if (!(newFocus = focusOrigin -> next))  {
+		if (!(newFocus = focusOrigin -> next) && focusOrigin -> parent)  {
 			newFocus = focusOrigin -> parent -> child;
 		}
 	}
@@ -213,14 +213,9 @@ void kill() {
 		if (focusedNode == viewNode) viewNode = viewNode -> parent;
 
 		if ( !focusedNode -> next && !focusedNode -> previous 
-				&& viewNode == focusedNode -> parent) {
-			if (focusedNode -> parent -> parent != NULL) {
-				fprintf(stderr, "Parent's parent exists\n");
-				viewNode = focusedNode -> parent -> parent;
-			} else {
-				fprintf(stderr, "Parent's parent does not exist\n");
-				viewNode = focusedNode -> parent;
-			}
+				&& focusedNode -> parent) {
+			viewNode = focusedNode -> parent -> parent ?
+				focusedNode -> parent -> parent : focusedNode -> parent;
 		}
 
 		destroyNode(focusedNode);

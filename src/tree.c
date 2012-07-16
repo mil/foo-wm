@@ -64,9 +64,15 @@ void focusNode(Node * n, XEvent * event) {
 				GrabModeAsync, GrabModeAsync, None, None);
 	}
 
+	Bool setView = (focusedNode == viewNode) ? True : False;
+
 	//Set the Focused Node and 
+	if (selectedNode)
+		placeNode(selectedNode, selectedNode -> x, selectedNode -> y,
+				selectedNode -> width, selectedNode -> height);
 	selectedNode = NULL;
 	focusedNode = n;
+	if (setView) viewNode = focusedNode;
 	if (focusedNode -> parent != NULL)  {
 		focusedNode -> parent -> focus = focusedNode;
 		if (focusedNode -> parent -> layout == MAX)
