@@ -30,8 +30,8 @@
 
 
 "echo 'containerize client' > /home/mil/fifos/wm-fifo"
-	m:0x40 + c:33
-	Mod4 + p
+	m:0x40 + c:47
+	Mod4 + semicolon
 
 
 "echo 'focus cycle next' > /home/mil/fifos/wm-fifo"
@@ -49,6 +49,11 @@
 "echo 'select parent' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:32
 	Mod4 + o
+
+"echo 'select child' > /home/mil/fifos/wm-fifo"
+	m:0x40 + c:33
+	Mod4 + p
+
 
 "echo 'dump' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:28
