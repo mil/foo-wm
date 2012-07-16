@@ -114,40 +114,6 @@ void handleCommand(char* request) {
 	}
 }
 
-/* Gets the brother client in given direction
- * Does not loop */
-Node * getClient (Node *start, int direction) {
-	Node *n = (direction == 0) ? start -> previous : start -> next;
-	while (n)
-		if      (isClient(n))    return n;
-		else if (direction == 0) n = n -> previous;
-		else if (direction == 1) n = n -> next;
-
-	return n;
-}
-
-/*
-void cycleFocus(int direction) {
-	Node *next = NULL;  Node *loopback = NULL;
-
-	if (direction == 0) {
-		next = getClient(focusedNode, 0);
-		if (!isClient(next)) {
-			loopback = focusedNode;
-			while (loopback -> next != NULL) loopback = loopback-> next;
-			next = isClient(loopback) ? loopback : getClient(loopback, 0);
-		}
-	} else if (direction == 1) {
-		next = getClient(focusedNode, 1);
-		if (!isClient(next)) {
-			loopback = focusedNode -> parent -> child;
-			next = (isClient(loopback)) ? loopback : getClient(loopback, 1);
-		}
-	}
-	if (next) focusNode(next, NULL);
-}
-*/
-
 /* If there is a selectedNode, updates focus
  * depending, there may be a new selectedNode & focusNode OR
  * just a new focusNode and no selectedNode */
@@ -155,10 +121,21 @@ void cycleFocus(int direction) {
 	if (direction != 0 && direction != 1) return;
 	Node * newSelect = NULL;
 
-	Node * focusOrigin = selectedNode ? 
-		selectedNode : focusedNode;
-	Node * newFocus  = direction == 0 ? 
-		focusOrigin -> previous : focusOrigin -> next;
+	Node * focusOrigin = selectedNode ?  selectedNode : focusedNode;
+	Node * newFocus = NULL;
+	//Loopback incase, 
+	//TODO: Could use focused node starting to make faster instead of focusOrigin?
+	if (direction == 0) {
+		if (!(newFocus = focusOrigin -> previous)) {
+			newFocus = focusOrigin;
+			while (newFocus -> next != NULL)
+				newFocus = newFocus -> next;
+		}
+	} else {
+		if (!(newFocus = focusOrigin -> next))  {
+			newFocus = focusOrigin -> parent -> child;
+		}
+	}
 
 		//Alright we have a prvious, now figure out focus & select
 		//First time around and were selecting a container!
@@ -168,13 +145,8 @@ void cycleFocus(int direction) {
 			while (!isClient(newFocus))
 				newFocus = (newFocus -> focus) ? 
 					newFocus -> focus : newFocus -> child;
-
-	} else { 
-		//End of the linked list, will need a loopback
 	}
 
-
-	fprintf(stderr, "The New Select is %p\nThe new focus is %p\n", newSelect, newFocus);
 
 	focusNode(newFocus, NULL);
 	selectNode(newSelect, True);
