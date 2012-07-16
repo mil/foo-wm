@@ -291,9 +291,9 @@ Node * getBrotherClient(Node * node, int direction) {
 	Node *pNode = node;
 	Node *nNode = node;
 
-	while (pNode -> previous != NULL || nNode -> next != NULL) {
-		if (pNode -> previous != NULL) pNode = pNode -> previous;
-		if (nNode -> next != NULL    ) nNode = nNode -> next;
+	while (pNode -> previous || nNode -> next) {
+		if (pNode -> previous ) pNode = pNode -> previous;
+		if (nNode -> next     ) nNode = nNode -> next;
 		switch (direction) {
 			case 0:
 				if (isClient(pNode) && pNode != node) return pNode;
@@ -314,10 +314,10 @@ Node * getClosestClient(Node * node) {
 	Node * currentNode = node;
 
 	/* Calls getBrotherClient going up the tree until a client is found */
-	while (returnNode == NULL) {
+	while (!returnNode) {
 		returnNode = getBrotherClient(currentNode, 1);
-		if (returnNode == NULL) {
-			if (currentNode -> parent != NULL) currentNode = currentNode -> parent;
+		if (!returnNode) {
+			if (currentNode -> parent) currentNode = currentNode -> parent;
 			else                               return NULL;
 		} else {  //We found a client 
 			return returnNode; 

@@ -51,8 +51,8 @@ void handleCommand(char* request) {
 
 	} else if (!strcmp(tokens[0], "focus")) {
 		if (!strcmp(tokens[1], "cycle")) {
-			if (!strcmp(tokens[2], "previous"))  cycleFocus(0);
-			else if (!strcmp(tokens[2], "next")) cycleFocus(1);	
+			if (!strcmp(tokens[2], "previous"))  cycleFocus(PREVIOUS);
+			else if (!strcmp(tokens[2], "next")) cycleFocus(NEXT);	
 
 		} else if (!strcmp(tokens[1], "direction")) {
 			if      (!strcmp(tokens[2], "left"))  directionFocus(0);
@@ -118,14 +118,14 @@ void handleCommand(char* request) {
  * depending, there may be a new selectedNode & focusNode OR
  * just a new focusNode and no selectedNode */
 void cycleFocus(int direction) {
-	if (direction != 0 && direction != 1) return;
+	if (direction != PREVIOUS && direction != NEXT) return;
 	Node * newSelect = NULL;
 
 	Node * focusOrigin = selectedNode ?  selectedNode : focusedNode;
 	Node * newFocus = NULL;
 	//Loopback incase, 
 	//TODO: Could use focused node starting to make faster instead of focusOrigin?
-	if (direction == 0) {
+	if (direction == PREVIOUS) {
 		if (!(newFocus = focusOrigin -> previous)) {
 			newFocus = focusOrigin;
 			while (newFocus -> next != NULL)
@@ -161,12 +161,12 @@ void containerize() {
 	Node * newContainer    = allocateNode();
 
 	if (selectedNode != NULL) {
-		if (selectedNode -> previous != NULL || selectedNode -> next != NULL) {
+		if (selectedNode -> previous || selectedNode -> next) {
 			Node *insertNode; int insertPosition;
-			if (selectedNode -> previous != NULL) {
-				insertNode = selectedNode -> previous; insertPosition = 1;
-			} else if (focusedNode -> next != NULL) {
-				insertNode = selectedNode -> next;     insertPosition = 0;
+			if (selectedNode -> previous) {
+				insertNode = selectedNode -> previous; insertPosition = NEXT;
+			} else if (focusedNode -> next) {
+				insertNode = selectedNode -> next;     insertPosition = PREVIOUS;
 			}
 
 			parentNode(selectedNode, newContainer);
@@ -181,9 +181,9 @@ void containerize() {
 			Node *insertNode; int insertPosition;
 			fprintf(stderr, "Containerizing, using some ref brother\n");
 			if (focusedNode -> previous) {
-				insertNode = focusedNode -> previous; insertPosition = 1;
+				insertNode = focusedNode -> previous; insertPosition = NEXT;
 			} else if (focusedNode -> next) {
-				insertNode = focusedNode -> next;     insertPosition = 0;
+				insertNode = focusedNode -> next;     insertPosition = PREVIOUS;
 			} else {
 				fprintf(stderr, "NO INSERT NODE\n");
 			}
@@ -209,10 +209,9 @@ void kill() {
 		/* Save closest client and destroy node */
 		Node *newFocus = getClosestClient(focusedNode);
 
-		if (focusedNode == viewNode) { viewNode = viewNode -> parent; }
+		if (focusedNode == viewNode) viewNode = viewNode -> parent;
 
-		if (
-				focusedNode -> next == NULL && focusedNode -> previous == NULL
+		if ( !focusedNode -> next && !focusedNode -> previous 
 				&& viewNode == focusedNode -> parent) {
 			if (focusedNode -> parent -> parent != NULL) {
 				fprintf(stderr, "Parent's parent exists\n");

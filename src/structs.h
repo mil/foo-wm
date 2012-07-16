@@ -1,6 +1,8 @@
 #include <X11/Xlib.h>
 
 enum { VERTICAL, HORIZONTAL, GRID, MAX };
+enum { PREVIOUS, NEXT };
+
 
 typedef struct Node Node;
 struct Node {
