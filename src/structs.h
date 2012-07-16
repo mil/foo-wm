@@ -1,5 +1,6 @@
 #include <X11/Xlib.h>
 
+enum { LEFT, UP, RIGHT, DOWN };
 enum { VERTICAL, HORIZONTAL, GRID, MAX };
 enum { PREVIOUS, NEXT };
 

@@ -36,18 +36,20 @@ void handleCommand(char* request) {
 		dumpTree();
 	} else if (!strcmp(tokens[0], "layout")) {
 		fprintf(stderr, "Setting layout to: %s", tokens[1]);
-		if (!strcmp(tokens[1], "vertical"))
-			focusedNode -> parent -> layout = VERTICAL; 
-		else if (!strcmp(tokens[1], "horizontal"))
-			focusedNode -> parent -> layout = HORIZONTAL; 
-		else if (!strcmp(tokens[1], "grid"))
-			focusedNode -> parent -> layout = GRID;
-		else if (!strcmp(tokens[1], "max"))
-			focusedNode -> parent -> layout = MAX;
 
-		placeNode(focusedNode -> parent,
-				(focusedNode -> parent) -> x,     (focusedNode -> parent) -> y,
-				(focusedNode -> parent) -> width, (focusedNode -> parent) -> height);
+		Node *setNode = selectedNode ? selectedNode : focusedNode -> parent;
+		if (!strcmp(tokens[1], "vertical"))
+			setNode -> layout = VERTICAL; 
+		else if (!strcmp(tokens[1], "horizontal"))
+			setNode -> layout = HORIZONTAL; 
+		else if (!strcmp(tokens[1], "grid"))
+			setNode -> layout = GRID;
+		else if (!strcmp(tokens[1], "max"))
+			setNode -> layout = MAX;
+
+		placeNode(setNode, 
+				setNode -> x, setNode -> y, 
+				setNode -> width, setNode -> height);
 
 	} else if (!strcmp(tokens[0], "focus")) {
 		if (!strcmp(tokens[1], "cycle")) {
@@ -55,10 +57,10 @@ void handleCommand(char* request) {
 			else if (!strcmp(tokens[2], "next")) cycleFocus(NEXT);	
 
 		} else if (!strcmp(tokens[1], "direction")) {
-			if      (!strcmp(tokens[2], "left"))  directionFocus(0);
-			else if (!strcmp(tokens[2], "up"))    directionFocus(1);
-			else if (!strcmp(tokens[2], "right")) directionFocus(2);
-			else if (!strcmp(tokens[2], "down"))  directionFocus(3);
+			if      (!strcmp(tokens[2], "left"))  directionFocus(LEFT);
+			else if (!strcmp(tokens[2], "up"))    directionFocus(UP);
+			else if (!strcmp(tokens[2], "right")) directionFocus(RIGHT);
+			else if (!strcmp(tokens[2], "down"))  directionFocus(DOWN);
 		}
 
 	} else if (!strcmp(tokens[0], "select")) {
