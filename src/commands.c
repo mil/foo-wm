@@ -152,34 +152,32 @@ void cycleFocus(int direction) {
  * depending, there may be a new selectedNode & focusNode OR
  * just a new focusNode and no selectedNode */
 void cycleFocus(int direction) {
+	if (direction != 0 && direction != 1) return;
 	Node * newSelect = NULL;
-	Node * newFocus  = NULL;
-	Node * focusOrigin = selectedNode ? selectedNode : focusedNode;
 
+	Node * focusOrigin = selectedNode ? 
+		selectedNode : focusedNode;
+	Node * newFocus  = direction == 0 ? 
+		focusOrigin -> previous : focusOrigin -> next;
 
-	if (direction == 0) {
 		//Alright we have a prvious, now figure out focus & select
 		//First time around and were selecting a container!
 		//Loop to find client to focus to
-		if ((newFocus = focusOrigin -> previous)) {
+	if (newFocus) {
 			if (!isClient(newFocus)) newSelect = newFocus;
 			while (!isClient(newFocus))
 				newFocus = (newFocus -> focus) ? 
 					newFocus -> focus : newFocus -> child;
 
-			//End of the linked list, will need a loopback
-		} else { 
-
-		}
-
-
-		fprintf(stderr, "The New Select is %p\nThe new focus is %p\n", newSelect, newFocus);
-
-		focusNode(newFocus, NULL);
-		selectNode(newSelect, True);
+	} else { 
+		//End of the linked list, will need a loopback
 	}
 
 
+	fprintf(stderr, "The New Select is %p\nThe new focus is %p\n", newSelect, newFocus);
+
+	focusNode(newFocus, NULL);
+	selectNode(newSelect, True);
 }
 
 
