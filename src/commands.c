@@ -85,24 +85,13 @@ void handleCommand(char* request) {
 	} else if (!strcmp(tokens[0], "view")) {
 
 		if (!strcmp(tokens[1], "parent")) {
-			if (viewNode -> parent) {
-				unmapNode(viewNode);
-				viewNode = viewNode -> parent;
-				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-				focusNode(focusedNode, NULL);
-			}
-
+			zoom(-1);
 		} else if (!strcmp(tokens[1], "child")) {
-			if (focusedNode != viewNode) {
-				Node *n = focusedNode;
-				while (n && n -> parent != viewNode) n = n -> parent;
-				if (!n) return;
-
-				unmapNode(viewNode);
-				viewNode = n;
-				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-			}
+			zoom(1);
 		}
+	} else if (!strcmp(tokens[0], "zoom")) {
+		zoom(atoi(tokens[1]));
+
 	} else if (!strcmp(tokens[0], "kill")) {
 		if (!strcmp(tokens[1], "client")) {
 			kill();
@@ -112,6 +101,31 @@ void handleCommand(char* request) {
 			//destroyContainer(currentContainer);
 			dumpTree();
 		}
+	}
+}
+
+/* Updates the viewNode approximating the current focusNode */
+void zoom(int level) {
+	while (level < 0) {
+		if (viewNode -> parent) {
+			unmapNode(viewNode);
+			viewNode = viewNode -> parent;
+			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+			focusNode(focusedNode, NULL);
+			level++;
+		}	else { return; }
+	}
+	while (level > 0) {
+		if (focusedNode != viewNode) {
+			Node *n = focusedNode;
+			while (n && n -> parent != viewNode) n = n -> parent;
+			if (!n) return;
+
+			unmapNode(viewNode);
+			viewNode = n;
+			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+			level--;
+		} else { return; }
 	}
 }
 
