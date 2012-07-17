@@ -61,6 +61,8 @@ void handleCommand(char* request) {
 			else if (!strcmp(tokens[2], "right")) directionFocus(RIGHT);
 			else if (!strcmp(tokens[2], "down"))  directionFocus(DOWN);
 		}
+	} else if (!strcmp(tokens[0], "move")) {
+		move(atoi(tokens[1]));
 
 	} else if (!strcmp(tokens[0], "select")) {
 		if (!strcmp(tokens[1], "parent")) {
@@ -96,6 +98,17 @@ void handleCommand(char* request) {
 	}
 }
 
+//Moves the current selection given amount
+void move(int amount) {
+	fprintf(stderr, "Moving");
+	Node *startNode = selectedNode ? selectedNode : focusedNode;
+	Node *swapNode = NULL;
+	swapNode = getBrother(startNode, amount);
+
+	fprintf(stderr, "going to swap with client %p\n", swapNode);
+}
+
+
 /* Updates the viewNode approximating the current focusNode */
 void zoom(int level) {
 	while (level < 0) {
@@ -125,24 +138,13 @@ void zoom(int level) {
  * depending, there may be a new selectedNode & focusNode OR
  * just a new focusNode and no selectedNode */
 void cycleFocus(int direction) {
+
 	if (direction != PREVIOUS && direction != NEXT) return;
 	Node * newSelect = NULL;
 
 	Node * focusOrigin = selectedNode ?  selectedNode : focusedNode;
-	Node * newFocus = NULL;
-	//Loopback incase, 
-	//TODO: Could use focused node starting to make faster instead of focusOrigin?
-	if (direction == PREVIOUS) {
-		if (!(newFocus = focusOrigin -> previous)) {
-			newFocus = focusOrigin;
-			while (newFocus -> next)
-				newFocus = newFocus -> next;
-		}
-	} else {
-		if (!(newFocus = focusOrigin -> next) && focusOrigin -> parent)  {
-			newFocus = focusOrigin -> parent -> child;
-		}
-	}
+	Node * newFocus = direction == PREVIOUS ? 
+		getBrother(focusOrigin, -1) : getBrother(focusOrigin, 1);
 
 		//Alright we have a prvious, now figure out focus & select
 		//First time around and were selecting a container!

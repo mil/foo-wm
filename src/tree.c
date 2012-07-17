@@ -284,6 +284,36 @@ Bool isClient(Node * node) {
 	return False;	
 }
 
+
+Node * getBrother(Node * node, int delta) {
+	fprintf(stderr, "Getting the brother node");
+
+	while (delta > 0) {
+		if (node -> next)
+			node = node -> next;
+		else if (node -> parent && node -> parent -> child)
+			node = node -> parent -> child;
+		delta--;
+	}
+
+	while (delta < 0) {
+		if (node -> previous) {
+			node = node -> previous;
+		} else if (node -> parent && node -> parent -> child) {
+			node = node -> parent -> child;
+			while (node -> next)
+				node = node -> next;
+		} else { fprintf(stderr, "Not a good situation\n"); }
+
+		delta++;
+	}
+
+	return node;
+}
+
+
+
+
 /* Gets the next brother client to node, in given direction 
  * [Container] - [Client X] - [Container] - [Container] - [Client Y]
  * Given Client X, function would loop until hitting Client Y

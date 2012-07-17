@@ -16,16 +16,9 @@
 
 void handleEvents(void) {
 	XEvent event; 
-	int fifoFd = 0;
-	int xFd = ConnectionNumber(display);
-	fd_set descriptors; //Descriptors FD Set
-
-	char commands[256];
-
-	int result = 0;
-
-	struct timeval tv;
-	tv.tv_sec = 200;  
+	int fifoFd = 0, xFd = ConnectionNumber(display), readResult = 0;
+	char commands[256]; fd_set descriptors; 
+	struct timeval tv; tv.tv_sec = 200;  
 
 	//Must open RDWR so select works properly
 	fifoFd = open(FIFO, O_RDWR | O_NONBLOCK);
@@ -36,8 +29,8 @@ void handleEvents(void) {
 
 		if (select(fifoFd + 1, &descriptors, 0, 0, &tv)) {
 
-			if ((result = read(fifoFd, commands, sizeof(commands))) > 0) {
-				commands[result] = '\0';
+			if ((readResult = read(fifoFd, commands, sizeof(commands))) > 0) {
+				commands[readResult] = '\0';
 				handleCommand(commands);
 			}
 
