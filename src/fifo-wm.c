@@ -50,44 +50,46 @@ void handleEvents(void) {
 	close(fifoFd);
 }
 
-
-int main(void) {
+void setup(void) {
+	// Setting from defines from config.h
 	layout = CONTAINER_DEFAULT_LAYOUT;
 	containerPadding = CONTAINER_PADDING;
 	clientPadding = CLIENT_PADDING;
 
-	display = XOpenDisplay(NULL);
-	assert(display);
-
-	root = RootWindow(display, activeScreen);
+	// Open Display and set acitveScreen
+	assert((display = XOpenDisplay(NULL)));
 	activeScreen = DefaultScreen(display);
 
-	/* Setup Screen Padding */
-	rootX = 0 + SCREEN_PADDING_LEFT;
-	rootWidth = DisplayWidth(display, activeScreen) - SCREEN_PADDING_LEFT - SCREEN_PADDING_RIGHT;
-	rootY = 0 + SCREEN_PADDING_TOP;
+	// Setup Root / Screen Padding
+	root       = RootWindow(display, activeScreen);
+	rootX      = SCREEN_PADDING_LEFT;
+	rootY      = SCREEN_PADDING_TOP;
+	rootWidth  = DisplayWidth(display, activeScreen) - SCREEN_PADDING_LEFT - SCREEN_PADDING_RIGHT;
 	rootHeight = DisplayHeight(display, activeScreen) - SCREEN_PADDING_TOP - SCREEN_PADDING_BOTTOM;
-
+	XSelectInput(display, root, SubstructureRedirectMask | SubstructureNotifyMask);
 	setCursor(&root, 68);
 
-
-	/* Setup Clients Defaults */
+	// Setup Clients Defaults
+	border         = CLIENT_BORDER_WIDTH;
 	focusedColor   = getColor(CLIENT_FOCUSED_COLOR);
-	unfocusedColor = getColor(CLIENT_UNFOCUSED_COLOR);
 	selectedColor  = getColor(CLIENT_SELECTED_COLOR);
-	border = CLIENT_BORDER_WIDTH;
+	unfocusedColor = getColor(CLIENT_UNFOCUSED_COLOR);
 
-	XSelectInput(display, root, SubstructureRedirectMask | SubstructureNotifyMask);
+	// Setup the Root Node (top of tree)
+	rootNode = allocateNode();
+	rootNode -> layout = layout;
+	rootNode -> x = rootX; rootNode -> y = rootY;
+	rootNode -> width = rootWidth; rootNode-> height = rootHeight;
+	viewNode = rootNode;
 
-	viewNode = allocateNode();
-	viewNode -> layout = layout;
-	viewNode -> x = rootX; viewNode -> y = rootY;
-	viewNode -> width = rootWidth; viewNode -> height = rootHeight;
-
-	rootNode = viewNode;
-
+	// Set Error Handlers and Flush to X
 	XSetErrorHandler((XErrorHandler)(xError));
 	XFlush(display);
+}
+
+
+int main(void) {
+	setup();
 	handleEvents();
 
 	return 0;
