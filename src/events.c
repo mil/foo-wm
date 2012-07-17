@@ -23,7 +23,7 @@ void eMapRequest(XEvent *event) {
 			True, ButtonPressMask | ButtonReleaseMask, GrabModeAsync, GrabModeSync,
 			None, None);
 
-	if (selectedNode != NULL) {
+	if (selectedNode) {
 		fprintf(stderr,"Mapping based on selectedNode\n");
 		parentNode(newNode, selectedNode);
 
@@ -32,7 +32,7 @@ void eMapRequest(XEvent *event) {
 				selectedNode -> width, selectedNode -> height);
 
 
-	} else if (focusedNode != NULL) {
+	} else if (focusedNode) {
 		fprintf(stderr,"Mapping based on focusedNode\n");
 		if (focusedNode == viewNode && isClient(viewNode)) {
 			fprintf(stderr, "Just viewing a single client");
@@ -53,15 +53,18 @@ void eMapRequest(XEvent *event) {
 					focusedNode -> parent -> height);
 		}
 
-	} else {
+	} else if (viewNode) {
 		//All we have to map on is the view node
 		fprintf(stderr,"Mapping based on viewNode\n");
+
 
 		parentNode(newNode, viewNode);
 		placeNode( viewNode,
 				viewNode -> x, viewNode -> y,
 				viewNode -> width, viewNode -> height);
 
+	} else {
+		fprintf(stderr, "This shouldn't be possible...\n");
 	}
 
 	addLookupEntry(newNode, &newNode -> window);
@@ -72,15 +75,14 @@ void eDestroyNotify(XEvent *event) {
 	fprintf(stderr, "DESTROY NOTIFY RECIEVED");
 
 	Node *n = getNodeByWindow(&(event -> xdestroywindow.window));
-	if (n == NULL) { return; }
+	if (n == NULL) return;
 
 	if (n == viewNode) { 
 		viewNode = n -> parent; 
 		fprintf(stderr, "Equals view node\n");
 	}
 	destroyNode(n);
-	placeNode( viewNode, rootX, rootY, rootWidth, rootHeight);
-
+	placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 }
 
 void eConfigureRequest(XEvent *e) {

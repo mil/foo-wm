@@ -113,17 +113,12 @@ void selectNode(Node * n, Bool setSelected) {
 
 
 void destroyNode(Node * n) {
-	fprintf(stderr, "PRE DESTROY\n");
-	dumpTree();
-
 	if (n == NULL) return;
-	if (n -> parent == NULL) return;
 
-	//Asking to destroy a node who once disowned would leave an empty node
-	//Recall destroyNode on parent
-	if ( n -> next == NULL     && n -> parent -> child == n && 
-			n -> previous == NULL && n -> parent -> parent != NULL) {
-		fprintf(stderr, "Calling destroy node on parent\n");
+	//Recursvily unmap up any lone parents
+	if ( n -> parent && !n -> next  &&  !n -> previous && 
+			n -> parent -> child == n && n -> parent -> parent
+			&& n -> parent != viewNode) {
 		destroyNode(n -> parent);
 		return;
 	}
@@ -131,21 +126,20 @@ void destroyNode(Node * n) {
 	//Unparent the node
 	unparentNode(n);
 
-	//Recursivly unmap all children of the node
+	//Recursivly unmap down all children of the node
 	if (isClient(n)) {
 		removeLookupEntry(&n -> window);
 		XDestroyWindow(display, n -> window);
 	} else {
-		fprintf(stderr, "The child is %p\n", n -> child);
-		if (n -> child  -> next != NULL) {
-			Node * child;
-			for (child = n -> child; child != NULL; child = child -> next) {
-				destroyNode(child);
-			}
-		}
+		Node *destroy = n -> child; Node *next = NULL;
+		do {
+			next = destroy -> next;
+			destroyNode(destroy);
+		} while (next);
 
 	}
 
+	//Set Focused Node if we just destroyed the focus, and free 
 	if (n == focusedNode) focusedNode = NULL;
 	free(n);
 }
