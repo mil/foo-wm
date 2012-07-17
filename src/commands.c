@@ -79,16 +79,8 @@ void handleCommand(char* request) {
 		}
 
 	} else if (!strcmp(tokens[0], "containerize")) {
-
 		if (!strcmp(tokens[1], "client")) containerize();
 
-	} else if (!strcmp(tokens[0], "view")) {
-
-		if (!strcmp(tokens[1], "parent")) {
-			zoom(-1);
-		} else if (!strcmp(tokens[1], "child")) {
-			zoom(1);
-		}
 	} else if (!strcmp(tokens[0], "zoom")) {
 		zoom(atoi(tokens[1]));
 

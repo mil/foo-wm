@@ -24,4 +24,4 @@ long unfocusedColor, focusedColor, selectedColor;
 
 
 void handleCommand(char* request);
-void handleEvents();
+void handleEvents(void);

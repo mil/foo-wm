@@ -8,14 +8,21 @@ The Tree
 --------
 All windows are stored as nodes within a tree data structure. The tree is made up of two fundamental types of nodes. 
 
-1. A **client** node
-	- Hold 1 X Window
-	- A **client** always has a parent
-	- A **client** cannot have any children
+1. **Client** Nodes
+	- Holds: 1 X11 Window
 
-2. A **container** node
-	- 1 or more **client** nodes 
-	- 1 or more **container** nodes
+2. **Container** Nodes
+	- Holds: 1 or more **Client** Nodes
+	- Holds: 1 or more **Container** Nodes**
+	- Has a Property called *Layout* Which May Be Set To:
+		* *Vertical*: Children are arranged side by side vertically
+		* *Horizontal*: Children are arranged horizontally
+		* *Grid*: Children are arranged to be equal size in a grid	
+		* *Max*: One child takes up the full view of the container 
+			- The other children are hidden
+		* *Tabbed*: Exactly like Max, only there is a visual tab indication
+		* *Float*: Clients are floated, but bound by the container
+		* *Freefloat*: Clients are free to float, even on top of the current view
 
 FIFO Commands
 -------------
@@ -36,23 +43,18 @@ Dumps a tree view of the root container to STDERR.
 		Client
 ```
 
-### layout [vertical/horizontal/grid/tabbed/max]
+### layout [vertical/horizontal/grid/max/tabbed/float/freefloat]
 Updates the layout of the current container. Currenly only vertical and horizontal layouts are supported, although future layouts planned include: floating, max, and tabbed.
 
-### view [parent/child]
-Controls the view of the screen. [*parent*] sets the view to the parent of the current view. [*child*] sets the view to the next child approximating the focused node. Switching the focus node allows you to view / zoom in on different nodes.
+### zoom [#]
+Controls the view of the screen. Using zoom with a negative number will set the current view to zoom out. Using zoom with a positive number will zoom the screen in approximating the focusedNode.
 
 
-### focus
+### focus [next/previous|left/up/right/down]
 The focus command switches the client which is currently focused.
-
-#### focus cycle [next/previous]
 Using focus cycle allows you to cycle through client in your current container.
 
-#### focus direction [left/up/right/down]
-
-
-### select [parent]
+### select [parent/child]
 Selects the parent container
 
 

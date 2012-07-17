@@ -63,11 +63,11 @@
 	m:0x40 + c:24
 	Mod4 + q
 
-"echo 'view parent' > /home/mil/fifos/wm-fifo"
+"echo 'zoom -1' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:31
 	Mod4 + i 
 
-"echo 'view child' > /home/mil/fifos/wm-fifo"
+"echo 'zoom 1' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:30
 	Mod4 + u
 

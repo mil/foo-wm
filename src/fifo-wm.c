@@ -14,7 +14,7 @@
 #include "util.h"
 #include "window.h"
 
-void handleEvents() {
+void handleEvents(void) {
 	XEvent event; 
 	int fifoFd = 0;
 	int xFd = ConnectionNumber(display);
@@ -51,7 +51,7 @@ void handleEvents() {
 }
 
 
-int main() {
+int main(void) {
 	layout = CONTAINER_DEFAULT_LAYOUT;
 	containerPadding = CONTAINER_PADDING;
 	clientPadding = CLIENT_PADDING;
