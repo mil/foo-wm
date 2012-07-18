@@ -75,12 +75,25 @@ void handleCommand(char* request) {
 			}
 		} else if (!strcmp(tokens[1], "child")) {
 			fprintf(stderr, "Selectign on child node\n");
+
+			//If were a selected node and there is a child
+			if (selectedNode  && selectedNode -> child) {	
+				Node *n = focusedNode;
+				while (n && n -> parent != selectedNode) n = n -> parent;
+				if (!n) return;
+
+				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+				selectNode(n, True);
+			}
+
+			/*
 			if (!selectedNode || !selectedNode -> focus)
 				return;
-			if (isClient(selectedNode -> focus))
+			else if (isClient(selectedNode -> focus))
 				focusNode(selectedNode -> focus, NULL);
 			else
 				selectNode(selectedNode -> focus, True);
+			*/
 		}
 
 	} else if (!strcmp(tokens[0], "containerize")) {
