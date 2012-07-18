@@ -34,9 +34,8 @@ void crawlNode(Node * node, int level) {
 		fprintf(stderr, "\n");
 
 		Node *n;
-		for (n = node -> child; n != NULL; n = n -> next) {
+		for (n = node -> child; n; n = n -> next)
 			crawlNode(n, level + 1);	
-		}
 	}
 
 }
@@ -73,7 +72,7 @@ void focusNode(Node * n, XEvent * event) {
 	selectedNode = NULL;
 	focusedNode = n;
 	if (setView) viewNode = focusedNode;
-	if (focusedNode -> parent != NULL)  {
+	if (focusedNode -> parent)  {
 		focusedNode -> parent -> focus = focusedNode;
 		if (focusedNode -> parent -> layout == MAX)
 			placeNode(focusedNode -> parent, 
