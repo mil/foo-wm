@@ -100,12 +100,11 @@ void handleCommand(char* request) {
 
 //Moves the current selection given amount
 void move(int amount) {
-	fprintf(stderr, "Moving");
 	Node *startNode = selectedNode ? selectedNode : focusedNode;
-	Node *swapNode = NULL;
-	swapNode = getBrother(startNode, amount);
+	Node *swapNode = getBrother(startNode, amount);
 
-	fprintf(stderr, "going to swap with client %p\n", swapNode);
+	swapNodes(startNode, swapNode);
+	focusNode(focusedNode, NULL);
 }
 
 
@@ -146,16 +145,13 @@ void cycleFocus(int direction) {
 	Node * newFocus = direction == PREVIOUS ? 
 		getBrother(focusOrigin, -1) : getBrother(focusOrigin, 1);
 
-		//Alright we have a prvious, now figure out focus & select
-		//First time around and were selecting a container!
-		//Loop to find client to focus to
+	//Search until we have a client to focus
 	if (newFocus) {
 			if (!isClient(newFocus)) newSelect = newFocus;
 			while (!isClient(newFocus))
 				newFocus = (newFocus -> focus) ? 
 					newFocus -> focus : newFocus -> child;
 	}
-
 
 	focusNode(newFocus, NULL);
 	selectNode(newSelect, True);

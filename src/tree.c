@@ -50,7 +50,7 @@ void dumpTree() {
 
 //Will only work on nodes with windows for now
 void focusNode(Node * n, XEvent * event) {
-	if (!n || focusedNode == n) return;
+	if (!n) return;
 	if (!isClient(n)) { 
 		fprintf(stderr, "Trying to focus a node thats not a client !\n"); 
 		return;
@@ -311,7 +311,36 @@ Node * getBrother(Node * node, int delta) {
 	return node;
 }
 
+/* Swaps nodes within the same container of the tree 
+ * [ NULL <- A <-> B <-> C <-> D -> NULL ] */
+void swapNodes(Node * a, Node * b) {
+	if (!a || !b || a == b) return;
 
+
+	/* First child / start of linked list */
+	Node *temp = NULL;
+	if (a -> parent -> child == a)      a -> parent -> child = b;
+	else if (b -> parent -> child == b) b -> parent -> child = a;
+
+	/* Update Previous Pointer */
+	temp = a -> previous;
+	a -> previous = b -> previous;
+	if (a -> previous) a -> previous -> next = a;
+	b -> previous = temp;
+	if (b -> previous) b -> previous -> next = b;
+
+	/* Update Next Pointer */
+	temp = a -> next;
+	a -> next = b -> next;
+	if (a -> next) a -> next -> previous = a;
+	b -> next = temp;
+	if (b -> next) b -> next -> previous = b;
+
+
+	/* Replace node */
+	placeNode(viewNode, viewNode -> x, viewNode -> y,
+			viewNode -> width, viewNode -> height);
+}
 
 
 /* Gets the next brother client to node, in given direction 
