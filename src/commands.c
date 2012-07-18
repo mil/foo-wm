@@ -104,7 +104,8 @@ void move(int amount) {
 	Node *swapNode = getBrother(startNode, amount);
 
 	swapNodes(startNode, swapNode);
-	focusNode(focusedNode, NULL);
+	if (selectedNode) selectNode(selectedNode, True);
+	else focusNode(focusedNode, NULL);
 }
 
 

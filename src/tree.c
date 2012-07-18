@@ -100,7 +100,7 @@ void focusNode(Node * n, XEvent * event) {
 }
 
 void selectNode(Node * n, Bool setSelected) {
-	if (!n || selectedNode == n) return;
+	if (!n) return;
 	if (setSelected == True) selectedNode = n;
 
 	Node *i;
