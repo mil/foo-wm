@@ -42,9 +42,24 @@
 	m:0x40 + c:23
 	Mod4 + Tab
 
+"echo 'move 1' > /home/mil/fifos/wm-fifo"
+	m:0x41 + c:23
+	Shift+Mod4 + Tab
+
 "echo 'focus cycle previous' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:45
 	Mod4 + k
+
+"echo 'move 1' > /home/mil/fifos/wm-fifo"
+	m:0x41 + c:44
+	Shift+Mod4 + j
+
+"echo 'move -1' > /home/mil/fifos/wm-fifo"
+	m:0x41 + c:45
+	Shift+Mod4 + k
+
+
+
 
 "echo 'select parent' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:32

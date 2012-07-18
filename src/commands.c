@@ -155,6 +155,7 @@ void cycleFocus(int direction) {
 
 	focusNode(newFocus, NULL);
 	selectNode(newSelect, True);
+	if (!selectedNode) focusNode(newFocus, NULL);
 }
 
 
