@@ -25,12 +25,21 @@ void eMapRequest(XEvent *event) {
 
 	if (selectedNode) {
 		fprintf(stderr,"Mapping based on selectedNode\n");
-		parentNode(newNode, selectedNode);
 
-		placeNode(selectedNode,
-				selectedNode -> x, selectedNode -> y, 
-				selectedNode -> width, selectedNode -> height);
+		if (selectedNode -> parent) {
+			brotherNode(newNode, selectedNode, 1);
+			placeNode(selectedNode -> parent,
+					selectedNode -> parent -> x, selectedNode -> parent -> y, 
+					selectedNode -> parent -> width, selectedNode -> parent -> height);
+		} else {
+			fprintf(stderr, "Going to reparent the root node\n");
 
+			containerize();
+			rootNode = viewNode = selectedNode -> parent;
+			brotherNode(newNode, viewNode -> child, 1);
+
+			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+		}
 
 	} else if (focusedNode) {
 		fprintf(stderr,"Mapping based on focusedNode\n");

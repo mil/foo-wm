@@ -83,17 +83,10 @@ void handleCommand(char* request) {
 				if (!n) return;
 
 				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-				selectNode(n, True);
+				if (isClient(n)) focusNode(n, NULL);
+				else selectNode(n, True);
 			}
 
-			/*
-			if (!selectedNode || !selectedNode -> focus)
-				return;
-			else if (isClient(selectedNode -> focus))
-				focusNode(selectedNode -> focus, NULL);
-			else
-				selectNode(selectedNode -> focus, True);
-			*/
 		}
 
 	} else if (!strcmp(tokens[0], "containerize")) {
@@ -184,8 +177,8 @@ void containerize() {
 	Node * newContainer    = allocateNode();
 
 	if (selectedNode) {
-		if (selectedNode -> previous || selectedNode -> next) {
-			Node *insertNode; int insertPosition;
+		//if (selectedNode -> previous || selectedNode -> next) {
+			Node *insertNode; int insertPosition = -300;
 			if (selectedNode -> previous) {
 				insertNode = selectedNode -> previous; insertPosition = NEXT;
 			} else if (selectedNode -> next) {
@@ -193,12 +186,14 @@ void containerize() {
 			}
 
 			parentNode(selectedNode, newContainer);
-			brotherNode(newContainer, insertNode, insertPosition);
+			if (insertPosition != -300) {
+				brotherNode(newContainer, insertNode, insertPosition);
+			}
 			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-		}
+		//}
 
 
-	} else if (focusedNode != NULL) { /* Working iwth a focused Client */
+	} else if (focusedNode) { /* Working iwth a focused Client */
 		/* Containerizing a client that is one of many in an existing container */
 		if (focusedNode -> previous || focusedNode -> next) {
 			Node *insertNode; int insertPosition;

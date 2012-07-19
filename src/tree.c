@@ -185,7 +185,7 @@ void brotherNode(Node *node, Node * brother, int position) {
 
 void parentNode(Node *node, Node *parent) {
 	fprintf(stderr, "Pareting node %p into parent %p\n", node, parent);
-	if (!parent) return;  //Cant add to NULL
+	if (!node || !parent) return;  //Cant add to NULL
 
 	unparentNode(node); //Unparent then set the parent to new parent
 	node -> parent = parent;
