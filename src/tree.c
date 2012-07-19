@@ -227,7 +227,10 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 				(y < 0) ? 0 : y, 
 				(width -  (border * 2)) > 0 ? (width - border * 2) : 1, 
 				(height - (border * 2)) > 0 ? (height- border * 2) : 1);
-		XSetWindowBorderWidth(display, node -> window, border);
+		XSetWindowBorderWidth(display, node -> window, 
+				(node -> fullscreen ? 0 : border)
+				);
+
 		XSetWindowBorder(display, node -> window, 
 				(focusedNode == node ? focusedColor : unfocusedColor));
 

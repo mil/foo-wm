@@ -17,6 +17,7 @@ struct Node {
 
 	/* If a Container */
 	Node *child;
+	Bool fullscreen;
 	//Node *focus;
 
 	/* If a Client */

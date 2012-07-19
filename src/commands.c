@@ -121,13 +121,16 @@ void move(int amount) {
 /* Updates the viewNode approximating the current focusNode */
 void zoom(int level) {
 	while (level < 0) {
-		if (viewNode -> parent) {
-			unmapNode(viewNode);
+		if (viewNode -> fullscreen) {
+			viewNode -> fullscreen = False;
+		} else if (viewNode -> parent) { unmapNode(viewNode);
 			viewNode = viewNode -> parent;
 			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 			focusNode(focusedNode, NULL);
-			level++;
 		}	else { return; }
+		placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+		focusNode(focusedNode, NULL);
+		level++;
 	}
 	while (level > 0) {
 		if (focusedNode != viewNode) {
@@ -138,8 +141,15 @@ void zoom(int level) {
 			unmapNode(viewNode);
 			viewNode = n;
 			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-			level--;
+		} else if (!viewNode -> fullscreen) {
+			fprintf(stderr, "Maxing");
+			placeNode(viewNode, 0, 0, 
+					DisplayWidth(display, activeScreen),
+					DisplayHeight(display, activeScreen));
+			viewNode -> fullscreen = True;
+
 		} else { return; }
+		level--;
 	}
 }
 
