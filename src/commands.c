@@ -37,7 +37,8 @@ void handleCommand(char* request) {
 	} else if (!strcmp(tokens[0], "layout")) {
 		fprintf(stderr, "Setting layout to: %s", tokens[1]);
 
-		Node *setNode = selectedNode ? selectedNode : focusedNode -> parent;
+
+		Node *setNode = selectedNode && selectedNode -> parent ? selectedNode -> parent : focusedNode -> parent;
 		if (!strcmp(tokens[1], "vertical"))
 			setNode -> layout = VERTICAL; 
 		else if (!strcmp(tokens[1], "horizontal"))
