@@ -30,7 +30,6 @@ Node * allocateNode() {
 	n -> focus = NULL;    
 	n -> window = (Window) NULL; 
 	n -> layout = layout;
-	n -> fullscreen = False;
 	return n;
 }
 
