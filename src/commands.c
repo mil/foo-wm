@@ -161,11 +161,14 @@ void cycleFocus(int delta) {
 				newFocus = (newFocus -> focus) ? 
 					newFocus -> focus : newFocus -> child;
 		}
+		if (newFocus == selectedNode) return; //Rootnode
 		fprintf(stderr, "The new focus will be: %p\n", newFocus);
 		fprintf(stderr, "The new selected will be: %p\n", newSelect);
 
-		if ((newFocus && newFocus -> parent -> layout == MAX) || 
-				(newSelect && newSelect -> parent -> layout == MAX)) {
+		if ((newFocus && newFocus -> parent &&
+					newFocus -> parent -> layout == MAX) || 
+				(newSelect && newSelect -> parent &&
+				 newSelect -> parent -> layout == MAX)) {
 			fprintf(stderr, "\n\nRerender\n\n");
 		}
 

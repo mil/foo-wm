@@ -43,18 +43,21 @@ Dumps a tree view of the root container to STDERR.
 		Client
 ```
 
-### layout [vertical/horizontal/grid/max/tabbed/float/freefloat]
+### layout *[vertical/horizontal/grid/max/tabbed/float/freefloat]*
 Updates the layout of the current container. Currenly only vertical and horizontal layouts are supported, although future layouts planned include: floating, max, and tabbed.
 
-### zoom [#]
-Controls the view of the screen. Using zoom with a negative number will set the current view to zoom out. Using zoom with a positive number will zoom the screen in approximating the focusedNode.
+### zoom *[(-+)delta]*
+Controls the view of the screen. Using zoom with a negative delta will zoom out based on the current view node. Using zoom with a positive number will zoom the screen in one level closer to the focused node.
 
 
-### focus [next/previous|left/up/right/down]
+### focus cycle *[(-+)delta]*
 The focus command switches the client which is currently focused.
 Using focus cycle allows you to cycle through client in your current container.
 
-### select [parent/child]
+### move cycle *[(+-)delta]*
+Moves the current node (focused or selected) within its container delta positions.
+
+### select *[parent/child]*
 Selects the parent container
 
 
