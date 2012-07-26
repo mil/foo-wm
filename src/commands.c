@@ -172,14 +172,17 @@ void cycleFocus(int delta) {
 			fprintf(stderr, "\n\nRerender\n\n");
 		}
 
+
+		//Update the viewNode if need be
+		if (viewNode == selectedNode || viewNode == focusedNode) {
+			viewNode = newSelect ? newSelect : newFocus;
+			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+		}
+
 		focusNode(newFocus, NULL);
 		selectNode(newSelect, True);
 
-		placeNode(viewNode, viewNode -> x, viewNode -> y,
-				viewNode -> width, viewNode -> height);
-
-		if (delta > 0) delta--;
-		if (delta < 0) delta++;
+		delta = delta + ( delta > 0 ? -1 : 1);
 	}
 
 }

@@ -99,6 +99,7 @@ void focusNode(Node * n, XEvent * event) {
 }
 
 void selectNode(Node * n, Bool setSelected) {
+	fprintf(stderr, "Selectnode\n");
 	if (!n) return;
 	if (setSelected == True) {
 		selectedNode = n;
