@@ -27,7 +27,7 @@ void crawlNode(Node * node, int level) {
 			case 3: label = "Max"; break;
 		}
 
-		fprintf(stderr, "Container (%p) %s", node, label);
+		fprintf(stderr, "Container (%p) %s (focus=%p)", node, label, node -> focus);
 		if (node == selectedNode) fprintf(stderr, " [Selected]");
 		if (node == viewNode)     fprintf(stderr, " [View]");
 		//fprintf(stderr, " || N[%p] P[%p]", node -> next, node -> previous);
@@ -100,7 +100,10 @@ void focusNode(Node * n, XEvent * event) {
 
 void selectNode(Node * n, Bool setSelected) {
 	if (!n) return;
-	if (setSelected == True) selectedNode = n;
+	if (setSelected == True) {
+		selectedNode = n;
+		if (n -> parent) n -> parent -> focus = n;
+	}
 
 	Node *i;
 	for (i = n -> child; i; i = i -> next)
@@ -258,11 +261,12 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 				else callPlace = False;
 			}
 
+			a -> x = x + (i % cols) * (width/cols) + pad;
+			a -> y = y + ((int)(i / cols)) * (height/rows) + pad;
+			a -> width = width / cols - (pad * 2);
+			a -> height = height / rows - (pad * 2);
+
 			if (callPlace) {	
-				a -> x = x + (i % cols) * (width/cols) + pad;
-				a -> y = y + ((int)(i / cols)) * (height/rows) + pad;
-				a -> width = width / cols - (pad * 2);
-				a -> height = height / rows - (pad * 2);
 
 				if (node -> layout == GRID) {
 					//Two nodes, edge case for formula
@@ -271,6 +275,9 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 					if (i + 1 == children)  a -> width = x + width - a -> x - (pad * 2);
 				}
 				placeNode(a, a -> x, a -> y, a -> width, a -> height);
+			} else {
+				fprintf(stderr, "Going to call unmap on %p\n", a);
+				unmapNode(a);
 			}
 		}
 	}

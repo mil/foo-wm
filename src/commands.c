@@ -36,18 +36,16 @@ void handleCommand(char* request) {
 		dumpTree();
 	} else if (!strcmp(tokens[0], "layout")) {
 		fprintf(stderr, "Setting layout to: %s", tokens[1]);
+		Node *setNode = selectedNode && selectedNode -> parent ? 
+			selectedNode -> parent : focusedNode -> parent;
+		int newLayout = 0;
 
+		if      (!strcmp(tokens[1], "vertical"))   newLayout = VERTICAL;
+		else if (!strcmp(tokens[1], "horizontal")) newLayout = HORIZONTAL;
+		else if (!strcmp(tokens[1], "grid"))       newLayout = GRID;
+		else if (!strcmp(tokens[1], "max"))        newLayout = MAX;
 
-		Node *setNode = selectedNode && selectedNode -> parent ? selectedNode -> parent : focusedNode -> parent;
-		if (!strcmp(tokens[1], "vertical"))
-			setNode -> layout = VERTICAL; 
-		else if (!strcmp(tokens[1], "horizontal"))
-			setNode -> layout = HORIZONTAL; 
-		else if (!strcmp(tokens[1], "grid"))
-			setNode -> layout = GRID;
-		else if (!strcmp(tokens[1], "max"))
-			setNode -> layout = MAX;
-
+		setNode -> layout = newLayout;
 		placeNode(setNode, 
 				setNode -> x, setNode -> y, setNode -> width, setNode -> height);
 
@@ -149,7 +147,6 @@ void zoom(int level) {
  * depending, there may be a new selectedNode & focusNode OR
  * just a new focusNode and no selectedNode */
 void cycleFocus(int direction) {
-
 	if (direction != PREVIOUS && direction != NEXT) return;
 	Node * newSelect = NULL;
 
@@ -164,10 +161,19 @@ void cycleFocus(int direction) {
 				newFocus = (newFocus -> focus) ? 
 					newFocus -> focus : newFocus -> child;
 	}
+	fprintf(stderr, "The new focus will be: %p\n", newFocus);
+	fprintf(stderr, "The new selected will be: %p\n", newSelect);
+
+	if ((newFocus && newFocus -> parent -> layout == MAX) || 
+			(newSelect && newSelect -> parent -> layout == MAX)) {
+		fprintf(stderr, "\n\nRerender\n\n");
+	}
 
 	focusNode(newFocus, NULL);
 	selectNode(newSelect, True);
-	if (!selectedNode) focusNode(newFocus, NULL);
+
+	placeNode(viewNode, viewNode -> x, viewNode -> y,
+			viewNode -> width, viewNode -> height);
 }
 
 
