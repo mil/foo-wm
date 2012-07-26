@@ -51,8 +51,7 @@ void handleCommand(char* request) {
 
 	} else if (!strcmp(tokens[0], "focus")) {
 		if (!strcmp(tokens[1], "cycle")) {
-			if (!strcmp(tokens[2], "previous"))  cycleFocus(PREVIOUS);
-			else if (!strcmp(tokens[2], "next")) cycleFocus(NEXT);	
+			cycleFocus(atoi(tokens[2]));
 
 		} else if (!strcmp(tokens[1], "direction")) {
 			if      (!strcmp(tokens[2], "left"))  directionFocus(LEFT);
@@ -146,34 +145,40 @@ void zoom(int level) {
 /* If there is a selectedNode, updates focus
  * depending, there may be a new selectedNode & focusNode OR
  * just a new focusNode and no selectedNode */
-void cycleFocus(int direction) {
-	if (direction != PREVIOUS && direction != NEXT) return;
-	Node * newSelect = NULL;
+void cycleFocus(int delta) {
+	fprintf(stderr, "Cycling focus");
 
-	Node * focusOrigin = selectedNode ?  selectedNode : focusedNode;
-	Node * newFocus = direction == PREVIOUS ? 
-		getBrother(focusOrigin, -1) : getBrother(focusOrigin, 1);
+	while (delta != 0) {
+		Node * newSelect = NULL;
+		Node * focusOrigin = selectedNode ?  selectedNode : focusedNode;
 
-	//Search until we have a client to focus
-	if (newFocus) {
+		Node * newFocus = getBrother(focusOrigin, (delta < 0) ? -1 : 1);
+
+		//Search until we have a client to focus
+		if (newFocus) {
 			if (!isClient(newFocus)) newSelect = newFocus;
 			while (!isClient(newFocus))
 				newFocus = (newFocus -> focus) ? 
 					newFocus -> focus : newFocus -> child;
+		}
+		fprintf(stderr, "The new focus will be: %p\n", newFocus);
+		fprintf(stderr, "The new selected will be: %p\n", newSelect);
+
+		if ((newFocus && newFocus -> parent -> layout == MAX) || 
+				(newSelect && newSelect -> parent -> layout == MAX)) {
+			fprintf(stderr, "\n\nRerender\n\n");
+		}
+
+		focusNode(newFocus, NULL);
+		selectNode(newSelect, True);
+
+		placeNode(viewNode, viewNode -> x, viewNode -> y,
+				viewNode -> width, viewNode -> height);
+
+		if (delta > 0) delta--;
+		if (delta < 0) delta++;
 	}
-	fprintf(stderr, "The new focus will be: %p\n", newFocus);
-	fprintf(stderr, "The new selected will be: %p\n", newSelect);
 
-	if ((newFocus && newFocus -> parent -> layout == MAX) || 
-			(newSelect && newSelect -> parent -> layout == MAX)) {
-		fprintf(stderr, "\n\nRerender\n\n");
-	}
-
-	focusNode(newFocus, NULL);
-	selectNode(newSelect, True);
-
-	placeNode(viewNode, viewNode -> x, viewNode -> y,
-			viewNode -> width, viewNode -> height);
 }
 
 

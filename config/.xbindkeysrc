@@ -34,11 +34,11 @@
 	Mod4 + semicolon
 
 
-"echo 'focus cycle next' > /home/mil/fifos/wm-fifo"
+"echo 'focus cycle 1' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:44
 	Mod4 + j
 
-"echo 'focus cycle next' > /home/mil/fifos/wm-fifo"
+"echo 'focus cycle 1' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:23
 	Mod4 + Tab
 
@@ -46,7 +46,7 @@
 	m:0x41 + c:23
 	Shift+Mod4 + Tab
 
-"echo 'focus cycle previous' > /home/mil/fifos/wm-fifo"
+"echo 'focus cycle -1' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:45
 	Mod4 + k
 
