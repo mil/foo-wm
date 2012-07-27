@@ -29,7 +29,7 @@ Node * allocateNode() {
 	n -> parent = NULL;   n -> child = NULL;
 	n -> focus = NULL;    
 	n -> window = (Window) NULL; 
-	n -> layout = layout;
+	n -> layout = defaultLayout;
 	return n;
 }
 

@@ -1,22 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include "fifo-wm.h"
 #include "commands.h"
 #include "tree.h"
 #include "util.h"
 
-
+/* Extracts the next token from the tokenString */
 char * nextToken(char ** tokenString) {
 	char *command;
 	command = strsep(tokenString, " ");
-
-	if (command == NULL) return NULL;
+	if (!command) return NULL;
 
 	char *newLine = strchr(command, '\n');
-	if (newLine != NULL) 
-		*newLine = '\0';
+	if (newLine) *newLine = '\0';
 
 	return command;
 }
@@ -24,44 +21,122 @@ char * nextToken(char ** tokenString) {
 void handleCommand(char* request) {
 	fprintf(stderr, "Recv from FIFO: %s", request);
 
-	char *tokens[5];
-
-	char *token; int i = 0;
+	char *tokens[5]; char *token; int i = 0;
 	while ((token = nextToken(&request))) {
 		tokens[i] = token;
 		i++;
 	}
 
-	if (!strcmp(tokens[0], "dump")) {
+	if (!strcmp(tokens[0], "dump"))
 		dumpTree();
-	} else if (!strcmp(tokens[0], "layout")) {
-		fprintf(stderr, "Setting layout to: %s", tokens[1]);
-		Node *setNode = selectedNode && selectedNode -> parent ? 
-			selectedNode -> parent : focusedNode -> parent;
-		int newLayout = 0;
-
-		if      (!strcmp(tokens[1], "vertical"))   newLayout = VERTICAL;
-		else if (!strcmp(tokens[1], "horizontal")) newLayout = HORIZONTAL;
-		else if (!strcmp(tokens[1], "grid"))       newLayout = GRID;
-		else if (!strcmp(tokens[1], "max"))        newLayout = MAX;
-
-		setNode -> layout = newLayout;
-		placeNode(setNode, 
-				setNode -> x, setNode -> y, setNode -> width, setNode -> height);
-
-	} else if (!strcmp(tokens[0], "focus")) {
-		if (!strcmp(tokens[1], "cycle")) {
-			cycleFocus(atoi(tokens[2]));
-
-		} else if (!strcmp(tokens[1], "direction")) {
-			if      (!strcmp(tokens[2], "left"))  directionFocus(LEFT);
-			else if (!strcmp(tokens[2], "up"))    directionFocus(UP);
-			else if (!strcmp(tokens[2], "right")) directionFocus(RIGHT);
-			else if (!strcmp(tokens[2], "down"))  directionFocus(DOWN);
-		}
-	} else if (!strcmp(tokens[0], "move")) {
+	else if (!strcmp(tokens[0], "layout"))
+		layout(tokens[0]);
+	else if (!strcmp(tokens[0], "focus"))
+		focus(tokens[1], atoi(tokens[2]));
+	else if (!strcmp(tokens[0], "move"))
 		move(atoi(tokens[1]));
+	else if (!strcmp(tokens[0], "containerize"))
+		containerize();
+	else if (!strcmp(tokens[0], "zoom"))
+		zoom(atoi(tokens[1]));
+	else if (!strcmp(tokens[0], "kill"))
+		kill();
+}
 
+void layout(char * l) {
+	fprintf(stderr, "Setting layout to: %s", l);
+
+	Node *setNode = isClient(focusedNode) ?  focusedNode -> parent : focusedNode;
+	int newLayout = 0;
+
+	if      (!strcmp(l, "vertical"))   newLayout = VERTICAL;
+	else if (!strcmp(l, "horizontal")) newLayout = HORIZONTAL;
+	else if (!strcmp(l, "grid"))       newLayout = GRID;
+	else if (!strcmp(l, "max"))        newLayout = MAX;
+
+	setNode -> layout = newLayout;
+	placeNode(setNode, 
+			setNode -> x, setNode -> y, setNode -> width, setNode -> height);
+}
+
+//Moves the current selection given amount
+void move(int amount) {
+	Node *startNode = focusedNode;
+	Node *swapNode = getBrother(startNode, amount);
+
+	swapNodes(startNode, swapNode);
+	focusNode(focusedNode, NULL, True);
+}
+
+
+/* Updates the viewNode approximating the current focusNode */
+void zoom(int level) {
+	while (level < 0) {
+		if (viewNode -> parent) { unmapNode(viewNode);
+			viewNode = viewNode -> parent;
+			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+			focusNode(focusedNode, NULL, True);
+		}	else { return; }
+		placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+		focusNode(focusedNode, NULL, True);
+		level++;
+	}
+	while (level > 0) {
+		if (focusedNode != viewNode) {
+			Node *n = focusedNode;
+			while (n && n -> parent != viewNode) n = n -> parent;
+			if (!n) return;
+
+			unmapNode(viewNode);
+			viewNode = n;
+			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+		} else { return; }
+		level--;
+	}
+}
+
+void focus(char * brotherOrPc, int delta) {
+
+	fprintf(stderr, "Cycling focus");
+
+	while (delta != 0) {
+		Node * focusOrigin = focusedNode;
+		Node * newFocus = getBrother(focusOrigin, (delta < 0) ? -1 : 1);
+
+		//Search until we have a client to focus
+		if (newFocus) {
+			//if (!isClient(newFocus)) newSelect = newFocus;
+			while (!isClient(newFocus))
+				newFocus = (newFocus -> focus) ?  newFocus -> focus : newFocus -> child;
+		}
+		/*
+		if (newFocus == selectedNode) return; //Rootnode
+		fprintf(stderr, "The new focus will be: %p\n", newFocus);
+		fprintf(stderr, "The new selected will be: %p\n", newSelect);
+
+		if ((newFocus && newFocus -> parent &&
+					newFocus -> parent -> layout == MAX) || 
+				(newSelect && newSelect -> parent &&
+				 newSelect -> parent -> layout == MAX)) {
+			fprintf(stderr, "\n\nRerender\n\n");
+		}
+
+
+		//Update the viewNode if need be
+		if (viewNode == selectedNode || viewNode == focusedNode) {
+			viewNode = newSelect ? newSelect : newFocus;
+			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+		}
+
+		focusNode(newFocus, NULL);
+		selectNode(newSelect, True);
+		*/
+
+		delta = delta + ( delta > 0 ? -1 : 1);
+	}
+
+
+		/*
 	} else if (!strcmp(tokens[0], "select")) {
 		if (!strcmp(tokens[1], "parent")) {
 			fprintf(stderr, "Selecting parent node\n");
@@ -86,115 +161,16 @@ void handleCommand(char* request) {
 			}
 
 		}
-
-	} else if (!strcmp(tokens[0], "containerize")) {
-		if (!strcmp(tokens[1], "client")) containerize();
-
-	} else if (!strcmp(tokens[0], "zoom")) {
-		zoom(atoi(tokens[1]));
-
-	} else if (!strcmp(tokens[0], "kill")) {
-		if (!strcmp(tokens[1], "client")) {
-			kill();
-		} else if (!strcmp(tokens[1], "container")) {
-			dumpTree();
-			fprintf(stderr, "Destroy Container %p\n", focusedNode -> parent);
-			//destroyContainer(currentContainer);
-			dumpTree();
-		}
-	}
-}
-
-//Moves the current selection given amount
-void move(int amount) {
-	Node *startNode = selectedNode ? selectedNode : focusedNode;
-	Node *swapNode = getBrother(startNode, amount);
-
-	swapNodes(startNode, swapNode);
-	if (selectedNode) selectNode(selectedNode, True);
-	else focusNode(focusedNode, NULL);
-}
+		*/
 
 
-/* Updates the viewNode approximating the current focusNode */
-void zoom(int level) {
-	while (level < 0) {
-		if (viewNode -> parent) { unmapNode(viewNode);
-			viewNode = viewNode -> parent;
-			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-			focusNode(focusedNode, NULL);
-		}	else { return; }
-		placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-		focusNode(focusedNode, NULL);
-		level++;
-	}
-	while (level > 0) {
-		if (focusedNode != viewNode) {
-			Node *n = focusedNode;
-			while (n && n -> parent != viewNode) n = n -> parent;
-			if (!n) return;
-
-			unmapNode(viewNode);
-			viewNode = n;
-			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-		} else { return; }
-		level--;
-	}
-}
-
-/* If there is a selectedNode, updates focus
- * depending, there may be a new selectedNode & focusNode OR
- * just a new focusNode and no selectedNode */
-void cycleFocus(int delta) {
-	fprintf(stderr, "Cycling focus");
-
-	while (delta != 0) {
-		Node * newSelect = NULL;
-		Node * focusOrigin = selectedNode ?  selectedNode : focusedNode;
-
-		Node * newFocus = getBrother(focusOrigin, (delta < 0) ? -1 : 1);
-
-		//Search until we have a client to focus
-		if (newFocus) {
-			if (!isClient(newFocus)) newSelect = newFocus;
-			while (!isClient(newFocus))
-				newFocus = (newFocus -> focus) ? 
-					newFocus -> focus : newFocus -> child;
-		}
-		if (newFocus == selectedNode) return; //Rootnode
-		fprintf(stderr, "The new focus will be: %p\n", newFocus);
-		fprintf(stderr, "The new selected will be: %p\n", newSelect);
-
-		if ((newFocus && newFocus -> parent &&
-					newFocus -> parent -> layout == MAX) || 
-				(newSelect && newSelect -> parent &&
-				 newSelect -> parent -> layout == MAX)) {
-			fprintf(stderr, "\n\nRerender\n\n");
-		}
-
-
-		//Update the viewNode if need be
-		if (viewNode == selectedNode || viewNode == focusedNode) {
-			viewNode = newSelect ? newSelect : newFocus;
-			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-		}
-
-		focusNode(newFocus, NULL);
-		selectNode(newSelect, True);
-
-		delta = delta + ( delta > 0 ? -1 : 1);
-	}
-
-}
-
-
-void directionFocus(int direction) {
 }
 
 void containerize() {
 
 	Node * newContainer    = allocateNode();
 
+	/*
 	if (selectedNode) {
 		//if (selectedNode -> previous || selectedNode -> next) {
 			Node *insertNode; int insertPosition = -300;
@@ -212,7 +188,9 @@ void containerize() {
 		//}
 
 
-	} else if (focusedNode) { /* Working iwth a focused Client */
+	} else 
+	*/
+	if (focusedNode) { /* Working iwth a focused Client */
 		/* Containerizing a client that is one of many in an existing container */
 		if (focusedNode -> previous || focusedNode -> next) {
 			Node *insertNode; int insertPosition;
@@ -259,7 +237,7 @@ void kill() {
 		dumpTree();
 
 		/* Give the closeset client of destroyed node focus and rerender */
-		focusNode(newFocus, NULL);
+		focusNode(newFocus, NULL, True);
 		placeNode(viewNode, 
 				viewNode -> x, viewNode -> y, 
 				viewNode -> width, viewNode -> height);

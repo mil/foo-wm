@@ -8,18 +8,17 @@ int screen, activeScreen;
 int rootX, rootY, rootWidth, rootHeight;
 Window root; 
 
-/* focusedNode  :: Currently focused client node (recieves input)
- * selectedNode :: Currently selected node (for containerize, move, etc....)
+/* focusedNode  :: Currently focused node (innard most of fcs ptrs rcvs input)
  * viewNode     :: Currently viewed node (screenspace) 
  * rootNode     :: Node at the top of the tree*/
-Node *focusedNode, *selectedNode, *viewNode, *rootNode;
+Node *focusedNode, *viewNode, *rootNode;
 
 /* X Window -> Node Lookup Table */
 Lookup * lookup;
 
 //Customizations
 int clientPadding, containerPadding;
-int layout, border;
+int defaultLayout, border;
 long unfocusedColor, focusedColor, selectedColor;
 
 

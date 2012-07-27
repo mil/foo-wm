@@ -1,8 +1,8 @@
 char * nextToken(char ** tokenString);
-void handleCommand(char* request);
+void handleCommand(char * request);
 void move(int amount);
+void layout(char * l);
 void zoom(int level);
-void cycleFocus(int direction);
-void directionFocus(int direction);
-void containerize();
-void kill();
+void focus(char * brotherOrPc, int delta);
+void containerize(void);
+void kill(void);

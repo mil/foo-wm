@@ -45,7 +45,7 @@ void handleEvents(void) {
 
 void setup(void) {
 	// Setting from defines from config.h
-	layout           = CONTAINER_DEFAULT_LAYOUT;
+	defaultLayout    = CONTAINER_DEFAULT_LAYOUT;
 	containerPadding = CONTAINER_PADDING;
 	clientPadding    = CLIENT_PADDING;
 
@@ -72,7 +72,7 @@ void setup(void) {
 
 	// Setup the Root Node (top of tree)
 	rootNode           = allocateNode();
-	rootNode -> layout = layout;
+	rootNode -> layout = defaultLayout;
 	rootNode -> x      = rootX; 
 	rootNode -> y      = rootY;
 	rootNode -> width  = rootWidth; 

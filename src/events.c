@@ -23,61 +23,37 @@ void eMapRequest(XEvent *event) {
 			True, ButtonPressMask | ButtonReleaseMask, GrabModeAsync, GrabModeSync,
 			None, None);
 
-	if (selectedNode) {
-		fprintf(stderr,"Mapping based on selectedNode\n");
+	fprintf(stderr, "\n\nIFFFFF\n\n");
+	//Containerize and move the viewNode
+	if (focusedNode == viewNode) {
+		fprintf(stderr, "Focused node is equal to the viewnode\n");
+		containerize();
+		viewNode = viewNode -> parent;
 
-		if (selectedNode == viewNode) {
-			containerize();
-			viewNode = selectedNode -> parent;
-			if (selectedNode == rootNode) rootNode = viewNode;
-			brotherNode(newNode, viewNode -> child, 1);
-			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+		//This is the case in which we reparented the root node
+		if (focusedNode == rootNode) { rootNode = viewNode; }
 
-		} else if (selectedNode -> parent) {
-			brotherNode(newNode, selectedNode, 1);
-			placeNode(selectedNode -> parent,
-					selectedNode -> parent -> x, selectedNode -> parent -> y, 
-					selectedNode -> parent -> width, selectedNode -> parent -> height);
-		}
-
-	/* Brother new node next to focused node */
-	} else if (focusedNode) {
-		fprintf(stderr,"Mapping based on focusedNode\n");
-		if (focusedNode == viewNode && isClient(viewNode)) {
-			fprintf(stderr, "Just viewing a single client");
-			containerize();
-			viewNode = focusedNode -> parent;
-			parentNode(newNode, viewNode);
-			placeNode(viewNode,
-					rootX, rootY,
-					rootWidth, rootHeight);
-		} else {
-			//Brother new node to current focus then focus new node
-			brotherNode(newNode, focusedNode, 1);
-			//Rerender parent of (old focus & new node)
-			placeNode( focusedNode -> parent, 
-					focusedNode -> parent -> x, 
-					focusedNode -> parent -> y, 
-					focusedNode -> parent -> width, 
-					focusedNode -> parent -> height);
-		}
-
-	} else if (viewNode) {
-		//All we have to map on is the view node
-		fprintf(stderr,"Mapping based on viewNode\n");
-
+		//Brother the new node and rerender
+		brotherNode(newNode, viewNode -> child, 1);
+		placeNode(viewNode,  rootX, rootY, rootWidth, rootHeight);
+	} else if (focusedNode && focusedNode -> parent) {
+		brotherNode(newNode, focusedNode, 1);
+		placeNode(focusedNode,
+				focusedNode -> parent -> x, focusedNode -> parent -> y,
+				focusedNode -> parent -> width, focusedNode -> parent -> height);
+	} else {
+		//No focus node, fist element created
+		fprintf(stderr, "FIRST NODE YO\n");
 
 		parentNode(newNode, viewNode);
-		placeNode( viewNode,
-				viewNode -> x, viewNode -> y,
-				viewNode -> width, viewNode -> height);
-
-	} else {
-		fprintf(stderr, "This shouldn't be possible...\n");
 	}
 
+	fprintf(stderr, "\n\nAFTA\n\n");
+
 	addLookupEntry(newNode, &newNode -> window);
-	focusNode(newNode, NULL);
+	fprintf(stderr, "added the lookup entry\n");
+	focusNode(newNode, NULL, True);
+	fprintf(stderr, "done with the map request\n");
 }
 
 void eDestroyNotify(XEvent *event) {
@@ -129,7 +105,7 @@ void eButtonPress(XEvent *event) {
 	if (event -> xbutton.window == None) return;
 
 	// Click to Focus
-	focusNode(getNodeByWindow(&(event -> xbutton.window)), event);
+	focusNode(getNodeByWindow(&(event -> xbutton.window)), event, True);
 }
 
 void handleXEvent(XEvent *event) {

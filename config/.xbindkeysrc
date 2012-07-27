@@ -12,6 +12,8 @@
 	Shift+Mod4 + q
 
 ### WM
+
+# Layout Commands
 "echo 'layout vertical' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:55
 	Mod4 + v
@@ -28,27 +30,37 @@
 	m:0x40 + c:58
 	Mod4 + m
 
-
+# Containerize Command
 "echo 'containerize client' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:47
 	Mod4 + semicolon
 
 
-"echo 'focus cycle 1' > /home/mil/fifos/wm-fifo"
+# Focus Commands
+"echo 'focus brother 1' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:44
 	Mod4 + j
 
-"echo 'focus cycle 1' > /home/mil/fifos/wm-fifo"
+"echo 'focus brother 1' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:23
 	Mod4 + Tab
 
+"echo 'focus brother -1' > /home/mil/fifos/wm-fifo"
+	m:0x40 + c:45
+	Mod4 + k
+
+"echo 'focus pc -1' > /home/mil/fifos/wm-fifo"
+	m:0x40 + c:32
+	Mod4 + o
+
+"echo 'focus pc 1' > /home/mil/fifos/wm-fifo"
+	m:0x40 + c:33
+	Mod4 + p
+
+# Move Commands
 "echo 'move 1' > /home/mil/fifos/wm-fifo"
 	m:0x41 + c:23
 	Shift+Mod4 + Tab
-
-"echo 'focus cycle -1' > /home/mil/fifos/wm-fifo"
-	m:0x40 + c:45
-	Mod4 + k
 
 "echo 'move 1' > /home/mil/fifos/wm-fifo"
 	m:0x41 + c:44
@@ -56,28 +68,9 @@
 
 "echo 'move -1' > /home/mil/fifos/wm-fifo"
 	m:0x41 + c:45
-	Shift+Mod4 + k
 
 
-
-
-"echo 'select parent' > /home/mil/fifos/wm-fifo"
-	m:0x40 + c:32
-	Mod4 + o
-
-"echo 'select child' > /home/mil/fifos/wm-fifo"
-	m:0x40 + c:33
-	Mod4 + p
-
-
-"echo 'dump' > /home/mil/fifos/wm-fifo"
-	m:0x40 + c:28
-	Mod4 + t
-
-"echo 'kill client' > /home/mil/fifos/wm-fifo"
-	m:0x40 + c:24
-	Mod4 + q
-
+# Zoom Commands
 "echo 'zoom -1' > /home/mil/fifos/wm-fifo"
 	m:0x40 + c:31
 	Mod4 + i 
@@ -87,6 +80,19 @@
 	Mod4 + u
 
 
+# Killing Clients
+"echo 'kill client' > /home/mil/fifos/wm-fifo"
+	m:0x40 + c:24
+	Mod4 + q
+
+
+# Dumps the Tree
+"echo 'dump' > /home/mil/fifos/wm-fifo"
+	m:0x40 + c:28
+	Mod4 + t
+
+
+# Dmenu
 "dmenu-suggestions.rb | dmenu -h 60 -x 100 -y 400 -w 1200 -fn 'Envy Code R-20' -sb '#ffffff' -nf '#00ffd5' -nb '#1f1f1f' -sf '#000000' -b -p 'Command:' | xargs -0 -I INPUT handler INPUT"
 	m:0x40 + c:40
 	Mod4 + d
