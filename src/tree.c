@@ -51,7 +51,7 @@ void dumpTree() {
 /* Unfocuses the currently focused node, called only by focusNode 
  * Returns Bool if an update of the view is needed
  * Dangerous if called alone */
-Bool unfocusNode(Node * n) {
+Bool unfocusNode(Node * n, Bool focusPath) {
 	if (!n) return False;
 
 	Bool setView = (n == viewNode) ? True : False;
@@ -62,14 +62,17 @@ Bool unfocusNode(Node * n) {
 		XSetWindowBorder(display, n -> window, unfocusedColor);
 
 		//This should only apply to the most innard focus of focusedNode, follow ptrs
-		XGrabButton(display, AnyButton, AnyModifier,
-				n -> window, True,
-				ButtonPressMask | ButtonReleaseMask,
+		if (focusPath)
+			XGrabButton(display, AnyButton, AnyModifier,
+				n -> window, True, ButtonPressMask | ButtonReleaseMask,
 				GrabModeAsync, GrabModeAsync, None, None);
 
 	} else {
 		//Recursive loop on children to set 
 
+		Node *c;
+		for (c = n -> child; c; c = c -> next)
+			unfocusNode(c, c -> parent -> focus == c ? True : False);
 	}
 
 	return setView;
@@ -83,6 +86,7 @@ void focusNode(Node * n, XEvent * event, Bool setFocused) {
 	fprintf(stderr, "Focusing %p", n);
 
 
+	unfocusNode(focusedNode, True);
 	if (setFocused)             focusedNode = n;
 	if (n -> parent)            n -> parent -> focus = n;
 

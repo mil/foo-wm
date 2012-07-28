@@ -49,17 +49,12 @@ Updates the layout of the current container. Currenly only vertical and horizont
 ### zoom *[(-+)delta]*
 Controls the view of the screen. Using zoom with a negative delta will zoom out based on the current view node. Using zoom with a positive number will zoom the screen in one level closer to the focused node.
 
-
-### focus cycle *[(-+)delta]*
+### focus *[brother/pc]* *[(-+)delta]*
 The focus command switches the client which is currently focused.
 Using focus cycle allows you to cycle through client in your current container.
 
-### move cycle *[(+-)delta]*
-Moves the current node (focused or selected) within its container delta positions.
-
-### select *[parent/child]*
-Selects the parent container
-
+### move *[brother/pc]* *[(+-)delta]*
+Moves the currently focused node delta positions. If brother is specified, the focusedNode is moved within its current parent container (around its brothers). If pc is specified, the focused node is moved based on its parent/child. A negative delta moves the node to the next highest parent.
 
 ### containerize
 If the current client is in a container with 2 or more other clients, containerize creates  new container and parents the current client into this new container.

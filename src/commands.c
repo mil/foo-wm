@@ -30,7 +30,7 @@ void handleCommand(char* request) {
 	if (!strcmp(tokens[0], "dump"))
 		dumpTree();
 	else if (!strcmp(tokens[0], "layout"))
-		layout(tokens[0]);
+		layout(tokens[1]);
 	else if (!strcmp(tokens[0], "focus"))
 		focus(tokens[1], atoi(tokens[2]));
 	else if (!strcmp(tokens[0], "move"))
