@@ -75,8 +75,6 @@ void zoom(int level) {
 		if (viewNode -> parent) { 
 			unmapNode(viewNode);
 			viewNode = viewNode -> parent;
-			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-			focusNode(focusedNode, NULL, True);
 		}	else { return; }
 		placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 		focusNode(focusedNode, NULL, True);
