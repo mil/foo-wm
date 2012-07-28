@@ -85,10 +85,10 @@ void focusNode(Node * n, XEvent * event, Bool setFocused) {
 	if (!n || n == focusedNode) return;
 	fprintf(stderr, "Focusing %p", n);
 
-
-	unfocusNode(focusedNode, True);
-	if (setFocused)             focusedNode = n;
-	if (n -> parent)            n -> parent -> focus = n;
+	Bool setView = unfocusNode(focusedNode, True);
+	if (setFocused)  focusedNode = n;
+	if (setView)     viewNode    = n;
+	if (n -> parent)   n -> parent -> focus = n;
 
 	if (isClient(n)) {
 		if (n -> parent)  {
@@ -126,6 +126,8 @@ void focusNode(Node * n, XEvent * event, Bool setFocused) {
 			}
 		}
 	}
+
+	if (setView) placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 }
 void destroyNode(Node * n) {
 	if (!n) return;
