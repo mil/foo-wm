@@ -113,7 +113,6 @@ void focus(char * brotherOrPc, int delta) {
 				(focusedNode -> focus ? focusedNode -> focus : focusedNode -> child);
 		}
 
-		if (focusedNode == newFocus) return;
 		focusNode(newFocus, NULL, True);
 		delta = delta + ( delta > 0 ? -1 : 1);	
 	}
@@ -122,27 +121,6 @@ void focus(char * brotherOrPc, int delta) {
 void containerize() {
 
 	Node * newContainer    = allocateNode();
-
-	/*
-	if (selectedNode) {
-		//if (selectedNode -> previous || selectedNode -> next) {
-			Node *insertNode; int insertPosition = -300;
-			if (selectedNode -> previous) {
-				insertNode = selectedNode -> previous; insertPosition = NEXT;
-			} else if (selectedNode -> next) {
-				insertNode = selectedNode -> next;     insertPosition = PREVIOUS;
-			}
-
-			parentNode(selectedNode, newContainer);
-			if (insertPosition != -300) {
-				brotherNode(newContainer, insertNode, insertPosition);
-			}
-			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-		//}
-
-
-	} else 
-	*/
 	if (focusedNode) { /* Working iwth a focused Client */
 		/* Containerizing a client that is one of many in an existing container */
 		if (focusedNode -> previous || focusedNode -> next) {
