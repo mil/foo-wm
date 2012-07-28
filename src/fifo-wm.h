@@ -19,7 +19,7 @@ Lookup * lookup;
 //Customizations
 int clientPadding, containerPadding;
 int defaultLayout, border;
-long unfocusedColor, focusedColor, selectedColor;
+long unfocusedColor, focusedColor, focusedInactiveColor, selectedColor;
 
 
 void handleCommand(char* request);

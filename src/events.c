@@ -52,7 +52,7 @@ void eMapRequest(XEvent *event) {
 
 	addLookupEntry(newNode, &newNode -> window);
 	fprintf(stderr, "added the lookup entry\n");
-	focusNode(newNode, NULL, True);
+	focusNode(newNode, NULL, True, True);
 	fprintf(stderr, "done with the map request\n");
 }
 
@@ -105,7 +105,7 @@ void eButtonPress(XEvent *event) {
 	if (event -> xbutton.window == None) return;
 
 	// Click to Focus
-	focusNode(getNodeByWindow(&(event -> xbutton.window)), event, True);
+	focusNode(getNodeByWindow(&(event -> xbutton.window)), event, True, True);
 }
 
 void handleXEvent(XEvent *event) {

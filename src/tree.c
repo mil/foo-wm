@@ -81,54 +81,54 @@ Bool unfocusNode(Node * n, Bool focusPath) {
 
 
 //This should focus OR select
-void focusNode(Node * n, XEvent * event, Bool setFocused) {
+void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
 	if (!n || n == focusedNode) return;
 	fprintf(stderr, "Focusing %p", n);
 
-	Bool setView = unfocusNode(focusedNode, True);
+	Bool setView = False; //Wether the viewNode needs to be moved
+	if (focusPath) { 
+		fprintf(stderr, "\n\nNode %p, is in the focus patho\n\n", n);
+		setView = unfocusNode(focusedNode, True);
+		if (n -> parent)   n -> parent -> focus = n;
+	}
+
 	if (setFocused)  focusedNode = n;
 	if (setView)     viewNode    = n;
-	if (n -> parent)   n -> parent -> focus = n;
 
+	// Are we at the bottom level	
 	if (isClient(n)) {
 		if (n -> parent)  {
 			n -> parent -> focus = n;
-			//if (focusedNode -> parent -> layout == MAX)
 			placeNode(n -> parent, n -> parent -> x, n -> parent -> y,
 					n -> parent -> width, n -> parent -> height);
 		} 
 
-		// Set the Input focus, and ungrab the window (no longer point to click
-		XSetInputFocus(display, n -> window, RevertToParent, CurrentTime);	
-		XUngrabButton(display, AnyButton, AnyModifier, n ->window);
-		XSetWindowBorder(display, n -> window, focusedColor);
-		XRaiseWindow(display, n -> window);
-
-		//Passed an event
-		if (event) {
-			fprintf(stderr, "Focuing a node with an event\n");
-			XSendEvent(display, n -> window, True, ButtonPressMask, event);
+		// Set the Input focus, and ungrab the window (no longer point to click)
+		if (focusPath) {
+			XSetInputFocus(display, n -> window, RevertToParent, CurrentTime);	
+			XUngrabButton(display, AnyButton, AnyModifier, n ->window);
+			XRaiseWindow(display, n -> window);
+			XSetWindowBorder(display, n -> window, focusedColor);
+			if (event) {
+				XSendEvent(display, n -> window, True, ButtonPressMask, event);
+			} else {
+				centerPointer(&n -> window);
+			}
 		} else {
-			fprintf(stderr, "Focuing a node without an event\n");
-			centerPointer(&n -> window);
+			XSetWindowBorder(display, n -> window, focusedInactiveColor);
 		}
 	} else {
-		fprintf(stderr, "focus claled ona  ctaonerin");
-		Node *i;
-		for (i = n -> child; i; i = i -> next) {
-			if (i == n) { //The Focused node requested thats a container
-				focusNode(n, NULL, False);
-			} else if (isClient(i)) { //Must dehigh these clients, unfocused_inactive
-				XSetWindowBorder(display, i->window, selectedColor);	
-			} else {
-				//We have a container as a child of the focusedNode BUT not in the path 
-				//to focusing... ned a function to set unfocused_inactive OR in placeNode
-			}
+		fprintf(stderr, "focus called on a container");
+		Node *i; for (i = n -> child; i; i = i -> next) {
+			focusNode(i, NULL, False, //Recall Focusnode
+					i -> parent -> focus == i ? True : False);
 		}
 	}
 
 	if (setView) placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 }
+
+
 void destroyNode(Node * n) {
 	if (!n) return;
 
@@ -205,6 +205,7 @@ void parentNode(Node *node, Node *parent) {
 
 	unparentNode(node); //Unparent then set the parent to new parent
 	node -> parent = parent;
+	if (!parent -> focus) parent -> focus = node;
 
 	//Find last in children of parent, add to end
 	if (parent -> child) {

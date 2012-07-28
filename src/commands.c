@@ -65,7 +65,7 @@ void move(int amount) {
 	Node *swapNode = getBrother(startNode, amount);
 
 	swapNodes(startNode, swapNode);
-	focusNode(focusedNode, NULL, True);
+	focusNode(focusedNode, NULL, True, True);
 }
 
 
@@ -77,7 +77,7 @@ void zoom(int level) {
 			viewNode = viewNode -> parent;
 		}	else { return; }
 		placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-		focusNode(focusedNode, NULL, True);
+		focusNode(focusedNode, NULL, True, True);
 		level++;
 	}
 	while (level > 0) {
@@ -112,7 +112,7 @@ void focus(char * brotherOrPc, int delta) {
 				(focusedNode -> focus ? focusedNode -> focus : focusedNode -> child);
 		}
 
-		focusNode(newFocus, NULL, True);
+		focusNode(newFocus, NULL, True, True);
 		delta = delta + ( delta > 0 ? -1 : 1);	
 	}
 }
@@ -123,6 +123,8 @@ void containerize() {
 		if (isOnlyChild(focusedNode -> child)) return;
 
 	Node *insertNode, * newContainer = allocateNode(); int insertPosition;
+	if (focusedNode -> parent -> focus == focusedNode) 
+		focusedNode -> parent -> focus = newContainer;
 	if (focusedNode -> previous) {
 		insertNode = focusedNode -> previous; insertPosition = NEXT;
 	} else {
@@ -154,7 +156,7 @@ void kill() {
 		dumpTree();
 
 		/* Give the closeset client of destroyed node focus and rerender */
-		focusNode(newFocus, NULL, True);
+		focusNode(newFocus, NULL, True, True);
 		placeNode(viewNode, 
 				viewNode -> x, viewNode -> y, viewNode -> width, viewNode -> height);
 	}

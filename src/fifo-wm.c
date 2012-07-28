@@ -67,6 +67,7 @@ void setup(void) {
 	// Setup Clients Defaults
 	border         = CLIENT_BORDER_WIDTH;
 	focusedColor   = getColor(CLIENT_FOCUSED_COLOR);
+	focusedInactiveColor   = getColor(CLIENT_FOCUSED_INACTIVE_COLOR);
 	selectedColor  = getColor(CLIENT_SELECTED_COLOR);
 	unfocusedColor = getColor(CLIENT_UNFOCUSED_COLOR);
 
