@@ -80,9 +80,11 @@ Bool unfocusNode(Node * n) {
 //This should focus OR select
 void focusNode(Node * n, XEvent * event, Bool setFocused) {
 	if (!n || n == focusedNode) return;
+	fprintf(stderr, "Focusing %p", n);
+
+
 	if (setFocused)             focusedNode = n;
 	if (n -> parent)            n -> parent -> focus = n;
-	Bool setView = unfocusNode(focusedNode);
 
 	if (isClient(n)) {
 		if (n -> parent)  {
@@ -107,10 +109,9 @@ void focusNode(Node * n, XEvent * event, Bool setFocused) {
 			centerPointer(&n -> window);
 		}
 	} else {
-
 		fprintf(stderr, "focus claled ona  ctaonerin");
 		Node *i;
-		for (i = n -> parent -> child; i; i = i -> next) {
+		for (i = n -> child; i; i = i -> next) {
 			if (i == n) { //The Focused node requested thats a container
 				focusNode(n, NULL, False);
 			} else if (isClient(i)) { //Must dehigh these clients, unfocused_inactive

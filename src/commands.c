@@ -106,12 +106,11 @@ void focus(char * brotherOrPc, int delta) {
 		Node * newFocus;
 		if (brotherSwitch) {
 			newFocus = getBrother(focusedNode, (delta < 0) ? -1 : 1);
-			if (viewNode == newFocus)
-				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 		} else {
 			newFocus = delta < 0 ? focusedNode -> parent : focusedNode -> child;
 		}
 
+		if (focusedNode == newFocus) return;
 		focusNode(newFocus, NULL, True);
 		delta = delta + ( delta > 0 ? -1 : 1);	
 	}
