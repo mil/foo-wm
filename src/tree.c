@@ -244,8 +244,13 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 				(height - (border * 2)) > 0 ? (height- border * 2) : 1);
 		XSetWindowBorderWidth(display, node -> window, border);
 
+		Node *b = node; Bool inFocusPath = False;
+		do {  //Figure out if were in the focus path
+			if (b == focusedNode) inFocusPath = True; break;
+		} while ((b = b -> parent));
+	
 		XSetWindowBorder(display, node -> window, 
-				(focusedNode == node ? focusedColor : unfocusedColor));
+				(inFocusPath ? focusedColor : unfocusedColor));
 
 	} else {
 		//Count up children prior to loop

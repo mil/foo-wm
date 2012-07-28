@@ -7,11 +7,9 @@
 #define SCREEN_PADDING_BOTTOM (8)
 #define SCREEN_PADDING_RIGHT  (8)
 
-
 // Containers
 #define CONTAINER_DEFAULT_LAYOUT (GRID)
 #define CONTAINER_PADDING (8)
-
 
 // Windows
 #define CLIENT_FOCUSED_COLOR   "rgb:AB/DB/F5"
