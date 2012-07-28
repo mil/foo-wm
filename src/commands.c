@@ -118,31 +118,26 @@ void focus(char * brotherOrPc, int delta) {
 }
 
 void containerize() {
+	if (!focusedNode) return;
+	if (!(focusedNode -> previous || focusedNode -> next)) return;
+	if (focusedNode -> child && !isClient(focusedNode -> child))
+		if (!(focusedNode -> child -> previous || focusedNode -> child -> previous))
+			return;
 
 	Node * newContainer    = allocateNode();
-	if (focusedNode) { /* Working iwth a focused Client */
-		/* Containerizing a client that is one of many in an existing container */
-		if (focusedNode -> previous || focusedNode -> next) {
-			Node *insertNode; int insertPosition;
-			fprintf(stderr, "Containerizing, using some ref brother\n");
-			if (focusedNode -> previous) {
-				insertNode = focusedNode -> previous; insertPosition = NEXT;
-			} else if (focusedNode -> next) {
-				insertNode = focusedNode -> next;     insertPosition = PREVIOUS;
-			} else {
-				fprintf(stderr, "NO INSERT NODE\n");
-			}
-
-			parentNode(focusedNode, newContainer);
-			brotherNode(newContainer, insertNode, insertPosition);
-			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-
-		} else { /* Containerizing client that is alone in container */
-
-		}
+	Node *insertNode; int insertPosition;
+	fprintf(stderr, "Containerizing, using some ref brother\n");
+	if (focusedNode -> previous) {
+		insertNode = focusedNode -> previous; insertPosition = NEXT;
+	} else if (focusedNode -> next) {
+		insertNode = focusedNode -> next;     insertPosition = PREVIOUS;
 	} else {
-		//Defaulted with just a view node
+		fprintf(stderr, "NO INSERT NODE\n");
 	}
+
+	parentNode(focusedNode, newContainer);
+	brotherNode(newContainer, insertNode, insertPosition);
+	placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 }
 
 void kill() {
