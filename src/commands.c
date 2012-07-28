@@ -97,29 +97,23 @@ void zoom(int level) {
 
 void focus(char * brotherOrPc, int delta) {
 	fprintf(stderr, "Cycling focus");
+	int brotherSwitch = -1;
+	if (!strcmp(brotherOrPc, "brother")) brotherSwitch = 1;
+	else if (!strcmp(brotherOrPc, "pc")) brotherSwitch = 0;
+	else return;
 
-	if (!strcmp(brotherOrPc, "brother")) {
-		while (delta != 0) {
-			Node * focusOrigin = focusedNode;
-			Node * newFocus    = getBrother(focusOrigin, (delta < 0) ? -1 : 1);
-
-			/* if (newFocus == selectedNode) return; */ // RootNode?
-			fprintf(stderr, "The new focus will be: %p\n", newFocus);
-
-			//Update the viewNode if need be
+	while (delta != 0) {
+		Node * newFocus;
+		if (brotherSwitch) {
+			newFocus = getBrother(focusedNode, (delta < 0) ? -1 : 1);
 			if (viewNode == newFocus)
 				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+		} else {
+			newFocus = delta < 0 ? focusedNode -> parent : focusedNode -> child;
+		}
 
-			focusNode(newFocus, NULL, True);
-			delta = delta + ( delta > 0 ? -1 : 1);
-		}
-	} else if (!strcmp(brotherOrPc, "pc")) {
-		while (delta != 0) {
-			Node *newFocus = delta < 0 ? focusedNode -> parent : focusedNode -> child;
-			if (!newFocus) return;
-			focusNode(newFocus, NULL, True);
-			delta = delta + ( delta > 0 ? -1 : 1);
-		}
+		focusNode(newFocus, NULL, True);
+		delta = delta + ( delta > 0 ? -1 : 1);	
 	}
 }
 
