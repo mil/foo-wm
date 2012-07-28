@@ -88,8 +88,7 @@ void zoom(int level) {
 
 		unmapNode(viewNode);
 		viewNode = n;
-		if (viewNode == focusedNode) focusNode( focusedNode -> focus ? 
-				focusedNode -> focus : focusedNode -> child, NULL, True);
+		//TODO:: Need placeNode to be aware of focusnnode (in)active colors....
 		placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 		level--;
 	}
