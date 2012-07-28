@@ -96,45 +96,24 @@ void zoom(int level) {
 }
 
 void focus(char * brotherOrPc, int delta) {
-
 	fprintf(stderr, "Cycling focus");
 
-	while (delta != 0) {
-		Node * focusOrigin = focusedNode;
-		Node * newFocus = getBrother(focusOrigin, (delta < 0) ? -1 : 1);
+	if (!strcmp(brotherOrPc, "brother")) {
+		while (delta != 0) {
+			Node * focusOrigin = focusedNode;
+			Node * newFocus    = getBrother(focusOrigin, (delta < 0) ? -1 : 1);
 
-		//Search until we have a client to focus
-		if (newFocus) {
-			//if (!isClient(newFocus)) newSelect = newFocus;
-			while (!isClient(newFocus))
-				newFocus = (newFocus -> focus) ?  newFocus -> focus : newFocus -> child;
+			/* if (newFocus == selectedNode) return; */ // RootNode?
+			fprintf(stderr, "The new focus will be: %p\n", newFocus);
+
+			//Update the viewNode if need be
+			if (viewNode == newFocus)
+				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+
+			focusNode(newFocus, NULL, True);
+			delta = delta + ( delta > 0 ? -1 : 1);
 		}
-		/*
-		if (newFocus == selectedNode) return; //Rootnode
-		fprintf(stderr, "The new focus will be: %p\n", newFocus);
-		fprintf(stderr, "The new selected will be: %p\n", newSelect);
-
-		if ((newFocus && newFocus -> parent &&
-					newFocus -> parent -> layout == MAX) || 
-				(newSelect && newSelect -> parent &&
-				 newSelect -> parent -> layout == MAX)) {
-			fprintf(stderr, "\n\nRerender\n\n");
-		}
-
-
-		//Update the viewNode if need be
-		if (viewNode == selectedNode || viewNode == focusedNode) {
-			viewNode = newSelect ? newSelect : newFocus;
-			placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-		}
-
-		focusNode(newFocus, NULL);
-		selectNode(newSelect, True);
-		*/
-
-		delta = delta + ( delta > 0 ? -1 : 1);
-	}
-
+	} else if (!strcmp(brotherOrPc, "pc")) {
 
 		/*
 	} else if (!strcmp(tokens[0], "select")) {
@@ -162,8 +141,7 @@ void focus(char * brotherOrPc, int delta) {
 
 		}
 		*/
-
-
+	}
 }
 
 void containerize() {
