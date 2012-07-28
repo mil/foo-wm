@@ -133,9 +133,8 @@ void destroyNode(Node * n) {
 	if (!n) return;
 
 	//Recursvily unmap up any lone parents
-	if ( n -> parent && !n -> next  &&  !n -> previous && 
-			n -> parent -> child == n && n -> parent -> parent
-			&& n -> parent != viewNode) {
+	if (n -> parent && n -> parent != viewNode && isOnlyChild(n) && 
+			n -> parent -> child == n && n -> parent -> parent) {
 		destroyNode(n -> parent);
 		return;
 	}
@@ -163,17 +162,16 @@ void destroyNode(Node * n) {
 
 
 void unparentNode(Node *node) {
-	if (node == NULL || node -> parent == NULL) return;
-
-	fprintf(stderr, "unparent called");
+	if (!(node && node -> parent)) return;
+	fprintf(stderr, "Unparent called\n");
 
 	//Move parent's child pointer if were it....
 	if (node -> parent -> child == node) 
 		node -> parent -> child = node -> next;
 
 	//Move the next and previous pointers to cut out the node
-	if (node -> next != NULL)     node -> next -> previous = node -> previous;
-	if (node -> previous != NULL) node -> previous -> next = node -> next;
+	if (node -> next)     node -> next -> previous = node -> previous;
+	if (node -> previous) node -> previous -> next = node -> next;
 
 	//Set our parent to NULL
 	node -> parent = NULL; node -> next = NULL; node -> previous = NULL;
@@ -195,7 +193,7 @@ void brotherNode(Node *node, Node * brother, int position) {
 	} else if (position == 1) {
 		node -> previous = brother;
 		node -> next = brother -> next;
-		if (node -> next != NULL) node -> next -> previous = node;
+		if (node -> next) node -> next -> previous = node;
 		brother -> next = node;
 	}
 }
@@ -299,10 +297,14 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 }
 
 
-Bool isClient(Node * node) {
-	if (!node) return False;
-	if (node -> window != (Window) NULL) return True;
-	return False;	
+Bool isClient(Node * node) { /* Is the node a client? */
+	if (node && (node -> window != (Window) NULL)) return True;
+	else return False;	
+}
+
+Bool isOnlyChild(Node * node) { /* Is the node an only child */
+	if (node && (node -> next || node -> previous)) return False;
+	else return True;
 }
 
 
@@ -344,15 +346,13 @@ void swapNodes(Node * a, Node * b) {
 	else if (b -> parent -> child == b) b -> parent -> child = a;
 
 	/* Update Previous Pointer */
-	temp = a -> previous;
-	a -> previous = b -> previous;
+	temp = a -> previous; a -> previous = b -> previous;
 	if (a -> previous) a -> previous -> next = a;
 	b -> previous = temp;
 	if (b -> previous) b -> previous -> next = b;
 
 	/* Update Next Pointer */
-	temp = a -> next;
-	a -> next = b -> next;
+	temp = a -> next; a -> next = b -> next;
 	if (a -> next) a -> next -> previous = a;
 	b -> next = temp;
 	if (b -> next) b -> next -> previous = b;

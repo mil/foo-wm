@@ -14,3 +14,4 @@ Node * getBrotherClient(Node * node, int direction);
 Node * getClosestClient(Node * node);
 
 Bool isClient(Node * n);
+Bool isOnlyChild(Node * n);

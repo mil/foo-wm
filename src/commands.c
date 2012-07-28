@@ -118,21 +118,15 @@ void focus(char * brotherOrPc, int delta) {
 }
 
 void containerize() {
-	if (!focusedNode) return;
-	if (!(focusedNode -> previous || focusedNode -> next)) return;
+	if (!focusedNode || isOnlyChild(focusedNode)) return;
 	if (focusedNode -> child && !isClient(focusedNode -> child))
-		if (!(focusedNode -> child -> previous || focusedNode -> child -> previous))
-			return;
+		if (isOnlyChild(focusedNode -> child)) return;
 
-	Node * newContainer    = allocateNode();
-	Node *insertNode; int insertPosition;
-	fprintf(stderr, "Containerizing, using some ref brother\n");
+	Node *insertNode, * newContainer = allocateNode(); int insertPosition;
 	if (focusedNode -> previous) {
 		insertNode = focusedNode -> previous; insertPosition = NEXT;
-	} else if (focusedNode -> next) {
-		insertNode = focusedNode -> next;     insertPosition = PREVIOUS;
 	} else {
-		fprintf(stderr, "NO INSERT NODE\n");
+		insertNode = focusedNode -> next; insertPosition = PREVIOUS;
 	}
 
 	parentNode(focusedNode, newContainer);
@@ -151,20 +145,17 @@ void kill() {
 
 		if (focusedNode == viewNode) viewNode = viewNode -> parent;
 
-		if ( !focusedNode -> next && !focusedNode -> previous 
-				&& focusedNode -> parent) {
+		if ( isOnlyChild(focusedNode) && focusedNode -> parent) {
 			viewNode = focusedNode -> parent -> parent ?
 				focusedNode -> parent -> parent : focusedNode -> parent;
 		}
 
 		destroyNode(focusedNode);
-
 		dumpTree();
 
 		/* Give the closeset client of destroyed node focus and rerender */
 		focusNode(newFocus, NULL, True);
 		placeNode(viewNode, 
-				viewNode -> x, viewNode -> y, 
-				viewNode -> width, viewNode -> height);
+				viewNode -> x, viewNode -> y, viewNode -> width, viewNode -> height);
 	}
 }
