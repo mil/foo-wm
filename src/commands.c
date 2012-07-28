@@ -114,33 +114,12 @@ void focus(char * brotherOrPc, int delta) {
 			delta = delta + ( delta > 0 ? -1 : 1);
 		}
 	} else if (!strcmp(brotherOrPc, "pc")) {
-
-		/*
-	} else if (!strcmp(tokens[0], "select")) {
-		if (!strcmp(tokens[1], "parent")) {
-			fprintf(stderr, "Selecting parent node\n");
-			if (!selectedNode) {
-				if (focusedNode && focusedNode -> parent)
-					selectNode(focusedNode -> parent, True);
-			} else if (selectedNode -> parent) {
-					selectNode(selectedNode -> parent, True);
-			}
-		} else if (!strcmp(tokens[1], "child")) {
-			fprintf(stderr, "Selectign on child node\n");
-
-			//If were a selected node and there is a child
-			if (selectedNode  && selectedNode -> child) {	
-				Node *n = focusedNode;
-				while (n && n -> parent != selectedNode) n = n -> parent;
-				if (!n) return;
-
-				placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-				if (isClient(n)) focusNode(n, NULL);
-				else selectNode(n, True);
-			}
-
+		while (delta != 0) {
+			Node *newFocus = delta < 0 ? focusedNode -> parent : focusedNode -> child;
+			if (!newFocus) return;
+			focusNode(newFocus, NULL, True);
+			delta = delta + ( delta > 0 ? -1 : 1);
 		}
-		*/
 	}
 }
 
