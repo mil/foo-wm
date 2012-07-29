@@ -2,7 +2,7 @@ fifo-wm: FIFO Window Manager
 ============================
 The premise is quite simple, a window manager which is configured and used exclusivly through talking to a FIFO. 
 
-This should be considered unusable pre-alpha software. I'm using fifo-wm on a daily basis though it doesn't have support for many basic window managment functions (ICCCM/EWMH). Regardless, here is some explanations of how things are currently set up.
+This should be considered unusable pre-alpha software. I'm using fifo-wm on a daily basis though it doesn't have support for many basic window managment functions (ICCCM/EWMH). I recommend against using FIFO-WM for daily usage unless your interesting in contributing (in which case contact me). Regardless, here is some explanations of how things are currently set up.
 
 The Tree
 --------
