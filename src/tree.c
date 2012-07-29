@@ -55,11 +55,14 @@ Bool unfocusNode(Node * n, Bool focusPath) {
 	if (!n) return False;
 
 	Bool setView = (n == viewNode) ? True : False;
-	fprintf(stderr, "Yo i be unfocusing\n");
+	fprintf(stderr, "Yo i be unfocusing %p\n", n);
 
 	//Unfocusing Code for previous focusedNode
 	if (isClient(n)) {
-		XSetWindowBorder(display, n -> window, unfocusedColor);
+		/*XSetWindowBorder(display, n -> window, 
+				(n -> parent -> focus == n) ? 
+				inactiveFocusedColor : inactiveUnfocusedColor);
+				*/
 
 		//This should only apply to the most innard focus of focusedNode, follow ptrs
 		if (focusPath)
@@ -89,7 +92,7 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
 	if (focusPath) { 
 		fprintf(stderr, "\n\nNode %p, is in the focus patho\n\n", n);
 		setView = unfocusNode(focusedNode, True);
-		if (n -> parent)   n -> parent -> focus = n;
+		if (setFocused && n -> parent)   n -> parent -> focus = n;
 	}
 
 	if (setFocused)  focusedNode = n;
@@ -98,7 +101,6 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
 	// Are we at the bottom level	
 	if (isClient(n)) {
 		if (n -> parent)  {
-			n -> parent -> focus = n;
 			placeNode(n -> parent, n -> parent -> x, n -> parent -> y,
 					n -> parent -> width, n -> parent -> height);
 		} 
@@ -108,14 +110,11 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
 			XSetInputFocus(display, n -> window, RevertToParent, CurrentTime);	
 			XUngrabButton(display, AnyButton, AnyModifier, n ->window);
 			XRaiseWindow(display, n -> window);
-			XSetWindowBorder(display, n -> window, focusedColor);
 			if (event) {
 				XSendEvent(display, n -> window, True, ButtonPressMask, event);
 			} else {
 				centerPointer(&n -> window);
 			}
-		} else {
-			XSetWindowBorder(display, n -> window, focusedInactiveColor);
 		}
 	} else {
 		fprintf(stderr, "focus called on a container");
@@ -246,12 +245,33 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 		XSetWindowBorderWidth(display, node -> window, border);
 
 		Node *b = node; Bool inFocusPath = False;
-		do {  //Figure out if were in the focus path
-			if (b == focusedNode) inFocusPath = True; break;
-		} while ((b = b -> parent));
-	
-		XSetWindowBorder(display, node -> window, 
-				(inFocusPath ? focusedColor : unfocusedColor));
+
+		if (b == focusedNode) {
+			inFocusPath = True;
+		} else {
+			do {  //Figure out if were in the focus path
+				b = b -> parent;
+				if (b == focusedNode) inFocusPath = True;
+			} while (b -> parent);
+		}
+		fprintf(stderr, "Determining color for %p", node);
+		if (inFocusPath) {
+			if (focusedNode == node) {
+				XSetWindowBorder(display, node -> window, activeFocusedColor);
+			} else {
+				if (node -> parent -> focus == node) {
+					XSetWindowBorder(display, node -> window, inactiveFocusedColor);
+				} else {
+					XSetWindowBorder(display, node -> window, activeUnfocusedColor);
+				}
+			}
+		} else {
+			if (node -> parent -> focus == node) {
+				XSetWindowBorder(display, node -> window, inactiveFocusedColor);
+			} else {
+				XSetWindowBorder(display, node -> window, inactiveUnfocusedColor);
+			}
+		}
 
 	} else {
 		//Count up children prior to loop

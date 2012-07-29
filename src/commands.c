@@ -123,7 +123,7 @@ void containerize() {
 		if (isOnlyChild(focusedNode -> child)) return;
 
 	Node *insertNode, * newContainer = allocateNode(); int insertPosition;
-	if (focusedNode -> parent -> focus == focusedNode) 
+	if (focusedNode -> parent -> focus == focusedNode)  //Update parent focus ptr
 		focusedNode -> parent -> focus = newContainer;
 	if (focusedNode -> previous) {
 		insertNode = focusedNode -> previous; insertPosition = NEXT;

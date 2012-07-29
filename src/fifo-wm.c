@@ -66,10 +66,11 @@ void setup(void) {
 
 	// Setup Clients Defaults
 	border         = CLIENT_BORDER_WIDTH;
-	focusedColor   = getColor(CLIENT_FOCUSED_COLOR);
-	focusedInactiveColor   = getColor(CLIENT_FOCUSED_INACTIVE_COLOR);
-	selectedColor  = getColor(CLIENT_SELECTED_COLOR);
-	unfocusedColor = getColor(CLIENT_UNFOCUSED_COLOR);
+
+	activeFocusedColor     = getColor(CLIENT_ACTIVE_FOCUSED_COLOR);
+	activeUnfocusedColor   = getColor(CLIENT_ACTIVE_UNFOCUSED_COLOR);
+	inactiveFocusedColor   = getColor(CLIENT_INACTIVE_FOCUSED_COLOR);
+	inactiveUnfocusedColor = getColor(CLIENT_INACTIVE_UNFOCUSED_COLOR);
 
 	// Setup the Root Node (top of tree)
 	rootNode           = allocateNode();
