@@ -1,8 +1,12 @@
-fifo-wm: FIFO Window Manager
+foo-wm: Foo Window Manager
 ============================
-The premise is quite simple, a window manager which is configured and used exclusivly through talking to a FIFO. 
+The basic premises of Foo Window Manager are:
+1. Provide a tree data structure in which you can organize windows.
+2. Provide a socket for IPC along with a basic DSL for manipulating and traversing the tree.
 
-This should be considered unusable pre-alpha software. I'm using fifo-wm on a daily basis though it doesn't have support for many basic window managment functions (ICCCM/EWMH). I recommend against using FIFO-WM for daily usage unless your interesting in contributing (in which case contact me). Regardless, here is some explanations of how things are currently set up.
+foo-wm was previously named fifo-wm and used a FIFO for IPC. The switch over to a socket was in need for provide responses to IPC commands. Foo-wm may not be this window manager's final name.
+
+Foo-wm should be considered unusable pre-alpha software. I use foo-wm on a daily basis though that doesn't mean you should. Foo-wm doesn't have support for many basic window managment functions (ICCCM/EWMH). If you're interested in contributing, contact me. Below is an explanation of the basic structure of foo-wm if you want to hack on it.
 
 The Tree
 --------
@@ -24,8 +28,8 @@ All windows are stored as nodes within a tree data structure. The tree is made u
 		* *Float*: Clients are floated, but bound by the container
 		* *Freefloat*: Clients are free to float, even on top of the current view
 
-FIFO Commands
--------------
+IPC Commands
+------------
 The FIFO specified in src/config.h must be made with `mkfifo wm-fifo`. Once the FIFO is created you may use several commands to interact with the window manager by simply echoing to the FIFO like so:
 
 `echo "dump" > wm-fifo`
