@@ -1,6 +1,6 @@
 #include <X11/Xlib.h>
 
-#include "fifo-wm.h"
+#include "foo-wm.h"
 #include "window.h"
 
 void centerPointer(Window *window) {

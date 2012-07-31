@@ -22,6 +22,5 @@ int defaultLayout, border;
 long activeFocusedColor, activeUnfocusedColor, 
 		 inactiveFocusedColor, inactiveUnfocusedColor;
 
-void handleCommand(char* request);
 void setup(void);
 void handleEvents(void);

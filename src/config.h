@@ -1,5 +1,9 @@
-/* FIFO */
-#define FIFO "/home/mil/fifos/wm-fifo"
+/* Path to store socket */
+#define SOCKET_PATH "/tmp/"
+/* If "NONE" is specified as the SOCKET_NAME,
+ * one will automatically be generated based the sockets PID
+ * In the form of: foo-wm-pid.socket */
+#define SOCKET_NAME "foo-wm.socket" 
 
 //Screen
 #define SCREEN_PADDING_TOP    (25)

@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 
-#include "fifo-wm.h"
+#include "foo-wm.h"
 #include "util.h"
 
 //Returns the client associated with given windowv
