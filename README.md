@@ -28,13 +28,19 @@ All windows are stored as nodes within a tree data structure. The tree is made u
 		* *Float*: Clients are floated, but bound by the container
 		* *Freefloat*: Clients are free to float, even on top of the current view
 
+Foo-WM's Socket
+---------------
+The location and name of the socket, is to be specified in `src/config.h`. If no SOCKET_NAME, is specified then a name will be automatically generated based on the PID of the socket in the form of `foo-wm-pid.socket`.
+
+foo-wm-c
+--------
+`foo-wm-c` is a command line client to interface with foo-wm's socket, although similar interfaces could be made in any language with a socket class.
+
+*Usage:* `foo-wm-c socketpath "ipc command"`
+
 IPC Commands
 ------------
-The FIFO specified in src/config.h must be made with `mkfifo wm-fifo`. Once the FIFO is created you may use several commands to interact with the window manager by simply echoing to the FIFO like so:
-
-`echo "dump" > wm-fifo`
-
-Commands that may be sent to the FIFO are listed below:
+Commands that may be sent to the socket are listed below:
 
 ### dump
 Dumps a tree view of the root container to STDERR.
