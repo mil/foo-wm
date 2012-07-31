@@ -49,35 +49,30 @@ void setup(void) {
 	containerPadding = CONTAINER_PADDING;
 	clientPadding    = CLIENT_PADDING;
 
-	// Open Display and set acitveScreen
+	// Open display, set screen, set root, and select root input
 	assert((display = XOpenDisplay(NULL)));
-	activeScreen = DefaultScreen(display);
-
-	// Setup Root / Screen Padding
-	root       = RootWindow(display, activeScreen);
-	rootX      = SCREEN_PADDING_LEFT;
-	rootY      = SCREEN_PADDING_TOP;
-	rootWidth  = DisplayWidth(display, activeScreen) 
-		- SCREEN_PADDING_LEFT - SCREEN_PADDING_RIGHT;
-	rootHeight = DisplayHeight(display, activeScreen) 
-		- SCREEN_PADDING_TOP - SCREEN_PADDING_BOTTOM;
+	activeScreen    = DefaultScreen(display);
+	root            = RootWindow(display, activeScreen);
 	XSelectInput(display, root, SubstructureRedirectMask | SubstructureNotifyMask);
 	setCursor(&root, 68);
 
 	// Setup Clients Defaults
-	border         = CLIENT_BORDER_WIDTH;
-
+	border                 = CLIENT_BORDER_WIDTH;
 	activeFocusedColor     = getColor(CLIENT_ACTIVE_FOCUSED_COLOR);
 	activeUnfocusedColor   = getColor(CLIENT_ACTIVE_UNFOCUSED_COLOR);
 	inactiveFocusedColor   = getColor(CLIENT_INACTIVE_FOCUSED_COLOR);
 	inactiveUnfocusedColor = getColor(CLIENT_INACTIVE_UNFOCUSED_COLOR);
 
 	// Setup the Root Node (top of tree)
-	rootNode           = allocateNode();
-	rootNode -> layout = defaultLayout;
-	rootNode -> x      = rootX; 
-	rootNode -> y      = rootY;
-	rootNode -> width  = rootWidth; 
+	rootNode                       = allocateNode();
+	rootNode -> layout             = defaultLayout;
+	rootNode -> x      = rootX     = SCREEN_PADDING_LEFT;
+	rootNode -> y      = rootY     = SCREEN_PADDING_TOP;
+	rootWidth = DisplayWidth(display, activeScreen) 
+		- SCREEN_PADDING_LEFT - SCREEN_PADDING_RIGHT;
+	rootNode -> width  = rootWidth;
+	rootHeight = DisplayHeight(display, activeScreen) 
+		- SCREEN_PADDING_TOP - SCREEN_PADDING_BOTTOM;
 	rootNode -> height = rootHeight;
 	viewNode           = rootNode;
 

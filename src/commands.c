@@ -107,17 +107,19 @@ void focus(char * brotherOrPc, int delta) {
 		if (brotherSwitch) {
 			newFocus = getBrother(focusedNode, (delta < 0) ? -1 : 1);
 		} else {
-			newFocus = delta < 0 ? 
+			newFocus = (delta < 0) ? 
 				focusedNode -> parent : 
 				(focusedNode -> focus ? focusedNode -> focus : focusedNode -> child);
 		}
+
+		fprintf(stderr, "Going to focus node: %p", newFocus);
 
 		focusNode(newFocus, NULL, True, True);
 		delta = delta + ( delta > 0 ? -1 : 1);	
 	}
 }
 
-void containerize() {
+void containerize(void) {
 	if (!focusedNode || isOnlyChild(focusedNode)) return;
 	if (focusedNode -> child && !isClient(focusedNode -> child))
 		if (isOnlyChild(focusedNode -> child)) return;
@@ -136,7 +138,7 @@ void containerize() {
 	placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 }
 
-void kill() {
+void kill(void) {
 	dumpTree();
 	fprintf(stderr, "Destroying Client %p\n", focusedNode);
 
