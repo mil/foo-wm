@@ -10,10 +10,10 @@
 #include <sys/un.h>
 
 #include "config.h"
+#include "commands.h"
 #include "foo-wm.h"
 #include "events.h"
 #include "tree.h"
-#include "commands.h"
 #include "util.h"
 #include "window.h"
 
@@ -63,7 +63,8 @@ void handleEvents(void) {
 					if ((commandsLength = recv(socketReturnFd, commands, sizeof(commands), 0)) > 1) {
 						commands[commandsLength] = '\0';
 						fprintf(stderr, "Recieved the message %s, from the socket\n", commands);
-						handleCommand(commands);
+						char * response = handleCommand(commands);
+						send(socketReturnFd, response, sizeof(response), 0);
 
 					}
 				}

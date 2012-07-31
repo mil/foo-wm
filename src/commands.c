@@ -18,7 +18,7 @@ char * nextToken(char ** tokenString) {
 	return command;
 }
 
-void handleCommand(char* request) {
+char * handleCommand(char * request) {
 	fprintf(stderr, "Recv from FIFO: %s", request);
 
 	char *tokens[5]; char *token; int i = 0;
@@ -41,6 +41,9 @@ void handleCommand(char* request) {
 		zoom(atoi(tokens[1]));
 	else if (!strcmp(tokens[0], "kill"))
 		kill();
+
+	char * response = "I'm sending back to the socket";
+	return response;
 }
 
 void layout(char * l) {

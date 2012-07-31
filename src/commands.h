@@ -1,5 +1,5 @@
 char * nextToken(char ** tokenString);
-void handleCommand(char * request);
+char * handleCommand(char * request);
 void move(int amount);
 void layout(char * l);
 void zoom(int level);

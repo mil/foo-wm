@@ -5,9 +5,9 @@
 #include <X11/Xlib.h>
 
 #include "foo-wm.h"
+#include "commands.h"
 #include "events.h"
 #include "tree.h"
-#include "commands.h"
 #include "window.h"
 #include "lookup.h"
 #include "util.h"
