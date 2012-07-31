@@ -1,6 +1,7 @@
 foo-wm: Foo Window Manager
 ============================
 The basic premises of Foo Window Manager are:
+
 1. Provide a tree data structure in which you can organize windows.
 2. Provide a socket for IPC along with a basic DSL for manipulating and traversing the tree.
 
