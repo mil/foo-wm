@@ -7,7 +7,7 @@ CLI_OBJS= client.o
 
 all: foo-wm foo-wm-c
 
-foo-wm:  $(WM_OBJS)
+foo-wm: $(WM_OBJS)
 	$(CC) $(CFLAGS) $(WM_OBJS) -o foo-wm
 
 foo-wm-c: $(CLI_OBJS)

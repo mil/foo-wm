@@ -60,15 +60,15 @@ Bool unfocusNode(Node * n, Bool focusPath) {
 	//Unfocusing Code for previous focusedNode
 	if (isClient(n)) {
 		/*XSetWindowBorder(display, n -> window, 
-				(n -> parent -> focus == n) ? 
-				inactiveFocusedColor : inactiveUnfocusedColor);
-				*/
+			(n -> parent -> focus == n) ? 
+inactiveFocusedColor : inactiveUnfocusedColor);
+*/
 
 		//This should only apply to the most innard focus of focusedNode, follow ptrs
 		if (focusPath)
 			XGrabButton(display, AnyButton, AnyModifier,
-				n -> window, True, ButtonPressMask | ButtonReleaseMask,
-				GrabModeAsync, GrabModeAsync, None, None);
+					n -> window, True, ButtonPressMask | ButtonReleaseMask,
+					GrabModeAsync, GrabModeAsync, None, None);
 
 	} else {
 		//Recursive loop on children to set 
@@ -105,17 +105,21 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
 					n -> parent -> width, n -> parent -> height);
 		} 
 
-		// Set the Input focus, and ungrab the window (no longer point to click)
 		if (focusPath) {
-			XSetInputFocus(display, n -> window, RevertToParent, CurrentTime);	
-			XUngrabButton(display, AnyButton, AnyModifier, n ->window);
-			XRaiseWindow(display, n -> window);
+				XSetInputFocus(display, n -> window, RevertToParent, CurrentTime);	
+				XUngrabButton(display, AnyButton, AnyModifier, n ->window);
+				XRaiseWindow(display, n -> window);
+
 			if (event) {
+				// Set the Input focus, and ungrab the window (no longer point to click)
 				XSendEvent(display, n -> window, True, ButtonPressMask, event);
 			} else {
+				fprintf(stderr, "YO I AM CENTERING POINT on %p !\n\n", n);
 				centerPointer(&n -> window);
 			}
 		}
+
+
 	} else {
 		fprintf(stderr, "focus called on a container");
 		Node *i; for (i = n -> child; i; i = i -> next) {
@@ -125,6 +129,9 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
 	}
 
 	if (setView) placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+
+	/* Again why is this needed */
+	XFlush(display);
 }
 
 
@@ -272,6 +279,9 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 				XSetWindowBorder(display, node -> window, inactiveUnfocusedColor);
 			}
 		}
+
+		//Why is this needed
+		XFlush(display);
 
 	} else {
 		//Count up children prior to loop

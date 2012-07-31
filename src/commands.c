@@ -19,7 +19,7 @@ char * nextToken(char ** tokenString) {
 }
 
 char * handleCommand(char * request) {
-	fprintf(stderr, "Recv from FIFO: %s", request);
+	fprintf(stderr, "Recv from Socket: %s", request);
 
 	char *tokens[5]; char *token; int i = 0;
 	while ((token = nextToken(&request))) {
@@ -92,6 +92,8 @@ void zoom(int level) {
 		unmapNode(viewNode);
 		viewNode = n;
 		//TODO:: Need placeNode to be aware of focusnnode (in)active colors....
+		
+		fprintf(stderr, "placeing yo");
 		placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 		level--;
 	}

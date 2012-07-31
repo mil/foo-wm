@@ -52,7 +52,7 @@
 	m:0x40 + c:32
 	Mod4 + o
 
-"foo-wm-c  /tmp/foo-wm.socket 'focus pc -1'"
+"foo-wm-c  /tmp/foo-wm.socket 'focus pc 1'"
 	m:0x40 + c:33
 	Mod4 + p
 
