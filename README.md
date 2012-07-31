@@ -6,7 +6,7 @@ The basic premises of Foo Window Manager are:
 
 foo-wm was previously named fifo-wm and used a FIFO for IPC. The switch over to a socket was in need for provide responses to IPC commands. Foo-wm may not be this window manager's final name.
 
-Foo-wm should be considered unusable pre-alpha software. I use foo-wm on a daily basis though that doesn't mean you should. Foo-wm doesn't have support for many basic window managment functions (ICCCM/EWMH). If you're interested in contributing, contact me. Below is an explanation of the basic structure of foo-wm if you want to hack on it.
+foo-wm should be considered unusable pre-alpha software. I use foo-wm on a daily basis though that doesn't mean you should. Foo-wm doesn't have support for many basic window managment functions (ICCCM/EWMH). If you're interested in contributing, contact me. Below is an explanation of the basic structure of foo-wm if you want to hack on it.
 
 The Tree
 --------
