@@ -14,80 +14,79 @@
 ### WM
 
 # Layout Commands
-"echo 'layout vertical' > /home/mil/fifos/wm-fifo"
+"foo-wm-c  /tmp/foo-wm.socket 'layout vertical'"
 	m:0x40 + c:55
 	Mod4 + v
 
-"echo 'layout horizontal' > /home/mil/fifos/wm-fifo"
+"foo-wm-c /tmp/foo-wm.socket 'layout horizontal'"
 	m:0x40 + c:56
 	Mod4 + b
 
-"echo 'layout grid' > /home/mil/fifos/wm-fifo"
+"foo-wm-c /tmp/foo-wm.socket 'layout grid'"
 	m:0x40 + c:57
 	Mod4 + n
 
-"echo 'layout max' > /home/mil/fifos/wm-fifo"
+"foo-wm-c /tmp/foo-wm.socket 'layout max'"
 	m:0x40 + c:58
 	Mod4 + m
 
 # Containerize Command
-"echo 'containerize client' > /home/mil/fifos/wm-fifo"
+"foo-wm-c  /tmp/foo-wm.socket 'containerize'"
 	m:0x40 + c:47
 	Mod4 + semicolon
 
-
 # Focus Commands
-"echo 'focus brother 1' > /home/mil/fifos/wm-fifo"
+"foo-wm-c  /tmp/foo-wm.socket 'focus brother 1'"
 	m:0x40 + c:44
 	Mod4 + j
 
-"echo 'focus brother 1' > /home/mil/fifos/wm-fifo"
+"foo-wm-c  /tmp/foo-wm.socket 'focus brother 1'"
 	m:0x40 + c:23
 	Mod4 + Tab
 
-"echo 'focus brother -1' > /home/mil/fifos/wm-fifo"
+"foo-wm-c  /tmp/foo-wm.socket 'focus brother -1'"
 	m:0x40 + c:45
 	Mod4 + k
 
-"echo 'focus pc -1' > /home/mil/fifos/wm-fifo"
+"foo-wm-c  /tmp/foo-wm.socket 'focus pc -1'"
 	m:0x40 + c:32
 	Mod4 + o
 
-"echo 'focus pc 1' > /home/mil/fifos/wm-fifo"
+"foo-wm-c  /tmp/foo-wm.socket 'focus pc -1'"
 	m:0x40 + c:33
 	Mod4 + p
 
 # Move Commands
-"echo 'move 1' > /home/mil/fifos/wm-fifo"
+"foo-wm-c  /tmp/foo-wm.socket 'move 1'"
 	m:0x41 + c:23
 	Shift+Mod4 + Tab
 
-"echo 'move 1' > /home/mil/fifos/wm-fifo"
+"foo-wm-c  /tmp/foo-wm.socket 'move 1'"
 	m:0x41 + c:44
 	Shift+Mod4 + j
 
-"echo 'move -1' > /home/mil/fifos/wm-fifo"
+"foo-wm-c  /tmp/foo-wm.socket 'move -1'"
 	m:0x41 + c:45
 
 
 # Zoom Commands
-"echo 'zoom -1' > /home/mil/fifos/wm-fifo"
+"foo-wm-c  /tmp/foo-wm.socket 'zoom -1'"
 	m:0x40 + c:31
 	Mod4 + i 
 
-"echo 'zoom 1' > /home/mil/fifos/wm-fifo"
+"foo-wm-c  /tmp/foo-wm.socket 'zoom 1'"
 	m:0x40 + c:30
 	Mod4 + u
 
 
 # Killing Clients
-"echo 'kill client' > /home/mil/fifos/wm-fifo"
+"foo-wm-c  /tmp/foo-wm.socket 'kill client'"
 	m:0x40 + c:24
 	Mod4 + q
 
 
 # Dumps the Tree
-"echo 'dump' > /home/mil/fifos/wm-fifo"
+"foo-wm-c  /tmp/foo-wm.socket 'dump tree'"
 	m:0x40 + c:28
 	Mod4 + t
 

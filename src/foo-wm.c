@@ -5,9 +5,12 @@
 #include <fcntl.h> 
 #include <string.h>
 #include <assert.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/un.h>
 
 #include "config.h"
-#include "fifo-wm.h"
+#include "foo-wm.h"
 #include "events.h"
 #include "tree.h"
 #include "commands.h"
@@ -15,32 +18,69 @@
 #include "window.h"
 
 void handleEvents(void) {
-	XEvent event; 
-	int fifoFd = 0, xFd = ConnectionNumber(display), readResult = 0;
-	char commands[256]; fd_set descriptors; 
-	struct timeval tv; tv.tv_sec = 200;  
+	XEvent event; 	
+	socklen_t returnAddressSize;
+	int socketFd, xFd, socketReturnFd;
+	struct sockaddr_un socketAddress, returnAddress;
+	char commands[256];  int commandsLength;
 
-	//Must open RDWR so select works properly
-	fifoFd = open(FIFO, O_RDWR | O_NONBLOCK);
+	/* Setup the X FD */
+	xFd = ConnectionNumber(display);
+
+	/* Get PID, Setup Socket Family, And Setup Address based on PID */
+	socketAddress.sun_family = AF_UNIX;
+	char * socketName = SOCKET_NAME;
+	if (!strcmp(socketName, "NONE")) {
+		pid_t pid = getpid();
+		socketName = sprintf(socketName, "foo-wm-%d.socket", pid);
+	}
+	sprintf(socketAddress.sun_path, "%s%s", SOCKET_PATH, socketName);
+	unlink(socketAddress.sun_path);
+
+	/* Setup Socket FD, Bind and Listen */
+	socketFd = socket(AF_UNIX, SOCK_STREAM, 0);
+	bind(socketFd, (struct sockaddr *)&socketAddress, sizeof(socketAddress));
+	listen(socketFd, 5);
+
+	/* Assemble the file descriptor set */
+	fd_set descriptors; 
 	for (;;) {
 		FD_ZERO(&descriptors); 
 		FD_SET(xFd, &descriptors); 
-		FD_SET(fifoFd, &descriptors);
+		FD_SET(socketFd, &descriptors);
 
-		if (select(fifoFd + 1, &descriptors, 0, 0, &tv)) {
+		if (select(socketFd + 1, &descriptors, NULL, NULL, NULL)) {
 
-			if ((readResult = read(fifoFd, commands, sizeof(commands))) > 0) {
-				commands[readResult] = '\0';
-				handleCommand(commands);
+			/* Anything on the Socket File Descriptor? */
+			if (FD_ISSET(socketFd, &descriptors)) {
+				/* Deal with events from the socket */
+				socketReturnFd = accept(
+						socketFd, 
+						(struct sockaddr*)&returnAddress, 
+						&returnAddressSize);
+				fprintf(stderr, "\n\nthe socket return FD IS %d\n\n", socketReturnFd);
+				if (socketReturnFd != -1) {
+					if ((commandsLength = recv(socketReturnFd, commands, sizeof(commands), 0)) > 1) {
+						commands[commandsLength] = '\0';
+						fprintf(stderr, "Recieved the message %s, from the socket\n", commands);
+						handleCommand(commands);
+
+					}
+				}
 			}
 
-			while (XPending(display)) {
-				XNextEvent(display, &event);
-				handleXEvent(&event);
+			/* Anything on the X File Descriptor? */
+			if (FD_ISSET(xFd, &descriptors)) {
+				while (XPending(display)) {
+					XNextEvent(display, &event);
+					handleXEvent(&event);
+				}
 			}
+
+
 		}
 	}
-	close(fifoFd);
+	close(socketFd);
 }
 
 void setup(void) {

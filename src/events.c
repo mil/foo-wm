@@ -4,7 +4,7 @@
 #include <string.h>
 #include <X11/Xlib.h>
 
-#include "fifo-wm.h"
+#include "foo-wm.h"
 #include "events.h"
 #include "tree.h"
 #include "commands.h"

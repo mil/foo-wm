@@ -4,7 +4,7 @@
 #include <math.h>
 
 
-#include "fifo-wm.h"
+#include "foo-wm.h"
 #include "util.h"
 
 

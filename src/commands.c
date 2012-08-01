@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "fifo-wm.h"
+#include "foo-wm.h"
 #include "commands.h"
 #include "tree.h"
 #include "util.h"
