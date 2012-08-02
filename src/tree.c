@@ -89,7 +89,7 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
 	fprintf(stderr, "Focusing %p", n);
 
 	Bool setView = False; //Wether the viewNode needs to be moved
-	if (focusPath) { 
+	if (focusPath && setFocused) { 
 		fprintf(stderr, "\n\nNode %p, is in the focus patho\n\n", n);
 		setView = unfocusNode(focusedNode, True);
 		if (setFocused && n -> parent)   n -> parent -> focus = n;

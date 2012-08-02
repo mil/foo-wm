@@ -95,6 +95,10 @@ void zoom(int level) {
 		
 		fprintf(stderr, "placeing yo");
 		placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+		if (focusedNode == viewNode && !isClient(focusedNode)) {
+			focusNode(focusedNode -> focus ?
+					focusedNode -> focus : focusedNode -> child , NULL, True, True);
+		}
 		level--;
 	}
 }
