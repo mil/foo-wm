@@ -67,10 +67,9 @@ void layout(char * l) {
 
 //Moves the current selection given amount
 void move(int amount) {
-	Node *startNode = focusedNode;
-	Node *swapNode = getBrother(startNode, amount);
+	Node *swapNode = getBrother(focusedNode, amount);
 
-	swapNodes(startNode, swapNode);
+	swapNodes(focusedNode, swapNode);
 	focusNode(focusedNode, NULL, True, True);
 }
 
@@ -86,9 +85,10 @@ void shift(char * directionString) {
 	else if (!strcmp(directionString, "down"))
 		direction = DOWN;
 
-	Node *swap = getBrotherByDirection(focusedNode, direction);
-	fprintf(stderr, "Got the brother %p\n", swap);
-
+	Node *swapNode = getBrotherByDirection(focusedNode, direction);
+	fprintf(stderr, "Swaping with %p", swapNode);
+	swapNodes(focusedNode, swapNode);
+	focusNode(focusedNode, NULL, True, True);
 
 }
 

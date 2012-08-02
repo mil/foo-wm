@@ -392,34 +392,30 @@ Node * getBrotherByDirection(Node * node, int direction) {
 	//Determine the brother
 	switch (direction) {
 		case LEFT:
-			if (((nodePosition - 1) % rows != 0) && node -> previous)
+			if (((nodePosition - 1) % cols != 0) && node -> previous)
 				return node -> previous;
 			break;
 		case RIGHT:
-			if ((nodePosition % rows != 0) && node -> next)
+			if ((nodePosition % cols != 0) && node -> next)
 				return node -> next;
 			break;
 		case UP:
 			dest = nodePosition - cols;
 			if (dest >= 0) {
 				n = node;
-				while (dest != nodePosition) {
-					n = n -> previous;
-					dest++;
-				}
+				while (dest != nodePosition)
+					n = n -> previous; dest++;
 				return n;
-			}	else { return NULL; }
+			}
 			break;
 		case DOWN:
 			dest = nodePosition + cols;
 			if (dest <= parentChildren) {
 				n = node;
-				while (dest != nodePosition) {
-					n = n -> next;
-					dest--;
-				}
+				while (dest != nodePosition)
+					n = n -> next; dest--;
 				return n;
-			} else { return NULL; }
+			} 
 			break;
 	}
 
