@@ -46,34 +46,40 @@ All user interaction with foo-wm takes place through its IPC via the socket. The
 ### dump
 Usage: 
 `dump`
+
 Dumps a tree view of the root container to STDERR.
 
 ### layout 
-Usage: 
+*Usage:*
 `layout vertical|horizontal|grid|max|tabbed|float|freefloat`
+
 Updates the layout of the current container. Currenly only vertical and horizontal layouts are supported, although future layouts planned include: floating, max, and tabbed.
 
 ### zoom 
-Usage: 
+*Usage:*
 `zoom -+delta`
+
 Controls the view of the screen. Using zoom with a negative delta will zoom out based on the current view node. Using zoom with a positive number will zoom the screen in one level closer to the focused node.
 
 ### focus 
-Usage:
+*Usage:*
 `focus brother|pc -+delta`
 `focus direction left|up|right|down`
+
 The focus command switches the node which is currently focused.
 
 ### move 
-Usage:
+*Usage:*
 `move brother|pc -+ delta`
 `move direction left/up/right/down`
+
 Moves the currently focused node. This wraps around if you attempt to move to a node that doesn't exist.
 
 ### shift
-Usage:
+*Usage:*
 `shift brother|pc -+ delta`
 `shift direction left|up|right|down`
+
 Shift the currently focused node. This is essentially the move command only instead of wrapping, shift will merge the node in the given direction.
 
 ### containerize
