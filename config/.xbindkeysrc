@@ -61,12 +61,25 @@
 	m:0x41 + c:23
 	Shift+Mod4 + Tab
 
-"foo-wm-c  /tmp/foo-wm.socket 'move 1'"
-	m:0x41 + c:44
-	Shift+Mod4 + j
+# Shift VIM-Esque Movement
+"foo-wm-c  /tmp/foo-wm.socket 'shift left'"
+	m:0x41 + c:43
+	Shift+Mod4 + h
 
-"foo-wm-c  /tmp/foo-wm.socket 'move -1'"
+"foo-wm-c  /tmp/foo-wm.socket 'shift down'"
+	m:0x41 + c:44
+	Shift+Mod4 + k
+
+
+"foo-wm-c  /tmp/foo-wm.socket 'shift up'"
 	m:0x41 + c:45
+	Shift+Mod4 + k
+
+"foo-wm-c  /tmp/foo-wm.socket 'shift right'"
+	m:0x41 + c:46
+	Shift+Mod4 + l
+
+
 
 
 # Zoom Commands
