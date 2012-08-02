@@ -44,49 +44,61 @@ IPC Commands
 All user interaction with foo-wm takes place through its IPC via the socket. The one exception to this is mouse actions which are bound by the IPC.
 
 ### dump
-Usage: 
+**Usage:**
 `dump`
 
 Dumps a tree view of the root container to STDERR.
 
 ### layout 
-*Usage:*
+**Usage:**
 `layout vertical|horizontal|grid|max|tabbed|float|freefloat`
 
 Updates the layout of the current container. Currenly only vertical and horizontal layouts are supported, although future layouts planned include: floating, max, and tabbed.
 
 ### zoom 
-*Usage:*
+**Usage:**
 `zoom -+delta`
 
 Controls the view of the screen. Using zoom with a negative delta will zoom out based on the current view node. Using zoom with a positive number will zoom the screen in one level closer to the focused node.
 
 ### focus 
-*Usage:*
+**Usage:**
 `focus brother|pc -+delta`
 `focus direction left|up|right|down`
 
 The focus command switches the node which is currently focused.
 
 ### move 
-*Usage:*
+**Usage:**
 `move brother|pc -+ delta`
 `move direction left/up/right/down`
 
 Moves the currently focused node. This wraps around if you attempt to move to a node that doesn't exist.
 
 ### shift
-*Usage:*
+**Usage:**
 `shift brother|pc -+ delta`
 `shift direction left|up|right|down`
 
 Shift the currently focused node. This is essentially the move command only instead of wrapping, shift will merge the node in the given direction.
 
 ### containerize
+**Usage:**
+`containerize`
+
 If the current client is in a container with 2 or more other clients, containerize creates  new container and parents the current client into this new container.
 
 ### uncontainerize
+**Usage:**
+`uncontainerize`
+
 Removes the current focused node from its container.
+
+### kill
+**Usage:**
+`kill`
+
+Kills the currently focused node (and any nodes that are the focused node's children).
 
 Inspiration
 ------
