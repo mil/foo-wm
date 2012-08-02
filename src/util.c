@@ -48,3 +48,10 @@ void gridDimensions(int children, int * rows, int * cols) {
 	}
 }
 
+Bool isPrime(int number) {
+	Bool prime = True;
+	int i;
+	for(i = 2; i <= number / 2; i++)
+		if(number % i == 0) { prime = False; break; }	
+	return prime;
+}

@@ -372,10 +372,7 @@ Node * getBrother(Node * node, int delta) {
  * */
 Node * getBrotherByDirection(Node * node, int direction) {
 	if (!node || !node -> parent) return NULL;
-
-	// In Max layout directional focus aint a work
-	if (node -> parent && node -> parent -> layout == MAX)
-		return NULL;
+	if (node -> parent && node -> parent -> layout == MAX) return NULL;
 
 	// Count up children and find us in our parent
 	int parentChildren = 0, nodePosition = -1;
@@ -388,9 +385,19 @@ Node * getBrotherByDirection(Node * node, int direction) {
 
 	// Get the dimensions of the current grid
 	int rows = 0, cols = 0;
-	gridDimensions(parentChildren, &rows, &cols);
+	switch (node -> parent -> layout) {
+		case VERTICAL:
+			cols = parentChildren; rows = 1;
+			break;
+		case HORIZONTAL:
+			cols = 1; rows = parentChildren;
+			break;
+		case GRID:
+			gridDimensions(parentChildren, &rows, &cols);
+			break;
+	}
 
-	int count, dest;
+	int dest;
 	//Determine the brother
 	switch (direction) {
 		case LEFT:
@@ -405,6 +412,7 @@ Node * getBrotherByDirection(Node * node, int direction) {
 			dest = nodePosition - cols;
 			if (dest >= 0) {
 				n = node;
+				if (!node -> next && isPrime(parentChildren)) dest++;
 				while (dest != nodePosition) {
 					n = n -> previous; dest++;
 				}
@@ -416,11 +424,14 @@ Node * getBrotherByDirection(Node * node, int direction) {
 			if (dest <= parentChildren) {
 				n = node;
 				while (dest != nodePosition) {
-					fprintf(stderr, "Going to get the next of %p", n);
 					n = n -> next; dest--; 
 				}
 				return n;
-			} 
+			} else if (dest <= parentChildren + 1 && isPrime(parentChildren)) { 
+				n = node; // Prime odd case
+				while (n -> next) { n = n -> next; }
+				return n;
+			}
 			break;
 	}
 
