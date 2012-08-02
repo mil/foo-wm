@@ -35,6 +35,8 @@ char * handleCommand(char * request) {
 		focus(tokens[1], atoi(tokens[2]));
 	else if (!strcmp(tokens[0], "move"))
 		move(atoi(tokens[1]));
+	else if (!strcmp(tokens[0], "shift"))
+		shift(tokens[1]);
 	else if (!strcmp(tokens[0], "containerize"))
 		containerize();
 	else if (!strcmp(tokens[0], "zoom"))
@@ -42,6 +44,7 @@ char * handleCommand(char * request) {
 	else if (!strcmp(tokens[0], "kill"))
 		kill();
 
+	XFlush(display);
 	char * response = "I'm sending back to the socket";
 	return response;
 }
@@ -69,6 +72,24 @@ void move(int amount) {
 
 	swapNodes(startNode, swapNode);
 	focusNode(focusedNode, NULL, True, True);
+}
+
+
+void shift(char * directionString) {
+	int direction = -1;
+	if (!strcmp(directionString, "left"))
+		direction = LEFT;
+	else if (!strcmp(directionString, "up"))
+		direction = UP;
+	else if (!strcmp(directionString, "right"))
+		direction = RIGHT;
+	else if (!strcmp(directionString, "down"))
+		direction = DOWN;
+
+	Node *swap = getBrotherByDirection(focusedNode, direction);
+	fprintf(stderr, "Got the brother %p\n", swap);
+
+
 }
 
 

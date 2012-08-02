@@ -1,6 +1,7 @@
 #include <X11/Xlib.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "foo-wm.h"
 #include "tree.h"
 #include "lookup.h"
@@ -88,15 +89,15 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
 	if (!n || n == focusedNode) return;
 	fprintf(stderr, "Focusing %p", n);
 
-	Bool setView = False; //Wether the viewNode needs to be moved
+	//Bool setView = False; //Wether the viewNode needs to be moved
 	if (focusPath && setFocused) { 
 		fprintf(stderr, "\n\nNode %p, is in the focus patho\n\n", n);
-		setView = unfocusNode(focusedNode, True);
+		unfocusNode(focusedNode, True);
 		if (setFocused && n -> parent)   n -> parent -> focus = n;
 	}
 
 	if (setFocused)  focusedNode = n;
-	if (setView)     viewNode    = n;
+	//if (setView)     viewNode    = n;
 
 	// Are we at the bottom level	
 	if (isClient(n)) {
@@ -128,10 +129,7 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
 		}
 	}
 
-	if (setView) placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-
-	/* Again why is this needed */
-	XFlush(display);
+	//if (setView) placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 }
 
 
@@ -280,9 +278,6 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 			}
 		}
 
-		//Why is this needed
-		XFlush(display);
-
 	} else {
 		//Count up children prior to loop
 		int children = 0; int i = 0; Node *a = NULL;
@@ -368,6 +363,67 @@ Node * getBrother(Node * node, int delta) {
 	}
 
 	return node;
+}
+
+/* Gets brother in specific direction 
+ * If can't get brother in direction, returns NULL
+ * */
+Node * getBrotherByDirection(Node * node, int direction) {
+	if (!node) return NULL;
+
+	// In Max layout directional focus aint a work
+	if (node -> parent && node -> parent -> layout == MAX)
+		return NULL;
+
+	// Count up children and find us in our parent
+	int parentChildren = 0, nodePosition = -1;
+	Node *n = NULL;
+	for (n = node -> parent -> child; n; n = n -> next) {
+		parentChildren++;
+		if (n == node) nodePosition = parentChildren;
+	}
+
+
+	// Get the dimensions of the current grid
+	int rows = 0, cols = 0;
+	gridDimensions(parentChildren, &rows, &cols);
+
+	int count, dest;
+	//Determine the brother
+	switch (direction) {
+		case LEFT:
+			if (((nodePosition - 1) % rows != 0) && node -> previous)
+				return node -> previous;
+			break;
+		case RIGHT:
+			if ((nodePosition % rows != 0) && node -> next)
+				return node -> next;
+			break;
+		case UP:
+			dest = nodePosition - cols;
+			if (dest >= 0) {
+				n = node;
+				while (dest != nodePosition) {
+					n = n -> previous;
+					dest++;
+				}
+				return n;
+			}	else { return NULL; }
+			break;
+		case DOWN:
+			dest = nodePosition + cols;
+			if (dest <= parentChildren) {
+				n = node;
+				while (dest != nodePosition) {
+					n = n -> next;
+					dest--;
+				}
+				return n;
+			} else { return NULL; }
+			break;
+	}
+
+	return NULL;
 }
 
 /* Swaps nodes within the same container of the tree 
