@@ -183,6 +183,7 @@ void unparentNode(Node *node) {
 
 
 void brotherNode(Node *node, Node * brother, int position) {
+	if (!node || !brother) return;
 	node -> parent = brother -> parent;
 
 	if (position == 0) {
@@ -192,6 +193,7 @@ void brotherNode(Node *node, Node * brother, int position) {
 		} else {
 			//Shift previous pointer
 			node -> previous = brother -> previous;
+			if (node -> previous) node -> previous -> next = node;
 			brother -> previous = node;
 		}
 	} else if (position == 1) {

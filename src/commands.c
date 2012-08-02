@@ -75,21 +75,29 @@ void move(int amount) {
 
 
 void shift(char * directionString) {
-	int direction = -1;
-	if (!strcmp(directionString, "left"))
-		direction = LEFT;
-	else if (!strcmp(directionString, "up"))
+	int direction = -1, position = 0;
+	if (!strcmp(directionString, "left")) {
+		direction = LEFT; position = 0;
+	} else if (!strcmp(directionString, "up")) {
 		direction = UP;
-	else if (!strcmp(directionString, "right"))
-		direction = RIGHT;
-	else if (!strcmp(directionString, "down"))
+	} else if (!strcmp(directionString, "right")) {
+		direction = RIGHT; position = 1;
+	} else if (!strcmp(directionString, "down")) {
 		direction = DOWN;
+	}
 
 	Node *swapNode = getBrotherByDirection(focusedNode, direction);
-	fprintf(stderr, "Swaping with %p", swapNode);
-	swapNodes(focusedNode, swapNode);
-	focusNode(focusedNode, NULL, True, True);
+	if (swapNode) {
+		unparentNode(focusedNode);
+		brotherNode(focusedNode, swapNode, position);	
 
+		placeNode(focusedNode -> parent, focusedNode -> parent -> x, focusedNode -> parent -> y,
+				focusedNode -> parent -> width, focusedNode -> parent -> height);
+		//swapNodes(focusedNode, swapNode);
+		focusNode(focusedNode, NULL, True, True);
+	} else {
+
+	}
 }
 
 
