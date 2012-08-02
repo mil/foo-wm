@@ -371,7 +371,7 @@ Node * getBrother(Node * node, int delta) {
  * If can't get brother in direction, returns NULL
  * */
 Node * getBrotherByDirection(Node * node, int direction) {
-	if (!node) return NULL;
+	if (!node || !node -> parent) return NULL;
 
 	// In Max layout directional focus aint a work
 	if (node -> parent && node -> parent -> layout == MAX)
@@ -405,8 +405,9 @@ Node * getBrotherByDirection(Node * node, int direction) {
 			dest = nodePosition - cols;
 			if (dest >= 0) {
 				n = node;
-				while (dest != nodePosition)
+				while (dest != nodePosition) {
 					n = n -> previous; dest++;
+				}
 				return n;
 			}
 			break;
@@ -414,8 +415,10 @@ Node * getBrotherByDirection(Node * node, int direction) {
 			dest = nodePosition + cols;
 			if (dest <= parentChildren) {
 				n = node;
-				while (dest != nodePosition)
-					n = n -> next; dest--;
+				while (dest != nodePosition) {
+					fprintf(stderr, "Going to get the next of %p", n);
+					n = n -> next; dest--; 
+				}
 				return n;
 			} 
 			break;
