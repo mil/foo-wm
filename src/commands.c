@@ -143,8 +143,9 @@ void zoom(int level) {
 void focus(char * argA, char * argB) {
 	if (!strcmp(argA, "direction")) {
 		int direction = directionStringToInt(argB);
-
-
+		Node *newFocus;
+		newFocus = getBrotherByDirection(focusedNode, direction);
+		focusNode(newFocus, NULL, True, True);
 
 	} else {	
 		int delta = atoi(argB);
