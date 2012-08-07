@@ -75,16 +75,7 @@ void move(int amount) {
 
 
 void shift(char * directionString) {
-	int direction;
-	if (!strcmp(directionString, "left"))
-		direction = LEFT; 
-	else if (!strcmp(directionString, "up"))
-		direction = UP;
-	else if (!strcmp(directionString, "right"))
-		direction = RIGHT; 
-	else if (!strcmp(directionString, "down"))
-		direction = DOWN;
-	else return;
+	int direction = directionStringToInt(directionString);
 
 	int c = 0;
 	Node *insertNode = NULL, *currentNode = focusedNode;
@@ -150,18 +141,9 @@ void zoom(int level) {
 }
 
 void focus(char * argA, char * argB) {
-
-	/* TODO: Should change this var name eventually */
 	if (!strcmp(argA, "direction")) {
-		if (!strcmp(argB, "left")) {
+		int direction = directionStringToInt(argB);
 
-		} else if (!strcmp(argB, "up")) {
-
-		} else if (!strcmp(argB, "right")) {
-
-		} else if (!strcmp(argB, "down")) {
-
-		}
 
 
 	} else {	

@@ -55,3 +55,11 @@ Bool isPrime(int number) {
 		if(number % i == 0) { prime = False; break; }	
 	return prime;
 }
+
+int directionStringToInt(char * directionString) {
+	if (!strcmp(directionString, "left"))       return LEFT; 
+	else if (!strcmp(directionString, "up"))    return UP;
+	else if (!strcmp(directionString, "right")) return RIGHT; 
+	else if (!strcmp(directionString, "down"))  return DOWN;
+	else return -1;
+}

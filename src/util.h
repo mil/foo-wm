@@ -3,3 +3,4 @@ int xError(XErrorEvent *e);
 Node * allocateNode();
 void gridDimensions(int children, int * rows, int * cols);
 Bool isPrime(int number);
+int directionStringTOint(char * directionString);
