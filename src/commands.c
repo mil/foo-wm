@@ -32,7 +32,7 @@ char * handleCommand(char * request) {
 	else if (!strcmp(tokens[0], "layout"))
 		layout(tokens[1]);
 	else if (!strcmp(tokens[0], "focus"))
-		focus(tokens[1], atoi(tokens[2]));
+		focus(tokens[1], tokens[2]);
 	else if (!strcmp(tokens[0], "move"))
 		move(atoi(tokens[1]));
 	else if (!strcmp(tokens[0], "shift"))
@@ -149,28 +149,46 @@ void zoom(int level) {
 	}
 }
 
-void focus(char * brotherOrPc, int delta) {
-	fprintf(stderr, "Cycling focus");
-	int brotherSwitch = -1;
-	if (!strcmp(brotherOrPc, "brother")) brotherSwitch = 1;
-	else if (!strcmp(brotherOrPc, "pc")) brotherSwitch = 0;
-	else return;
+void focus(char * argA, char * argB) {
 
-	while (delta != 0) {
-		Node * newFocus;
+	/* TODO: Should change this var name eventually */
+	if (!strcmp(argA, "direction")) {
+		if (!strcmp(argB, "left")) {
 
-		if (brotherSwitch) {
-			newFocus = getBrother(focusedNode, (delta < 0) ? -1 : 1);
-		} else {
-			newFocus = (delta < 0) ? 
-				focusedNode -> parent : 
-				(focusedNode -> focus ? focusedNode -> focus : focusedNode -> child);
+		} else if (!strcmp(argB, "up")) {
+
+		} else if (!strcmp(argB, "right")) {
+
+		} else if (!strcmp(argB, "down")) {
+
 		}
 
-		fprintf(stderr, "Going to focus node: %p", newFocus);
 
-		focusNode(newFocus, NULL, True, True);
-		delta = delta + ( delta > 0 ? -1 : 1);	
+	} else {	
+		int delta = atoi(argB);
+
+		fprintf(stderr, "Cycling focus");
+		int brotherSwitch = -1;
+		if (!strcmp(argA, "brother")) brotherSwitch = 1;
+		else if (!strcmp(argA, "pc")) brotherSwitch = 0;
+		else return;
+
+		while (delta != 0) {
+			Node * newFocus;
+
+			if (brotherSwitch) {
+				newFocus = getBrother(focusedNode, (delta < 0) ? -1 : 1);
+			} else {
+				newFocus = (delta < 0) ? 
+					focusedNode -> parent : 
+					(focusedNode -> focus ? focusedNode -> focus : focusedNode -> child);
+			}
+
+			fprintf(stderr, "Going to focus node: %p", newFocus);
+
+			focusNode(newFocus, NULL, True, True);
+			delta = delta + ( delta > 0 ? -1 : 1);	
+		}
 	}
 }
 
