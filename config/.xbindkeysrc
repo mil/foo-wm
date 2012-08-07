@@ -37,16 +37,26 @@
 
 # Focus Commands
 "foo-wm-c  /tmp/foo-wm.socket 'focus brother 1'"
-	m:0x40 + c:44
-	Mod4 + j
-
-"foo-wm-c  /tmp/foo-wm.socket 'focus brother 1'"
 	m:0x40 + c:23
 	Mod4 + Tab
 
-"foo-wm-c  /tmp/foo-wm.socket 'focus brother -1'"
+"foo-wm-c  /tmp/foo-wm.socket 'focus direction left'"
+	m:0x40 + c:43
+	Mod4 + h
+
+"foo-wm-c  /tmp/foo-wm.socket 'focus direction down'"
+	m:0x40 + c:44
+	Mod4 + j
+
+"foo-wm-c  /tmp/foo-wm.socket 'focus direction up'"
 	m:0x40 + c:45
 	Mod4 + k
+
+"foo-wm-c  /tmp/foo-wm.socket 'focus direction right'"
+	m:0x40 + c:46
+	Mod4 + l
+
+
 
 "foo-wm-c  /tmp/foo-wm.socket 'focus pc -1'"
 	m:0x40 + c:32
