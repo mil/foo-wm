@@ -76,26 +76,13 @@ void move(int amount) {
 
 void shift(char * directionString) {
 	int direction = directionStringToInt(directionString);
-
-	int c = 0;
-	Node *insertNode = NULL, *currentNode = focusedNode;
-	while (!insertNode) { 
-		insertNode = getBrotherByDirection(currentNode, direction);
-		if (!insertNode) {
-			if (currentNode -> parent) currentNode = currentNode -> parent;
-			else break;
-		} else if (c == 0 && !isClient(insertNode)) {
-			insertNode = insertNode -> child;
-		}
-		c++;
-	}
+	Node * insertNode = getBrotherByDirection(focusedNode, direction);
 
 	if (insertNode) {
 		Node * oldParent = focusedNode -> parent;
 		unparentNode(focusedNode);
 
 		placeNode(oldParent, oldParent -> x, oldParent -> y, oldParent -> width, oldParent -> height);
-
 		brotherNode(focusedNode, insertNode, direction == LEFT || direction == UP ? 0 : 1);	
 
 		placeNode(focusedNode -> parent, focusedNode -> parent -> x, focusedNode -> parent -> y,
@@ -103,7 +90,6 @@ void shift(char * directionString) {
 
 		focusNode(focusedNode, NULL, True, True);
 	} else {
-
 
 	}
 }
@@ -219,3 +205,4 @@ void kill(void) {
 				viewNode -> x, viewNode -> y, viewNode -> width, viewNode -> height);
 	}
 }
+

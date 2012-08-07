@@ -9,7 +9,10 @@ void focusNode(Node * node, XEvent * event, Bool setFocused, Bool focusPath);
 void unmapNode(Node * node);
 void placeNode(Node * node, int x, int y, int width, int height);
 void swapNodes(Node * a, Node * b);
+
 Node * getBrother(Node * origin, int delta);
+Node * getNodeByDirection(Node * originNode, int direction);
+Node * getBrotherByDirection(Node * node, int direction);
 Node * getBrotherClient(Node * node, int direction);
 Node * getClosestClient(Node * node);
 
