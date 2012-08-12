@@ -130,7 +130,8 @@ void focus(char * argA, char * argB) {
 	if (!strcmp(argA, "direction")) {
 		int direction = directionStringToInt(argB);
 		Node *newFocus;
-		newFocus = getBrotherByDirection(focusedNode, direction);
+		newFocus = getClientByDirection(focusedNode, direction);
+		fprintf(stderr, "Directional focusing %p\n", newFocus);
 		focusNode(newFocus, NULL, True, True);
 
 	} else {	

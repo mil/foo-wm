@@ -12,6 +12,8 @@ void swapNodes(Node * a, Node * b);
 
 Node * getBrother(Node * origin, int delta);
 Node * getNodeByDirection(Node * originNode, int direction);
+Node * getClientByDirection(Node * originNode, int direction);
+
 Node * getBrotherByDirection(Node * node, int direction);
 Node * getBrotherClient(Node * node, int direction);
 Node * getClosestClient(Node * node);
