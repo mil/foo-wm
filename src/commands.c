@@ -119,8 +119,7 @@ void zoom(int level) {
 		fprintf(stderr, "placeing yo");
 		placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 		if (focusedNode == viewNode && !isClient(focusedNode)) {
-			focusNode(focusedNode -> focus ?
-					focusedNode -> focus : focusedNode -> child , NULL, True, True);
+			focusNode(focusOrChildOf(focusedNode), NULL, True, True);
 		}
 		level--;
 	}
@@ -150,8 +149,7 @@ void focus(char * argA, char * argB) {
 				newFocus = getBrother(focusedNode, (delta < 0) ? -1 : 1);
 			} else {
 				newFocus = (delta < 0) ? 
-					focusedNode -> parent : 
-					(focusedNode -> focus ? focusedNode -> focus : focusedNode -> child);
+					focusedNode -> parent : focusOrChildOf(focusedNode);
 			}
 
 			fprintf(stderr, "Going to focus node: %p", newFocus);

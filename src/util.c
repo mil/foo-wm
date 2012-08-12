@@ -56,6 +56,12 @@ Bool isPrime(int number) {
 	return prime;
 }
 
+Node * focusOrChildOf(Node * node) {
+	if (!node) return NULL;
+	else if (node -> focus) return node -> focus;
+	else node -> child;
+}
+
 int directionStringToInt(char * directionString) {
 	if (!strcmp(directionString, "left"))       return LEFT; 
 	else if (!strcmp(directionString, "up"))    return UP;
