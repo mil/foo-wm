@@ -396,10 +396,13 @@ Node * getClientByDirection(Node * originNode, int direction) {
 		if (!returnNode) {
 			/* Search up until we have a brother in the direction */
 			if (originNode -> parent) originNode = originNode -> parent;
-			else break;;
+			else break;
 		} else {
 			/* Search down until we have a client */
-			while (!isClient(returnNode)) returnNode = returnNode -> child;
+			while (!isClient(returnNode)) {
+				returnNode = returnNode -> focus ? 
+					returnNode -> focus : returnNode -> child;
+			}
 		}
 		c++;
 	}
