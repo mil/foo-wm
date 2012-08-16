@@ -459,8 +459,9 @@ Node * getBrotherByDirection(Node * node, int direction) {
 			if (dest > 0) {
 				n = node;
 				if (!node -> next && cols != 1 && isPrime(parentChildren)) dest++;
-				while (dest != nodePosition)
+				while (dest != nodePosition) {
 					n = n -> previous; dest++;
+        }
 				return n;
 			}
 			break;
@@ -469,8 +470,9 @@ Node * getBrotherByDirection(Node * node, int direction) {
       if (rows == 1) { break;
       } else if (dest <= parentChildren) {
 				n = node;
-				while (dest != nodePosition)
+				while (dest != nodePosition) {
 					n = n -> next; dest--; 
+        }
 				return n;
 			} else if (dest <= parentChildren + 1 && isPrime(parentChildren)) { 
 				n = node; // Prime odd case
