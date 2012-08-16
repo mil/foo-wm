@@ -32,7 +32,7 @@ void handleEvents(void) {
   char * socketName = SOCKET_NAME;
   if (!strcmp(socketName, "NONE")) {
     pid_t pid = getpid();
-    socketName = sprintf(socketName, "foo-wm-%d.socket", pid);
+    *socketName = sprintf(socketName, "foo-wm-%d.socket", pid);
   }
   sprintf(socketAddress.sun_path, "%s%s", SOCKET_PATH, socketName);
   unlink(socketAddress.sun_path);
