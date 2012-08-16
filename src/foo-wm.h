@@ -3,7 +3,7 @@
 #include "structs.h"
 
 //X Server
-Display	*display;
+Display *display;
 int screen, activeScreen;
 int rootX, rootY, rootWidth, rootHeight;
 Window root; 
@@ -20,7 +20,7 @@ Lookup * lookup;
 int clientPadding, containerPadding;
 int defaultLayout, border;
 long activeFocusedColor, activeUnfocusedColor, 
-		 inactiveFocusedColor, inactiveUnfocusedColor;
+     inactiveFocusedColor, inactiveUnfocusedColor;
 
 void setup(void);
 void handleEvents(void);

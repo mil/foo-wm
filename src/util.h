@@ -4,4 +4,4 @@ Node * allocateNode();
 void gridDimensions(int children, int * rows, int * cols);
 Bool isPrime(int number);
 Node * focusOrChildOf(Node * node);
-int directionStringTOint(char * directionString);
+int directionStringToInt(char * directionString);
