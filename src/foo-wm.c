@@ -58,7 +58,6 @@ void handleEvents(void) {
 						socketFd, 
 						(struct sockaddr*)&returnAddress, 
 						&returnAddressSize);
-				fprintf(stderr, "\n\nthe socket return FD IS %d\n\n", socketReturnFd);
 				if (socketReturnFd != -1) {
 					if ((commandsLength = recv(socketReturnFd, commands, sizeof(commands), 0)) > 1) {
 						commands[commandsLength] = '\0';

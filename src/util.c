@@ -34,6 +34,8 @@ Node * allocateNode() {
 }
 
 void gridDimensions(int children, int * rows, int * cols) {
+	if (children == 2) { *rows = 1; *cols = 2; return; } /* Edgecase */
+
 	int square = (int) sqrt(children);
 	int r = square;
 

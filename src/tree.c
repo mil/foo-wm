@@ -194,8 +194,8 @@ void brotherNode(Node *node, Node * brother, int position) {
 			//Shift previous pointer
 			node -> previous = brother -> previous;
 			if (node -> previous) node -> previous -> next = node;
-			brother -> previous = node;
 		}
+		brother -> previous = node;
 	} else if (position == 1) {
 		node -> previous = brother;
 		node -> next = brother -> next;
@@ -391,6 +391,7 @@ Node * getClientByDirection(Node * originNode, int direction) {
 	int c = 0;
 	Node *returnNode = NULL;
 
+
 	while (!returnNode) { 
 		returnNode = getBrotherByDirection(originNode, direction);
 		if (!returnNode) {
@@ -425,6 +426,7 @@ Node * getBrotherByDirection(Node * node, int direction) {
 	}
 
 
+	fprintf(stderr, "Getting grid dems for %d, Layout = %d\n", parentChildren, node -> parent -> layout);
 	// Get the dimensions of the current grid
 	int rows = 0, cols = 0;
 	switch (node -> parent -> layout) {
@@ -439,6 +441,8 @@ Node * getBrotherByDirection(Node * node, int direction) {
 			break;
 	}
 
+
+
 	int dest;
 	//Determine the brother
 	switch (direction) {
@@ -452,22 +456,21 @@ Node * getBrotherByDirection(Node * node, int direction) {
 			break;
 		case UP:
 			dest = nodePosition - cols;
-			if (dest >= 0) {
+			if (dest > 0) {
 				n = node;
 				if (!node -> next && cols != 1 && isPrime(parentChildren)) dest++;
-				while (dest != nodePosition) {
+				while (dest != nodePosition)
 					n = n -> previous; dest++;
-				}
 				return n;
 			}
 			break;
 		case DOWN:
 			dest = nodePosition + cols;
-			if (dest <= parentChildren) {
+      if (rows == 1) { break;
+      } else if (dest <= parentChildren) {
 				n = node;
-				while (dest != nodePosition) {
+				while (dest != nodePosition)
 					n = n -> next; dest--; 
-				}
 				return n;
 			} else if (dest <= parentChildren + 1 && isPrime(parentChildren)) { 
 				n = node; // Prime odd case
