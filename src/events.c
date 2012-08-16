@@ -28,7 +28,7 @@ void eMapRequest(XEvent *event) {
   if (focusedNode == viewNode) {
     fprintf(stderr, "Focused node is equal to the viewnode\n");
     containerize();
-    viewNode = viewNode -> parent;
+    viewNode = viewNode -> parent ? viewNode -> parent : viewNode;
 
     //This is the case in which we reparented the root node
     if (focusedNode == rootNode) { rootNode = viewNode; }
