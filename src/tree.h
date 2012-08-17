@@ -11,7 +11,6 @@ void placeNode(Node * node, int x, int y, int width, int height);
 void swapNodes(Node * a, Node * b);
 
 Node * getBrother(Node * origin, int delta);
-Node * getNodeByDirection(Node * originNode, int direction);
 Node * getClientByDirection(Node * originNode, int direction);
 
 Bool nodeIsParentOf(Node * nodeA, Node * nodeB);

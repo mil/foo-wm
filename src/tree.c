@@ -367,25 +367,6 @@ Node * getBrother(Node * node, int delta) {
   return node;
 }
 
-/* Runs getBrotherByDirection til we get a client */
-Node * getNodeByDirection(Node * originNode, int direction) {
-
-  int c = 0;
-  Node *returnNode = NULL;
-  while (!returnNode) { 
-    returnNode = getBrotherByDirection(originNode, direction);
-    if (!returnNode) {
-      if (originNode -> parent) originNode = originNode -> parent;
-      else break;
-    } else if (!isClient(returnNode)) {
-      returnNode = returnNode -> child;
-    } else {
-      return returnNode;
-    }
-    c++;
-  }
-  return NULL;
-}
 
 Node * getClientByDirection(Node * originNode, int direction) {
   int c = 0;
