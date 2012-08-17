@@ -407,8 +407,23 @@ Node * getClientByDirection(Node * originNode, int direction) {
     }
     c++;
   }
-  return returnNode;
+  return nodeIsParentOf(viewNode, returnNode) ?  returnNode : NULL;
 }
+
+/* Searches nodeA for an occurance of nodeB
+ * if successful, return true */
+Bool nodeIsParentOf(Node * nodeA, Node * nodeB) {
+  if (nodeA == nodeB) return True;
+
+  Node *n = NULL;
+  for (n = nodeA -> child; n; n = n -> next) {
+    if (nodeIsParentOf(n, nodeB))
+      return True;
+  }
+
+  return False;
+}
+
 
 /* Gets brother in specific direction 
  * If can't get brother in direction, returns NULL

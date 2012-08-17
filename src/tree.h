@@ -14,6 +14,7 @@ Node * getBrother(Node * origin, int delta);
 Node * getNodeByDirection(Node * originNode, int direction);
 Node * getClientByDirection(Node * originNode, int direction);
 
+Bool nodeIsParentOf(Node * nodeA, Node * nodeB);
 Node * getBrotherByDirection(Node * node, int direction);
 Node * getBrotherClient(Node * node, int direction);
 Node * getClosestClient(Node * node);
