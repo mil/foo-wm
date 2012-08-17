@@ -23,7 +23,6 @@ void eMapRequest(XEvent *event) {
       True, ButtonPressMask | ButtonReleaseMask, GrabModeAsync, GrabModeSync,
       None, None);
 
-  fprintf(stderr, "\n\nIFFFFF\n\n");
   //Containerize and move the viewNode
   if (focusedNode == viewNode) {
     fprintf(stderr, "Focused node is equal to the viewnode\n");

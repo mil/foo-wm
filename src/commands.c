@@ -161,13 +161,14 @@ void focus(char * argA, char * argB) {
 }
 
 void containerize(void) {
-  if (!focusedNode || isOnlyChild(focusedNode)) return;
+  if (!focusedNode) return;
   if (focusedNode -> child && !isClient(focusedNode -> child))
     if (isOnlyChild(focusedNode -> child)) return;
 
-  Node *insertNode, * newContainer = allocateNode(); int insertPosition;
-  if (focusedNode -> parent -> focus == focusedNode)  //Update parent focus ptr
+  Node *insertNode, *newContainer = allocateNode(); int insertPosition;
+  if (focusedNode -> parent && focusedNode -> parent -> focus == focusedNode)
     focusedNode -> parent -> focus = newContainer;
+
   if (focusedNode -> previous) {
     insertNode = focusedNode -> previous; insertPosition = NEXT;
   } else {
