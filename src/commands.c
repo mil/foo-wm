@@ -59,6 +59,8 @@ void layout(char * l) {
   else if (!strcmp(l, "horizontal")) newLayout = HORIZONTAL;
   else if (!strcmp(l, "grid"))       newLayout = GRID;
   else if (!strcmp(l, "max"))        newLayout = MAX;
+  else if (!strcmp(l, "float"))      newLayout = FLOAT;
+
 
   setNode -> layout = newLayout;
   placeNode(setNode, 
@@ -78,19 +80,29 @@ void shift(char * directionString) {
   int direction = directionStringToInt(directionString);
   Node * insertNode = getBrotherByDirection(focusedNode, direction);
 
+
+  Node * oldParent = focusedNode -> parent;
+  unparentNode(focusedNode);
+  placeNode(oldParent, oldParent -> x, oldParent -> y, oldParent -> width, oldParent -> height);
+
+  /* Shifting within our current container */
   if (insertNode) {
-    Node * oldParent = focusedNode -> parent;
-    unparentNode(focusedNode);
-
-    placeNode(oldParent, oldParent -> x, oldParent -> y, oldParent -> width, oldParent -> height);
+    while (!isClient(insertNode)) {
+      insertNode = insertNode -> focus ? insertNode -> focus : insertNode -> child;
+    }
     brotherNode(focusedNode, insertNode, direction == LEFT || direction == UP ? 0 : 1); 
-
     placeNode(focusedNode -> parent, focusedNode -> parent -> x, focusedNode -> parent -> y,
         focusedNode -> parent -> width, focusedNode -> parent -> height);
 
     focusNode(focusedNode, NULL, True, True);
   } else {
+    /* Shifting outside of our container */
+   
+    Node * nf = getClientByDirection(focusedNode, direction);
 
+    brotherNode(focusedNode, nf, direction == LEFT || direction == UP ? 0 : 1); 
+    placeNode(focusedNode -> parent, focusedNode -> parent -> x, focusedNode -> parent -> y,
+        focusedNode -> parent -> width, focusedNode -> parent -> height);
   }
 }
 

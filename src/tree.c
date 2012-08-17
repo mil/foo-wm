@@ -21,10 +21,12 @@ void crawlNode(Node * node, int level) {
   } else {
     char *label;
     switch (node -> layout) {
-      case 0: label = "Vertical"; break;
-      case 1: label = "Horizontal"; break;
-      case 2: label = "Grid"; break;
-      case 3: label = "Max"; break;
+      case VERTICAL   : label = "Vertical"; break;
+      case HORIZONTAL : label = "Horizontal"; break;
+      case GRID       : label = "Grid"; break;
+      case MAX        : label = "Max"; break;
+      case FLOAT      : label = "Float"; break;
+
     }
 
     fprintf(stderr, "Container (%p) %s (focus=%p)", node, label, node -> focus);
@@ -261,7 +263,6 @@ void placeNode(Node * node, int x, int y, int width, int height) {
         if (b == focusedNode) inFocusPath = True;
       } while (b -> parent);
     }
-    fprintf(stderr, "Determining color for %p", node);
     if (inFocusPath) {
       if (focusedNode == node) {
         XSetWindowBorder(display, node -> window, activeFocusedColor);
@@ -289,6 +290,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
     /* Determine the number of rows and cols */
     int rows; int cols;
     switch (node -> layout) {
+      /* Emulate a grid  regardless */
       case VERTICAL  : cols = children; rows = 1; break;
       case HORIZONTAL: cols = 1; rows = children; break;
       case GRID      : gridDimensions(children, &rows, &cols); break;
@@ -298,32 +300,37 @@ void placeNode(Node * node, int x, int y, int width, int height) {
     Bool callPlace;
     int pad;
     for (a = node -> child; a; a = a -> next, i++) {
-      if (isClient(a)) pad = clientPadding;
-      else pad = containerPadding;
 
-      callPlace = True;
-      if (node -> layout == MAX) {
-        if (a -> parent -> focus == a) i = 0; 
-        else callPlace = False;
-      }
+      if (node -> layout == FLOAT) {
 
-      a -> x = x + (i % cols) * (width/cols) + pad;
-      a -> y = y + ((int)(i / cols)) * (height/rows) + pad;
-      a -> width = width / cols - (pad * 2);
-      a -> height = height / rows - (pad * 2);
+        placeNode(a, a -> x + 10, a -> y + 10 , a -> width - 20, a -> height - 20);
 
-      if (callPlace) {  
+      } else { /* Rendering based on a grid style */
 
-        if (node -> layout == GRID) {
-          //Two nodes, edge case for formula
-          if (children == 2)      a -> height = height - (pad * 2);
-          //Stretch the last child
-          if (i + 1 == children)  a -> width = x + width - a -> x - (pad * 2);
+        pad = isClient(a) ? clientPadding : containerPadding;
+        callPlace = True;
+        if (node -> layout == MAX) {
+          if (a -> parent -> focus == a) i = 0; 
+          else callPlace = False;
         }
-        placeNode(a, a -> x, a -> y, a -> width, a -> height);
-      } else {
-        fprintf(stderr, "Going to call unmap on %p\n", a);
-        unmapNode(a);
+
+        a -> x = x + (i % cols) * (width/cols) + pad;
+        a -> y = y + ((int)(i / cols)) * (height/rows) + pad;
+        a -> width = width / cols - (pad * 2);
+        a -> height = height / rows - (pad * 2);
+
+        if (callPlace) {  
+
+          if (node -> layout == GRID) { /* Must account for prime case */
+            if (children == 2)      a -> height = height - (pad * 2);
+            if (i + 1 == children)  a -> width = x + width - a -> x - (pad * 2);
+          }
+          placeNode(a, a -> x, a -> y, a -> width, a -> height);
+        } else {
+          fprintf(stderr, "Going to call unmap on %p\n", a);
+          unmapNode(a);
+        }
+
       }
     }
   }

@@ -1,7 +1,7 @@
 #include <X11/Xlib.h>
 
 enum { LEFT, UP, RIGHT, DOWN };
-enum { VERTICAL, HORIZONTAL, GRID, MAX };
+enum { VERTICAL, HORIZONTAL, GRID, MAX, TABBED, FLOAT, FREEFLOAT };
 enum { PREVIOUS, NEXT };
 
 
