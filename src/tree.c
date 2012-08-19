@@ -62,10 +62,6 @@ Bool unfocusNode(Node * n, Bool focusPath) {
 
   //Unfocusing Code for previous focusedNode
   if (isClient(n)) {
-    /*XSetWindowBorder(display, n -> window, 
-      (n -> parent -> focus == n) ? 
-inactiveFocusedColor : inactiveUnfocusedColor);
-*/
 
     //This should only apply to the most innard focus of focusedNode, follow ptrs
     if (focusPath)

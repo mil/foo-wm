@@ -79,7 +79,7 @@ void move(int amount) {
 void shift(char * directionString) {
   int direction = directionStringToInt(directionString);
   Node * insertNode = getBrotherByDirection(focusedNode, direction);
-
+  if (!insertNode) { insertNode = getClientByDirection(focusedNode, direction); }
 
   Node * oldParent = focusedNode -> parent;
   unparentNode(focusedNode);
@@ -95,15 +95,7 @@ void shift(char * directionString) {
         focusedNode -> parent -> width, focusedNode -> parent -> height);
 
     focusNode(focusedNode, NULL, True, True);
-  } else {
-    /* Shifting outside of our container */
-   
-    Node * nf = getClientByDirection(focusedNode, direction);
-
-    brotherNode(focusedNode, nf, direction == LEFT || direction == UP ? 0 : 1); 
-    placeNode(focusedNode -> parent, focusedNode -> parent -> x, focusedNode -> parent -> y,
-        focusedNode -> parent -> width, focusedNode -> parent -> height);
-  }
+  } 
 }
 
 

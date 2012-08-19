@@ -115,10 +115,12 @@
 
 
 # Dmenu
-"dmenu-suggestions.rb | dmenu -h 60 -x 100 -y 400 -w 1200 -fn 'Envy Code R-20' -sb '#ffffff' -nf '#00ffd5' -nb '#1f1f1f' -sf '#000000' -b -p 'Command:' | xargs -0 -I INPUT handler INPUT"
+"dmenu-suggestions.rb | dmenu -h 40 -x 100 -y 400 -w 1100 -fn 'Envy Code R-16' -sb '#ffffff' -nf '#2b4f00' -nb '#cfcfcf' -sf '#0052d6' -b -p 'Command:' | xargs -0 -I INPUT handler INPUT"
 	m:0x40 + c:40
 	Mod4 + d
 
-"cat /home/mil/code/repos/github/fifo-wm/config/commands | dmenu -h 60 -x 100 -y 400 -w 1200 -fn 'Envy Code R-20' -sb '#ffffff' -nf '#00ffd5' -nb '#1f1f1f' -sf '#000000' -b -p 'fifowm:' | xargs -0 -I INPUT sh /home/mil/code/repos/github/fifo-wm/config/writefifo INPUT"
-	m:0x40 + c:38
-	Mod4 + a
+
+# Dmenu
+"cat /home/mil/code/repos/github/foo-wm/config/commands | dmenu -h 40 -x 100 -y 400 -w 1100 -fn 'Envy Code R-16' -sb '#ffffff' -nf '#2b4f00' -nb '#cfcfcf' -sf '#0052d6' -b -p 'Foo-WM' | xargs -0 -I INPUT foo-wm-c /tmp/foo-wm.socket INPUT"
+  m:0x40 + c:38
+  Mod4 + a
