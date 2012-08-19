@@ -111,7 +111,6 @@ void addMark(char * markName) {
   m -> node     = viewNode;
   m -> previous = mark;
   mark = m;
-  fprintf(stderr, "Size %d", sizeof(m -> name));
 
   fprintf(stderr, "\nAdded the mark::  %s // %s\n", markName, mark -> name);
 }
@@ -123,13 +122,11 @@ void jump(char * markName) {
   for(n = mark; n; n = n -> previous) {
     if (!strcmp(n -> name, markName)) {
       fprintf(stderr, "Going to focus mark %p", n -> node);
-      unmapNode(focusedNode);
+      unmapNode(viewNode);
       viewNode = n -> node;
       placeNode(n -> node, rootX, rootY, rootWidth, rootHeight);
       focusNode(n -> node, NULL, True, True);
-      while (!isClient(focusedNode)) {
-        focus("pc", "1");
-      }
+      while (!isClient(focusedNode)) focus("pc", "1");
     }
   }
 }
