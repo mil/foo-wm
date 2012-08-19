@@ -125,6 +125,5 @@ void setup(void) {
 int main(void) {
   setup();
   handleEvents();
-
   return 0;
 }

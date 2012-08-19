@@ -30,3 +30,10 @@ struct Lookup {
   Node *node;
   Lookup *previous;
 };
+
+typedef struct Mark Mark;
+struct Mark {
+  char *name;
+  Node * node;
+  Mark * previous;
+};

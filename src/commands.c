@@ -37,6 +37,10 @@ char * handleCommand(char * request) {
     move(atoi(tokens[1]));
   else if (!strcmp(tokens[0], "shift"))
     shift(tokens[1]);
+  else if (!strcmp(tokens[0], "mark"))
+    addMark(tokens[1]);
+  else if(!strcmp(tokens[0], "jump"))
+    jump(tokens[1]);
   else if (!strcmp(tokens[0], "containerize"))
     containerize();
   else if (!strcmp(tokens[0], "zoom"))
@@ -96,6 +100,38 @@ void shift(char * directionString) {
 
     focusNode(focusedNode, NULL, True, True);
   } 
+}
+
+/* Adds the current viewNode as a mark */
+void addMark(char * markName) {
+
+  Mark *m = malloc(sizeof(Mark));
+  m -> name = malloc(sizeof(markName));
+  strcpy(m -> name, markName);
+  m -> node     = viewNode;
+  m -> previous = mark;
+  mark = m;
+  fprintf(stderr, "Size %d", sizeof(m -> name));
+
+  fprintf(stderr, "\nAdded the mark::  %s // %s\n", markName, mark -> name);
+}
+
+void jump(char * markName) {
+  fprintf(stderr, "Finding a node");
+
+  Mark *n = NULL;
+  for(n = mark; n; n = n -> previous) {
+    if (!strcmp(n -> name, markName)) {
+      fprintf(stderr, "Going to focus mark %p", n -> node);
+      unmapNode(focusedNode);
+      viewNode = n -> node;
+      placeNode(n -> node, rootX, rootY, rootWidth, rootHeight);
+      focusNode(n -> node, NULL, True, True);
+      while (!isClient(focusedNode)) {
+        focus("pc", "1");
+      }
+    }
+  }
 }
 
 
