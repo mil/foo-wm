@@ -94,6 +94,18 @@ If the current client is in a container with 2 or more other clients, containeri
 
 Removes the current focused node from its container.
 
+### mark
+**Usage:**
+`mark markName`
+
+Marks the current View Node. The viewnode may be restored with the `jump` command.
+
+### jump
+**Usage:**
+`jump markName`
+
+Jumps to the predefined marked node.
+
 ### kill
 **Usage:**
 `kill`
