@@ -97,7 +97,7 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
 
   if (setFocused)  {
     focusedNode = n;
-    if (oldFocus) {
+    if (oldFocus && nodeIsParentOf(viewNode, oldFocus)) {
       placeNode(oldFocus , oldFocus -> x, oldFocus -> y,
         oldFocus -> width, oldFocus -> height);
     }
@@ -234,7 +234,7 @@ void unmapNode(Node * node) {
   if (isClient(node)) {
     XUnmapWindow(display, node -> window);
   } else {
-    Node *n;
+    Node *n = NULL;
     for (n = node -> child; n; n = n -> next)
       unmapNode(n);
   }
@@ -404,7 +404,6 @@ Node * getClientByDirection(Node * originNode, int direction) {
 /* Searches nodeA for an occurance of nodeB
  * if successful, return true */
 Bool nodeIsParentOf(Node * nodeA, Node * nodeB) {
-  if (nodeA == nodeB) return True;
 
   Node *n = NULL;
   for (n = nodeA -> child; n; n = n -> next) {
