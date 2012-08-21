@@ -1,11 +1,11 @@
-char * nextToken(char ** tokenString);
 char * handleCommand(char * request);
-void move(int amount);
-void shift(char * directionString);
-void mark(char * markName);
+char * nextToken(char ** tokenString);
+
+void containerize(void);
+void focus(char * argA, char * argB);
+void kill(void);
 void jump(char * markName);
 void layout(char * l);
+void mark(char * markName);
+void move(int amount);
 void zoom(int level);
-void focus(char * argA, char * argB);
-void containerize(void);
-void kill(void);

@@ -6,18 +6,9 @@
 #include "tree.h"
 #include "util.h"
 
-/* Extracts the next token from the tokenString */
-char * nextToken(char ** tokenString) {
-  char *command;
-  command = strsep(tokenString, " ");
-  if (!command) return NULL;
-
-  char *newLine = strchr(command, '\n');
-  if (newLine) *newLine = '\0';
-
-  return command;
-}
-
+/* -----------------------------------------------------------------------------
+ * Handeling Commands 
+ * ---------------------------------------------------------------------------*/
 char * handleCommand(char * request) {
   fprintf(stderr, "Recv from Socket: %s", request);
 
@@ -51,6 +42,114 @@ char * handleCommand(char * request) {
   return response;
 }
 
+
+/* Extracts the next token from the tokenString */
+char * nextToken(char ** tokenString) {
+  char *command;
+  command = strsep(tokenString, " ");
+  if (!command) return NULL;
+
+  char *newLine = strchr(command, '\n');
+  if (newLine) *newLine = '\0';
+
+  return command;
+}
+
+
+/* -----------------------------------------------------------------------------
+ * IPC Commands 
+ * ---------------------------------------------------------------------------*/
+void containerize(void) {
+  if (!focusedNode) return;
+  if (focusedNode -> child && !isClient(focusedNode -> child))
+    if (isOnlyChild(focusedNode -> child)) return;
+
+  Node *insertNode, *newContainer = allocateNode(); int insertPosition;
+  if (focusedNode -> parent && focusedNode -> parent -> focus == focusedNode)
+    focusedNode -> parent -> focus = newContainer;
+
+  if (focusedNode -> previous) {
+    insertNode = focusedNode -> previous; insertPosition = NEXT;
+  } else {
+    insertNode = focusedNode -> next; insertPosition = PREVIOUS;
+  }
+
+  parentNode(focusedNode, newContainer);
+  brotherNode(newContainer, insertNode, insertPosition);
+  placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+}
+
+
+void focus(char * argA, char * argB) {
+  int delta = atoi(argB);
+
+  fprintf(stderr, "Cycling focus");
+  int brotherSwitch = -1;
+  if (!strcmp(argA, "brother")) brotherSwitch = 1;
+  else if (!strcmp(argA, "pc")) brotherSwitch = 0;
+  else return;
+
+  while (delta != 0) {
+    Node * newFocus;
+
+    if (brotherSwitch) {
+      newFocus = getBrother(focusedNode, (delta < 0) ? -1 : 1);
+    } else {
+      newFocus = (delta < 0) ? 
+        focusedNode -> parent : focusOrChildOf(focusedNode);
+    }
+
+    fprintf(stderr, "Going to focus node: %p", newFocus);
+
+    focusNode(newFocus, NULL, True, True);
+    delta = delta + ( delta > 0 ? -1 : 1);  
+  }
+
+}
+
+void kill(void) {
+  dumpTree();
+  fprintf(stderr, "Destroying Client %p\n", focusedNode);
+
+  if (isClient(focusedNode)) {
+
+    /* Save closest client and destroy node */
+    Node *newFocus = getClosestClient(focusedNode);
+
+    if (focusedNode == viewNode) viewNode = viewNode -> parent;
+
+    if ( isOnlyChild(focusedNode) && focusedNode -> parent) {
+      viewNode = focusedNode -> parent -> parent ?
+        focusedNode -> parent -> parent : focusedNode -> parent;
+    }
+
+    destroyNode(focusedNode);
+    dumpTree();
+
+    /* Give the closeset client of destroyed node focus and rerender */
+    focusNode(newFocus, NULL, True, True);
+    placeNode(viewNode, 
+        viewNode -> x, viewNode -> y, viewNode -> width, viewNode -> height);
+  }
+}
+
+void jump(char * markName) {
+  fprintf(stderr, "Finding a node");
+
+  Mark *n = NULL;
+  for(n = markTail; n; n = n -> previous) {
+    if (!strcmp(n -> name, markName)) {
+      fprintf(stderr, "Going to focus mark %p", n -> node);
+      unmapNode(viewNode);
+      viewNode = n -> node;
+      placeNode(n -> node, rootX, rootY, rootWidth, rootHeight);
+      focusNode(n -> node, NULL, True, True);
+      while (!isClient(focusedNode)) focus("pc", "1");
+    }
+  }
+}
+
+
 void layout(char * l) {
   fprintf(stderr, "Setting layout to: %s", l);
 
@@ -69,14 +168,6 @@ void layout(char * l) {
       setNode -> x, setNode -> y, setNode -> width, setNode -> height);
 }
 
-//Moves the current selection given amount
-void move(int amount) {
-  Node *swapNode = getBrother(focusedNode, amount);
-
-  swapNodes(focusedNode, swapNode);
-  focusNode(focusedNode, NULL, True, True);
-}
-
 
 /* Adds the current viewNode as a mark */
 void mark(char * markName) {
@@ -91,20 +182,13 @@ void mark(char * markName) {
   fprintf(stderr, "\nAdded the mark::  %s // %s\n", markName, markTail -> name);
 }
 
-void jump(char * markName) {
-  fprintf(stderr, "Finding a node");
 
-  Mark *n = NULL;
-  for(n = markTail; n; n = n -> previous) {
-    if (!strcmp(n -> name, markName)) {
-      fprintf(stderr, "Going to focus mark %p", n -> node);
-      unmapNode(viewNode);
-      viewNode = n -> node;
-      placeNode(n -> node, rootX, rootY, rootWidth, rootHeight);
-      focusNode(n -> node, NULL, True, True);
-      while (!isClient(focusedNode)) focus("pc", "1");
-    }
-  }
+//Moves the current selection given amount
+void move(int amount) {
+  Node *swapNode = getBrother(focusedNode, amount);
+
+  swapNodes(focusedNode, swapNode);
+  focusNode(focusedNode, NULL, True, True);
 }
 
 
@@ -137,77 +221,3 @@ void zoom(int level) {
     level--;
   }
 }
-
-void focus(char * argA, char * argB) {
-  int delta = atoi(argB);
-
-  fprintf(stderr, "Cycling focus");
-  int brotherSwitch = -1;
-  if (!strcmp(argA, "brother")) brotherSwitch = 1;
-  else if (!strcmp(argA, "pc")) brotherSwitch = 0;
-  else return;
-
-  while (delta != 0) {
-    Node * newFocus;
-
-    if (brotherSwitch) {
-      newFocus = getBrother(focusedNode, (delta < 0) ? -1 : 1);
-    } else {
-      newFocus = (delta < 0) ? 
-        focusedNode -> parent : focusOrChildOf(focusedNode);
-    }
-
-    fprintf(stderr, "Going to focus node: %p", newFocus);
-
-    focusNode(newFocus, NULL, True, True);
-    delta = delta + ( delta > 0 ? -1 : 1);  
-  }
-
-}
-
-void containerize(void) {
-  if (!focusedNode) return;
-  if (focusedNode -> child && !isClient(focusedNode -> child))
-    if (isOnlyChild(focusedNode -> child)) return;
-
-  Node *insertNode, *newContainer = allocateNode(); int insertPosition;
-  if (focusedNode -> parent && focusedNode -> parent -> focus == focusedNode)
-    focusedNode -> parent -> focus = newContainer;
-
-  if (focusedNode -> previous) {
-    insertNode = focusedNode -> previous; insertPosition = NEXT;
-  } else {
-    insertNode = focusedNode -> next; insertPosition = PREVIOUS;
-  }
-
-  parentNode(focusedNode, newContainer);
-  brotherNode(newContainer, insertNode, insertPosition);
-  placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
-}
-
-void kill(void) {
-  dumpTree();
-  fprintf(stderr, "Destroying Client %p\n", focusedNode);
-
-  if (isClient(focusedNode)) {
-
-    /* Save closest client and destroy node */
-    Node *newFocus = getClosestClient(focusedNode);
-
-    if (focusedNode == viewNode) viewNode = viewNode -> parent;
-
-    if ( isOnlyChild(focusedNode) && focusedNode -> parent) {
-      viewNode = focusedNode -> parent -> parent ?
-        focusedNode -> parent -> parent : focusedNode -> parent;
-    }
-
-    destroyNode(focusedNode);
-    dumpTree();
-
-    /* Give the closeset client of destroyed node focus and rerender */
-    focusNode(newFocus, NULL, True, True);
-    placeNode(viewNode, 
-        viewNode -> x, viewNode -> y, viewNode -> width, viewNode -> height);
-  }
-}
-
