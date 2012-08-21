@@ -377,30 +377,6 @@ Node * getBrother(Node * node, int delta) {
   return node;
 }
 
-
-Node * getClientByDirection(Node * originNode, int direction) {
-  int c = 0;
-  Node *returnNode = NULL;
-
-
-  while (!returnNode) { 
-    returnNode = getBrotherByDirection(originNode, direction);
-    if (!returnNode) {
-      /* Search up until we have a brother in the direction */
-      if (originNode -> parent) originNode = originNode -> parent;
-      else break;
-    } else {
-      /* Search down until we have a client */
-      while (!isClient(returnNode)) {
-        returnNode = returnNode -> focus ? 
-          returnNode -> focus : returnNode -> child;
-      }
-    }
-    c++;
-  }
-  return nodeIsParentOf(viewNode, returnNode) ?  returnNode : NULL;
-}
-
 /* Searches nodeA for an occurance of nodeB
  * if successful, return true */
 Bool nodeIsParentOf(Node * nodeA, Node * nodeB) {
@@ -413,82 +389,6 @@ Bool nodeIsParentOf(Node * nodeA, Node * nodeB) {
   }
 
   return False;
-}
-
-
-/* Gets brother in specific direction 
- * If can't get brother in direction, returns NULL
- * */
-Node * getBrotherByDirection(Node * node, int direction) {
-  if (!node || !node -> parent) return NULL;
-  if (node -> parent && node -> parent -> layout == MAX) return NULL;
-
-  // Count up children and find us in our parent
-  int parentChildren = 0, nodePosition = -1;
-  Node *n = NULL;
-  for (n = node -> parent -> child; n; n = n -> next) {
-    parentChildren++;
-    if (n == node) nodePosition = parentChildren;
-  }
-
-
-  fprintf(stderr, "Getting grid dems for %d, Layout = %d\n", parentChildren, node -> parent -> layout);
-  // Get the dimensions of the current grid
-  int rows = 0, cols = 0;
-  switch (node -> parent -> layout) {
-    case VERTICAL:
-      cols = parentChildren; rows = 1;
-      break;
-    case HORIZONTAL:
-      cols = 1; rows = parentChildren;
-      break;
-    case GRID:
-      gridDimensions(parentChildren, &rows, &cols);
-      break;
-  }
-
-
-
-  int dest;
-  //Determine the brother
-  switch (direction) {
-    case LEFT:
-      if (((nodePosition - 1) % cols != 0) && node -> previous)
-        return node -> previous;
-      break;
-    case RIGHT:
-      if ((nodePosition % cols != 0) && node -> next)
-        return node -> next;
-      break;
-    case UP:
-      dest = nodePosition - cols;
-      if (dest > 0) {
-        n = node;
-        if (!node -> next && cols != 1 && isPrime(parentChildren)) dest++;
-        while (dest != nodePosition) {
-          n = n -> previous; dest++;
-        }
-        return n;
-      }
-      break;
-    case DOWN:
-      dest = nodePosition + cols;
-      if (rows == 1) { break;
-      } else if (dest <= parentChildren) {
-        n = node;
-        while (dest != nodePosition) {
-          n = n -> next; dest--; 
-        }
-        return n;
-      } else if (dest <= parentChildren + 1 && isPrime(parentChildren)) { 
-        n = node; // Prime odd case
-        while (n -> next) { n = n -> next; }
-        if (n != node) return n;
-      }
-      break;
-  }
-
-  return NULL;
 }
 
 /* Swaps nodes within the same container of the tree 

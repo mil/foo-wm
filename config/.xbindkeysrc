@@ -40,19 +40,19 @@
 	m:0x40 + c:23
 	Mod4 + Tab
 
-"foo-wm-c  /tmp/foo-wm.socket 'focus direction left'"
+"foo-wm-c  /tmp/foo-wm.socket 'focus brother -2'"
 	m:0x40 + c:43
 	Mod4 + h
 
-"foo-wm-c  /tmp/foo-wm.socket 'focus direction down'"
+"foo-wm-c  /tmp/foo-wm.socket 'focus brother 1'"
 	m:0x40 + c:44
 	Mod4 + j
 
-"foo-wm-c  /tmp/foo-wm.socket 'focus direction up'"
+"foo-wm-c  /tmp/foo-wm.socket 'focus brother -1'"
 	m:0x40 + c:45
 	Mod4 + k
 
-"foo-wm-c  /tmp/foo-wm.socket 'focus direction right'"
+"foo-wm-c  /tmp/foo-wm.socket 'focus brother -2'"
 	m:0x40 + c:46
 	Mod4 + l
 
@@ -72,20 +72,20 @@
 	Shift+Mod4 + Tab
 
 # Shift VIM-Esque Movement
-"foo-wm-c  /tmp/foo-wm.socket 'shift left'"
+"foo-wm-c  /tmp/foo-wm.socket 'move 2'"
 	m:0x41 + c:43
 	Shift+Mod4 + h
 
-"foo-wm-c  /tmp/foo-wm.socket 'shift down'"
+"foo-wm-c  /tmp/foo-wm.socket 'move 1'"
 	m:0x41 + c:44
-	Shift+Mod4 + k
+	Shift+Mod4 + j
 
 
-"foo-wm-c  /tmp/foo-wm.socket 'shift up'"
+"foo-wm-c  /tmp/foo-wm.socket 'move -1'"
 	m:0x41 + c:45
 	Shift+Mod4 + k
 
-"foo-wm-c  /tmp/foo-wm.socket 'shift right'"
+"foo-wm-c  /tmp/foo-wm.socket 'move -2'"
 	m:0x41 + c:46
 	Shift+Mod4 + l
 

@@ -35,8 +35,6 @@ char * handleCommand(char * request) {
     focus(tokens[1], tokens[2]);
   else if (!strcmp(tokens[0], "move"))
     move(atoi(tokens[1]));
-  else if (!strcmp(tokens[0], "shift"))
-    shift(tokens[1]);
   else if (!strcmp(tokens[0], "mark"))
     addMark(tokens[1]);
   else if(!strcmp(tokens[0], "jump"))
@@ -79,28 +77,6 @@ void move(int amount) {
   focusNode(focusedNode, NULL, True, True);
 }
 
-
-void shift(char * directionString) {
-  int direction = directionStringToInt(directionString);
-  Node * insertNode = getBrotherByDirection(focusedNode, direction);
-  if (!insertNode) { insertNode = getClientByDirection(focusedNode, direction); }
-
-  Node * oldParent = focusedNode -> parent;
-  unparentNode(focusedNode);
-  placeNode(oldParent, oldParent -> x, oldParent -> y, oldParent -> width, oldParent -> height);
-
-  /* Shifting within our current container */
-  if (insertNode) {
-    while (!isClient(insertNode)) {
-      insertNode = insertNode -> focus ? insertNode -> focus : insertNode -> child;
-    }
-    brotherNode(focusedNode, insertNode, direction == LEFT || direction == UP ? 0 : 1); 
-    placeNode(focusedNode -> parent, focusedNode -> parent -> x, focusedNode -> parent -> y,
-        focusedNode -> parent -> width, focusedNode -> parent -> height);
-
-    focusNode(focusedNode, NULL, True, True);
-  } 
-}
 
 /* Adds the current viewNode as a mark */
 void addMark(char * markName) {
@@ -163,37 +139,30 @@ void zoom(int level) {
 }
 
 void focus(char * argA, char * argB) {
-  if (!strcmp(argA, "direction")) {
-    int direction = directionStringToInt(argB);
-    Node *newFocus = getClientByDirection(focusedNode, direction);
-    fprintf(stderr, "Directional focusing %p\n", newFocus);
-    focusNode(newFocus, NULL, True, True);
+  int delta = atoi(argB);
 
-  } else {  
-    int delta = atoi(argB);
+  fprintf(stderr, "Cycling focus");
+  int brotherSwitch = -1;
+  if (!strcmp(argA, "brother")) brotherSwitch = 1;
+  else if (!strcmp(argA, "pc")) brotherSwitch = 0;
+  else return;
 
-    fprintf(stderr, "Cycling focus");
-    int brotherSwitch = -1;
-    if (!strcmp(argA, "brother")) brotherSwitch = 1;
-    else if (!strcmp(argA, "pc")) brotherSwitch = 0;
-    else return;
+  while (delta != 0) {
+    Node * newFocus;
 
-    while (delta != 0) {
-      Node * newFocus;
-
-      if (brotherSwitch) {
-        newFocus = getBrother(focusedNode, (delta < 0) ? -1 : 1);
-      } else {
-        newFocus = (delta < 0) ? 
-          focusedNode -> parent : focusOrChildOf(focusedNode);
-      }
-
-      fprintf(stderr, "Going to focus node: %p", newFocus);
-
-      focusNode(newFocus, NULL, True, True);
-      delta = delta + ( delta > 0 ? -1 : 1);  
+    if (brotherSwitch) {
+      newFocus = getBrother(focusedNode, (delta < 0) ? -1 : 1);
+    } else {
+      newFocus = (delta < 0) ? 
+        focusedNode -> parent : focusOrChildOf(focusedNode);
     }
+
+    fprintf(stderr, "Going to focus node: %p", newFocus);
+
+    focusNode(newFocus, NULL, True, True);
+    delta = delta + ( delta > 0 ? -1 : 1);  
   }
+
 }
 
 void containerize(void) {
