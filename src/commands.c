@@ -184,15 +184,31 @@ void mark(char * markName) {
 
 
 //Moves the current selection given amount
-void shift(char * argA, int amount) {
-  if (!strcmp(argA, "brother")) {
-    Node *swapNode = getBrother(focusedNode, amount);
-    swapNodes(focusedNode, swapNode);
-    focusNode(focusedNode, NULL, True, True);
-  } else if (!strcmp(argA, "pc")) {
-    if (amount > 0) return;
-    if (focusedNode -> parent && focusedNode -> parent -> parent) {
+void shift(char * argA, int delta) {
 
+  int brotherSwitch = -1;
+  if (!strcmp(argA, "brother")) brotherSwitch = 1;
+  else if (!strcmp(argA, "pc")) brotherSwitch = 0;
+  else return;
+
+  while (delta != 0) {
+    if (brotherSwitch) {
+      Node *swapNode = getBrother(focusedNode, delta);
+      swapNodes(focusedNode, swapNode);
+      focusNode(focusedNode, NULL, True, True);
+      delta = 0;
+    } else {
+      if (delta > 0) { 
+        return;
+      } else {
+        if (focusedNode -> parent && focusedNode -> parent -> parent) {
+          Node *newParent = focusedNode -> parent -> parent;
+          parentNode(focusedNode, newParent);
+          placeNode(newParent, newParent -> x, newParent -> y, 
+              newParent -> width, newParent -> height);
+        } else { return; }
+        delta++;
+      }
     }
   }
 }

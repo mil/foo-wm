@@ -70,7 +70,6 @@ Bool unfocusNode(Node * n, Bool focusPath) {
  * -------------------------------------------------------------------------- */
 long getBorderColor(Node * node, Bool focusPath) {
   if (focusPath) {
-
     if (focusedNode == node)
       return activeFocusedColor;
     else
@@ -78,7 +77,8 @@ long getBorderColor(Node * node, Bool focusPath) {
         inactiveFocusedColor : activeUnfocusedColor;
 
   } else {
-    return node -> parent -> focus == node ? inactiveFocusedColor: inactiveUnfocusedColor;
+    return node -> parent -> focus == node ? 
+      inactiveFocusedColor: inactiveUnfocusedColor;
   }
 }
 
@@ -383,7 +383,6 @@ void placeNode(Node * node, int x, int y, int width, int height) {
     for (a = node -> child; a; a = a -> next, i++) {
 
       if (node -> layout == FLOAT) {
-
         placeNode(a, a -> x + 10, a -> y + 10 , a -> width - 20, a -> height - 20);
 
       } else { /* Rendering based on a grid style */
