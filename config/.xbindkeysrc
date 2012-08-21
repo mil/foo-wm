@@ -67,24 +67,24 @@
 	Mod4 + p
 
 # Move Commands
-"foo-wm-c  /tmp/foo-wm.socket 'shift 1'"
+"foo-wm-c  /tmp/foo-wm.socket 'shift brother 1'"
 	m:0x41 + c:23
 	Shift+Mod4 + Tab
 
-"foo-wm-c  /tmp/foo-wm.socket 'shift 2'"
+"foo-wm-c  /tmp/foo-wm.socket 'shift brother 2'"
 	m:0x41 + c:43
 	Shift+Mod4 + h
 
-"foo-wm-c  /tmp/foo-wm.socket 'shift 1'"
+"foo-wm-c  /tmp/foo-wm.socket 'shift brother 1'"
 	m:0x41 + c:44
 	Shift+Mod4 + j
 
 
-"foo-wm-c  /tmp/foo-wm.socket 'shift -1'"
+"foo-wm-c  /tmp/foo-wm.socket 'shift brother -1'"
 	m:0x41 + c:45
 	Shift+Mod4 + k
 
-"foo-wm-c  /tmp/foo-wm.socket 'shift -2'"
+"foo-wm-c  /tmp/foo-wm.socket 'shift brother -2'"
 	m:0x41 + c:46
 	Shift+Mod4 + l
 

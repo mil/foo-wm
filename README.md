@@ -68,19 +68,11 @@ Controls the view of the screen. Using zoom with a negative delta will zoom out 
 
 The focus command switches the node which is currently focused.
 
-### move 
-**Usage:**
-`move brother|pc -+ delta`
-`move direction left/up/right/down`
-
-Moves the currently focused node. This wraps around if you attempt to move to a node that doesn't exist.
-
-### shift
+### shift 
 **Usage:**
 `shift brother|pc -+ delta`
-`shift direction left|up|right|down`
 
-Shift the currently focused node. This is essentially the move command only instead of wrapping, shift will merge the node in the given direction.
+Shift the currently focused node. This wraps around if you attempt to move to a node that doesn't exist. Note, shifting to a positive pc won't do anything, shift pc should only be used with a negative delta to shift a client up toward its parent.
 
 ### containerize
 **Usage:**

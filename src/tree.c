@@ -64,6 +64,25 @@ Bool unfocusNode(Node * n, Bool focusPath) {
   return setView;
 }
 
+
+/* --------------------------------------------------------------------------
+ * LongReturns 
+ * -------------------------------------------------------------------------- */
+long getBorderColor(Node * node, Bool focusPath) {
+  if (focusPath) {
+
+    if (focusedNode == node)
+      return activeFocusedColor;
+    else
+      return node -> parent -> focus == node ? 
+        inactiveFocusedColor : activeUnfocusedColor;
+
+  } else {
+    return node -> parent -> focus == node ? inactiveFocusedColor: inactiveUnfocusedColor;
+  }
+}
+
+
 /* --------------------------------------------------------------------------
  * Node Returns 
  * -------------------------------------------------------------------------- */
@@ -340,23 +359,8 @@ void placeNode(Node * node, int x, int y, int width, int height) {
         if (b == focusedNode) inFocusPath = True;
       } while (b -> parent);
     }
-    if (inFocusPath) {
-      if (focusedNode == node) {
-        XSetWindowBorder(display, node -> window, activeFocusedColor);
-      } else {
-        if (node -> parent -> focus == node) {
-          XSetWindowBorder(display, node -> window, inactiveFocusedColor);
-        } else {
-          XSetWindowBorder(display, node -> window, activeUnfocusedColor);
-        }
-      }
-    } else {
-      if (node -> parent -> focus == node) {
-        XSetWindowBorder(display, node -> window, inactiveFocusedColor);
-      } else {
-        XSetWindowBorder(display, node -> window, inactiveUnfocusedColor);
-      }
-    }
+
+    XSetWindowBorder(display, node -> window, getBorderColor(node, inFocusPath));
 
   } else {
     //Count up children prior to loop
