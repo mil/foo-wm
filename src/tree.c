@@ -230,6 +230,7 @@ void destroyNode(Node * n) {
 
   //Unparent the node
   unparentNode(n);
+  fprintf(stderr, "Made it here");
 
   //Recursivly unmap down all children of the node
   if (isClient(n)) {
@@ -238,8 +239,10 @@ void destroyNode(Node * n) {
   } else {
     Node *destroy = n -> child; Node *next = NULL;
     do {
-      next = destroy -> next;
-      destroyNode(destroy);
+      if (destroy) {
+        next = destroy -> next;
+        destroyNode(destroy);
+      } else { next = NULL; }
     } while (next);
 
   }
@@ -273,10 +276,8 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
 
   if (setFocused)  {
     focusedNode = n;
-    if (oldFocus && nodeIsParentOf(viewNode, oldFocus)) {
-      placeNode(oldFocus , oldFocus -> x, oldFocus -> y,
-        oldFocus -> width, oldFocus -> height);
-    }
+    if (oldFocus && nodeIsParentOf(viewNode, oldFocus))
+      rePlaceNode(oldFocus);
   }
 
   //if (setView)     viewNode    = n;
@@ -284,8 +285,7 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
   // Are we at the bottom level 
   if (isClient(n)) {
     if (n -> parent)  {
-      placeNode(n -> parent, n -> parent -> x, n -> parent -> y,
-          n -> parent -> width, n -> parent -> height);
+      rePlaceNode(n -> parent);
     } 
 
     if (focusPath) {
@@ -405,7 +405,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
             if (children == 2)      a -> height = height - (pad * 2);
             if (i + 1 == children)  a -> width = x + width - a -> x - (pad * 2);
           }
-          placeNode(a, a -> x, a -> y, a -> width, a -> height);
+          rePlaceNode(a);
         } else {
           fprintf(stderr, "Going to call unmap on %p\n", a);
           unmapNode(a);
@@ -416,6 +416,9 @@ void placeNode(Node * node, int x, int y, int width, int height) {
   }
 }
 
+void rePlaceNode(Node * node) {
+  placeNode(node, node -> x, node -> y, node -> width, node -> height);
+}
 
 /* Swaps nodes within the same container of the tree 
  * [ NULL <- A <-> B <-> C <-> D -> NULL ] */
@@ -460,16 +463,21 @@ void unmapNode(Node * node) {
 
 void unparentNode(Node *node) {
   if (!(node && node -> parent)) return;
-  fprintf(stderr, "Unparent called\n");
 
+  fprintf(stderr, "Unparent called\n");
   //Move parent's child pointer if were it....
-  if (node -> parent -> child == node) 
-    node -> parent -> child = node -> next;
+  if (node -> parent -> child == node)
+      node -> parent -> child = node -> next;
+  if (node -> parent -> focus == node)
+    node -> parent -> focus = node -> parent -> child;
 
   //Move the next and previous pointers to cut out the node
   if (node -> next)     node -> next -> previous = node -> previous;
   if (node -> previous) node -> previous -> next = node -> next;
 
   //Set our parent to NULL
+  Node * oldParent = node -> parent;
   node -> parent = NULL; node -> next = NULL; node -> previous = NULL;
+  if (oldParent -> child == NULL)
+    destroyNode(oldParent);
 }

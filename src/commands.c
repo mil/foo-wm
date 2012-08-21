@@ -128,8 +128,7 @@ void kill(void) {
 
     /* Give the closeset client of destroyed node focus and rerender */
     focusNode(newFocus, NULL, True, True);
-    placeNode(viewNode, 
-        viewNode -> x, viewNode -> y, viewNode -> width, viewNode -> height);
+    rePlaceNode(viewNode);
   }
 }
 
@@ -164,8 +163,7 @@ void layout(char * l) {
 
 
   setNode -> layout = newLayout;
-  placeNode(setNode, 
-      setNode -> x, setNode -> y, setNode -> width, setNode -> height);
+  rePlaceNode(setNode);
 }
 
 
@@ -198,14 +196,11 @@ void shift(char * argA, int delta) {
       focusNode(focusedNode, NULL, True, True);
       delta = 0;
     } else {
-      if (delta > 0) { 
-        return;
-      } else {
+      if (delta > 0) { return; } else {
         if (focusedNode -> parent && focusedNode -> parent -> parent) {
           Node *newParent = focusedNode -> parent -> parent;
           parentNode(focusedNode, newParent);
-          placeNode(newParent, newParent -> x, newParent -> y, 
-              newParent -> width, newParent -> height);
+          rePlaceNode(newParent);
         } else { return; }
         delta++;
       }

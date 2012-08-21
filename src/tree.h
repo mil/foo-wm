@@ -14,6 +14,7 @@ void dumpTree();
 void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath);
 void parentNode(Node *node, Node *parent);
 void placeNode(Node * node, int x, int y, int width, int height);
+void rePlaceNode(Node * node);
 void swapNodes(Node * a, Node * b);
 void unmapNode(Node * node);
 void unparentNode(Node *node);
