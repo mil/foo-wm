@@ -8,6 +8,162 @@
 #include "util.h"
 #include "window.h"
 
+/* --------------------------------------------------------------------------
+ * Bool Returns 
+ * -------------------------------------------------------------------------- */
+Bool isClient(Node * node) { /* Is the node a client? */
+  if (node && (node -> window != (Window) NULL)) return True;
+  else return False;  
+}
+
+Bool isOnlyChild(Node * node) { /* Is the node an only child */
+  if (node && (node -> next || node -> previous)) return False;
+  else return True;
+}
+
+/* Searches nodeA for an occurance of nodeB
+ * if successful, return true */
+Bool nodeIsParentOf(Node * nodeA, Node * nodeB) {
+  if (nodeA == nodeB) return True;
+
+  Node *n = NULL;
+  for (n = nodeA -> child; n; n = n -> next) {
+    if (nodeIsParentOf(n, nodeB))
+      return True;
+  }
+
+  return False;
+}
+
+/* Unfocuses the currently focused node, called only by focusNode 
+ * Returns Bool if an update of the view is needed
+ * Dangerous if called alone */
+Bool unfocusNode(Node * n, Bool focusPath) {
+  if (!n) return False;
+
+  Bool setView = (n == viewNode) ? True : False;
+  fprintf(stderr, "Yo i be unfocusing %p\n", n);
+
+  //Unfocusing Code for previous focusedNode
+  if (isClient(n)) {
+
+    //This should only apply to the most innard focus of focusedNode, follow ptrs
+    if (focusPath)
+      XGrabButton(display, AnyButton, AnyModifier,
+          n -> window, True, ButtonPressMask | ButtonReleaseMask,
+          GrabModeAsync, GrabModeAsync, None, None);
+
+  } else {
+    //Recursive loop on children to set 
+
+    Node *c;
+    for (c = n -> child; c; c = c -> next)
+      unfocusNode(c, c -> parent -> focus == c ? True : False);
+  }
+
+  return setView;
+}
+
+/* --------------------------------------------------------------------------
+ * Node Returns 
+ * -------------------------------------------------------------------------- */
+Node * getBrother(Node * node, int delta) {
+  fprintf(stderr, "Getting the brother node");
+
+  while (delta > 0) {
+    if (node -> next)
+      node = node -> next;
+    else if (node -> parent && node -> parent -> child)
+      node = node -> parent -> child;
+    delta--;
+  }
+
+  while (delta < 0) {
+    if (node -> previous) {
+      node = node -> previous;
+    } else if (node -> parent && node -> parent -> child) {
+      node = node -> parent -> child;
+      while (node -> next)
+        node = node -> next;
+    } else { fprintf(stderr, "Not a good situation\n"); }
+
+    delta++;
+  }
+
+  return node;
+}
+
+/* Gets the next brother client to node, in given direction 
+ * [Container] - [Client X] - [Container] - [Container] - [Client Y]
+ * Given Client X, function would loop until hitting Client Y
+ * */
+Node * getBrotherClient(Node * node, int direction) {
+  Node *pNode = node;
+  Node *nNode = node;
+
+  while (pNode -> previous || nNode -> next) {
+    if (pNode -> previous ) pNode = pNode -> previous;
+    if (nNode -> next     ) nNode = nNode -> next;
+    switch (direction) {
+      case 0:
+        if (isClient(pNode) && pNode != node) return pNode;
+        if (isClient(nNode) && nNode != node) return nNode;
+        break;
+      case 1:
+        if (isClient(nNode) && nNode != node) return nNode;
+        if (isClient(pNode) && pNode != node) return pNode;
+        break;
+    }
+  }
+  return NULL;
+}
+
+
+Node * getClosestClient(Node * node) {
+  Node * returnNode = NULL;
+  Node * currentNode = node;
+
+  /* Calls getBrotherClient going up the tree until a client is found */
+  while (!returnNode) {
+    returnNode = getBrotherClient(currentNode, 1);
+    if (!returnNode) {
+      if (currentNode -> parent) currentNode = currentNode -> parent;
+      else                               return NULL;
+    } else {  //We found a client 
+      return returnNode; 
+    }
+  }
+  return NULL;
+}
+
+
+
+/* --------------------------------------------------------------------------
+ * Void Returns 
+ * -------------------------------------------------------------------------- */
+void brotherNode(Node *node, Node * brother, int position) {
+  if (!node || !brother) return;
+  node -> parent = brother -> parent;
+
+  if (position == 0) {
+    node -> next = brother;
+    if (!brother -> previous) { //Pop in the front
+      node -> parent -> child = node;
+    } else {
+      //Shift previous pointer
+      node -> previous = brother -> previous;
+      if (node -> previous) node -> previous -> next = node;
+    }
+    brother -> previous = node;
+  } else if (position == 1) {
+    node -> previous = brother;
+    node -> next = brother -> next;
+    if (node -> next) node -> next -> previous = node;
+    brother -> next = node;
+  }
+}
+
+
 void crawlNode(Node * node, int level) {
   int j; for (j = level; j > 0; j--) { fprintf(stderr, "|\t"); }
 
@@ -42,44 +198,45 @@ void crawlNode(Node * node, int level) {
 
 }
 
+
+void destroyNode(Node * n) {
+  if (!n) return;
+
+  //Recursvily unmap up any lone parents
+  if (n -> parent && n -> parent != viewNode && isOnlyChild(n) && 
+      n -> parent -> child == n && n -> parent -> parent) {
+    destroyNode(n -> parent);
+    return;
+  }
+
+  //Unparent the node
+  unparentNode(n);
+
+  //Recursivly unmap down all children of the node
+  if (isClient(n)) {
+    removeLookupEntry(&n -> window);
+    XDestroyWindow(display, n -> window);
+  } else {
+    Node *destroy = n -> child; Node *next = NULL;
+    do {
+      next = destroy -> next;
+      destroyNode(destroy);
+    } while (next);
+
+  }
+
+  //Set Focused Node if we just destroyed the focus, and free 
+  if (n == focusedNode) focusedNode = NULL;
+  free(n);
+}
+
+
 void dumpTree() {
   fprintf(stderr, "Printing the tree\n");
   fprintf(stderr, "----------------------------------\n");
   crawlNode(rootNode, 0);
   fprintf(stderr, "----------------------------------\n");
 }
-
-
-
-/* Unfocuses the currently focused node, called only by focusNode 
- * Returns Bool if an update of the view is needed
- * Dangerous if called alone */
-Bool unfocusNode(Node * n, Bool focusPath) {
-  if (!n) return False;
-
-  Bool setView = (n == viewNode) ? True : False;
-  fprintf(stderr, "Yo i be unfocusing %p\n", n);
-
-  //Unfocusing Code for previous focusedNode
-  if (isClient(n)) {
-
-    //This should only apply to the most innard focus of focusedNode, follow ptrs
-    if (focusPath)
-      XGrabButton(display, AnyButton, AnyModifier,
-          n -> window, True, ButtonPressMask | ButtonReleaseMask,
-          GrabModeAsync, GrabModeAsync, None, None);
-
-  } else {
-    //Recursive loop on children to set 
-
-    Node *c;
-    for (c = n -> child; c; c = c -> next)
-      unfocusNode(c, c -> parent -> focus == c ? True : False);
-  }
-
-  return setView;
-}
-
 
 
 //This should focus OR select
@@ -138,78 +295,6 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
 }
 
 
-void destroyNode(Node * n) {
-  if (!n) return;
-
-  //Recursvily unmap up any lone parents
-  if (n -> parent && n -> parent != viewNode && isOnlyChild(n) && 
-      n -> parent -> child == n && n -> parent -> parent) {
-    destroyNode(n -> parent);
-    return;
-  }
-
-  //Unparent the node
-  unparentNode(n);
-
-  //Recursivly unmap down all children of the node
-  if (isClient(n)) {
-    removeLookupEntry(&n -> window);
-    XDestroyWindow(display, n -> window);
-  } else {
-    Node *destroy = n -> child; Node *next = NULL;
-    do {
-      next = destroy -> next;
-      destroyNode(destroy);
-    } while (next);
-
-  }
-
-  //Set Focused Node if we just destroyed the focus, and free 
-  if (n == focusedNode) focusedNode = NULL;
-  free(n);
-}
-
-
-void unparentNode(Node *node) {
-  if (!(node && node -> parent)) return;
-  fprintf(stderr, "Unparent called\n");
-
-  //Move parent's child pointer if were it....
-  if (node -> parent -> child == node) 
-    node -> parent -> child = node -> next;
-
-  //Move the next and previous pointers to cut out the node
-  if (node -> next)     node -> next -> previous = node -> previous;
-  if (node -> previous) node -> previous -> next = node -> next;
-
-  //Set our parent to NULL
-  node -> parent = NULL; node -> next = NULL; node -> previous = NULL;
-}
-
-
-void brotherNode(Node *node, Node * brother, int position) {
-  if (!node || !brother) return;
-  node -> parent = brother -> parent;
-
-  if (position == 0) {
-    node -> next = brother;
-    if (!brother -> previous) { //Pop in the front
-      node -> parent -> child = node;
-    } else {
-      //Shift previous pointer
-      node -> previous = brother -> previous;
-      if (node -> previous) node -> previous -> next = node;
-    }
-    brother -> previous = node;
-  } else if (position == 1) {
-    node -> previous = brother;
-    node -> next = brother -> next;
-    if (node -> next) node -> next -> previous = node;
-    brother -> next = node;
-  }
-}
-
-
 void parentNode(Node *node, Node *parent) {
   fprintf(stderr, "Pareting node %p into parent %p\n", node, parent);
   if (!node || !parent) return;  //Cant add to NULL
@@ -226,17 +311,6 @@ void parentNode(Node *node, Node *parent) {
     n -> next = node;
   } else {
     parent -> child = node;
-  }
-}
-
-
-void unmapNode(Node * node) {
-  if (isClient(node)) {
-    XUnmapWindow(display, node -> window);
-  } else {
-    Node *n = NULL;
-    for (n = node -> child; n; n = n -> next)
-      unmapNode(n);
   }
 }
 
@@ -340,57 +414,6 @@ void placeNode(Node * node, int x, int y, int width, int height) {
 }
 
 
-Bool isClient(Node * node) { /* Is the node a client? */
-  if (node && (node -> window != (Window) NULL)) return True;
-  else return False;  
-}
-
-Bool isOnlyChild(Node * node) { /* Is the node an only child */
-  if (node && (node -> next || node -> previous)) return False;
-  else return True;
-}
-
-
-Node * getBrother(Node * node, int delta) {
-  fprintf(stderr, "Getting the brother node");
-
-  while (delta > 0) {
-    if (node -> next)
-      node = node -> next;
-    else if (node -> parent && node -> parent -> child)
-      node = node -> parent -> child;
-    delta--;
-  }
-
-  while (delta < 0) {
-    if (node -> previous) {
-      node = node -> previous;
-    } else if (node -> parent && node -> parent -> child) {
-      node = node -> parent -> child;
-      while (node -> next)
-        node = node -> next;
-    } else { fprintf(stderr, "Not a good situation\n"); }
-
-    delta++;
-  }
-
-  return node;
-}
-
-/* Searches nodeA for an occurance of nodeB
- * if successful, return true */
-Bool nodeIsParentOf(Node * nodeA, Node * nodeB) {
-  if (nodeA == nodeB) return True;
-
-  Node *n = NULL;
-  for (n = nodeA -> child; n; n = n -> next) {
-    if (nodeIsParentOf(n, nodeB))
-      return True;
-  }
-
-  return False;
-}
-
 /* Swaps nodes within the same container of the tree 
  * [ NULL <- A <-> B <-> C <-> D -> NULL ] */
 void swapNodes(Node * a, Node * b) {
@@ -421,45 +444,29 @@ void swapNodes(Node * a, Node * b) {
 }
 
 
-/* Gets the next brother client to node, in given direction 
- * [Container] - [Client X] - [Container] - [Container] - [Client Y]
- * Given Client X, function would loop until hitting Client Y
- * */
-Node * getBrotherClient(Node * node, int direction) {
-  Node *pNode = node;
-  Node *nNode = node;
-
-  while (pNode -> previous || nNode -> next) {
-    if (pNode -> previous ) pNode = pNode -> previous;
-    if (nNode -> next     ) nNode = nNode -> next;
-    switch (direction) {
-      case 0:
-        if (isClient(pNode) && pNode != node) return pNode;
-        if (isClient(nNode) && nNode != node) return nNode;
-        break;
-      case 1:
-        if (isClient(nNode) && nNode != node) return nNode;
-        if (isClient(pNode) && pNode != node) return pNode;
-        break;
-    }
+void unmapNode(Node * node) {
+  if (isClient(node)) {
+    XUnmapWindow(display, node -> window);
+  } else {
+    Node *n = NULL;
+    for (n = node -> child; n; n = n -> next)
+      unmapNode(n);
   }
-  return NULL;
 }
 
 
-Node * getClosestClient(Node * node) {
-  Node * returnNode = NULL;
-  Node * currentNode = node;
+void unparentNode(Node *node) {
+  if (!(node && node -> parent)) return;
+  fprintf(stderr, "Unparent called\n");
 
-  /* Calls getBrotherClient going up the tree until a client is found */
-  while (!returnNode) {
-    returnNode = getBrotherClient(currentNode, 1);
-    if (!returnNode) {
-      if (currentNode -> parent) currentNode = currentNode -> parent;
-      else                               return NULL;
-    } else {  //We found a client 
-      return returnNode; 
-    }
-  }
-  return NULL;
+  //Move parent's child pointer if were it....
+  if (node -> parent -> child == node) 
+    node -> parent -> child = node -> next;
+
+  //Move the next and previous pointers to cut out the node
+  if (node -> next)     node -> next -> previous = node -> previous;
+  if (node -> previous) node -> previous -> next = node -> next;
+
+  //Set our parent to NULL
+  node -> parent = NULL; node -> next = NULL; node -> previous = NULL;
 }

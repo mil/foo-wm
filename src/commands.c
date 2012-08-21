@@ -27,24 +27,24 @@ char * handleCommand(char * request) {
     i++;
   }
 
-  if (!strcmp(tokens[0], "dump"))
+  if (!strcmp(tokens[0], "containerize"))
+    containerize();
+  else if (!strcmp(tokens[0], "dump"))
     dumpTree();
-  else if (!strcmp(tokens[0], "layout"))
-    layout(tokens[1]);
   else if (!strcmp(tokens[0], "focus"))
     focus(tokens[1], tokens[2]);
-  else if (!strcmp(tokens[0], "move"))
-    move(atoi(tokens[1]));
-  else if (!strcmp(tokens[0], "mark"))
-    addMark(tokens[1]);
   else if(!strcmp(tokens[0], "jump"))
     jump(tokens[1]);
-  else if (!strcmp(tokens[0], "containerize"))
-    containerize();
-  else if (!strcmp(tokens[0], "zoom"))
-    zoom(atoi(tokens[1]));
   else if (!strcmp(tokens[0], "kill"))
     kill();
+  else if (!strcmp(tokens[0], "layout"))
+    layout(tokens[1]);
+  else if (!strcmp(tokens[0], "mark"))
+    mark(tokens[1]);
+  else if (!strcmp(tokens[0], "move"))
+    move(atoi(tokens[1]));
+  else if (!strcmp(tokens[0], "zoom"))
+    zoom(atoi(tokens[1]));
 
   XFlush(display);
   char * response = "I'm sending back to the socket";
@@ -79,23 +79,23 @@ void move(int amount) {
 
 
 /* Adds the current viewNode as a mark */
-void addMark(char * markName) {
+void mark(char * markName) {
 
   Mark *m = malloc(sizeof(Mark));
   m -> name = malloc(sizeof(markName));
   strcpy(m -> name, markName);
   m -> node     = viewNode;
-  m -> previous = mark;
-  mark = m;
+  m -> previous = markTail;
+  markTail = m;
 
-  fprintf(stderr, "\nAdded the mark::  %s // %s\n", markName, mark -> name);
+  fprintf(stderr, "\nAdded the mark::  %s // %s\n", markName, markTail -> name);
 }
 
 void jump(char * markName) {
   fprintf(stderr, "Finding a node");
 
   Mark *n = NULL;
-  for(n = mark; n; n = n -> previous) {
+  for(n = markTail; n; n = n -> previous) {
     if (!strcmp(n -> name, markName)) {
       fprintf(stderr, "Going to focus mark %p", n -> node);
       unmapNode(viewNode);

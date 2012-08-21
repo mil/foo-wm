@@ -14,8 +14,8 @@ Window root;
 Node *focusedNode, *viewNode, *rootNode;
 
 /* X Window -> Node Lookup Table */
-Lookup * lookup;
-Mark   * mark;
+Lookup * lookupTail;
+Mark   * markTail;
 
 //Customizations
 int clientPadding, containerPadding;

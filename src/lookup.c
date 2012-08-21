@@ -9,7 +9,7 @@
 //Returns the client associated with given windowv
 Node * getNodeByWindow(Window * window) {
   Lookup *entry;
-  for (entry = lookup; entry != NULL; entry = entry -> previous)
+  for (entry = lookupTail; entry != NULL; entry = entry -> previous)
     if (((int) *window) == entry -> window) 
       return entry -> node;
 
@@ -21,15 +21,15 @@ void removeLookupEntry(Window * window) {
   Lookup *entry;
 
   //Removing last entry in list 
-  if (lookup -> window == (int) *window) {
-    entry = lookup -> previous;
-    free(lookup);
-    lookup = entry;
+  if (lookupTail -> window == (int) *window) {
+    entry = lookupTail -> previous;
+    free(lookupTail);
+    lookupTail = entry;
     return;
   }
 
   //Rmove any other entry in list
-  for (entry = lookup; entry -> previous != NULL; entry = entry -> previous) {
+  for (entry = lookupTail; entry -> previous != NULL; entry = entry -> previous) {
     if ((int)*window == entry -> previous -> window) {
       cut = entry -> previous;
       entry -> previous = entry -> previous -> previous;
@@ -46,6 +46,6 @@ void addLookupEntry( Node * node, Window * window) {
   entry -> window = (int) *window;
 
   //Set lookup (last item) as aour previous, and now were lookup (last)
-  entry -> previous = lookup;
-  lookup = entry;
+  entry -> previous = lookupTail;
+  lookupTail = entry;
 }
