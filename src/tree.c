@@ -404,6 +404,7 @@ Node * getClientByDirection(Node * originNode, int direction) {
 /* Searches nodeA for an occurance of nodeB
  * if successful, return true */
 Bool nodeIsParentOf(Node * nodeA, Node * nodeB) {
+  if (nodeA == nodeB) return True;
 
   Node *n = NULL;
   for (n = nodeA -> child; n; n = n -> next) {
