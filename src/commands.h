@@ -7,5 +7,5 @@ void kill(void);
 void jump(char * markName);
 void layout(char * l);
 void mark(char * markName);
-void move(int amount);
+void shift(int amount);
 void zoom(int level);

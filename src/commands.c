@@ -24,6 +24,7 @@ char * handleCommand(char * request) {
     dumpTree();
   else if (!strcmp(tokens[0], "focus"))
     focus(tokens[1], tokens[2]);
+
   else if(!strcmp(tokens[0], "jump"))
     jump(tokens[1]);
   else if (!strcmp(tokens[0], "kill"))
@@ -32,8 +33,8 @@ char * handleCommand(char * request) {
     layout(tokens[1]);
   else if (!strcmp(tokens[0], "mark"))
     mark(tokens[1]);
-  else if (!strcmp(tokens[0], "move"))
-    move(atoi(tokens[1]));
+  else if (!strcmp(tokens[0], "shift"))
+    shift(atoi(tokens[1]));
   else if (!strcmp(tokens[0], "zoom"))
     zoom(atoi(tokens[1]));
 
@@ -184,7 +185,7 @@ void mark(char * markName) {
 
 
 //Moves the current selection given amount
-void move(int amount) {
+void shift(int amount) {
   Node *swapNode = getBrother(focusedNode, amount);
 
   swapNodes(focusedNode, swapNode);
