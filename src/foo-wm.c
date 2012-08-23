@@ -5,6 +5,7 @@
 #include <fcntl.h> 
 #include <string.h>
 #include <assert.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -50,7 +51,6 @@ void handleEvents(void) {
     FD_SET(socketFd, &descriptors);
 
     if (select(socketFd + 1, &descriptors, NULL, NULL, NULL)) {
-
       /* Anything on the Socket File Descriptor? */
       if (FD_ISSET(socketFd, &descriptors)) {
         /* Deal with events from the socket */
@@ -64,8 +64,10 @@ void handleEvents(void) {
             fprintf(stderr, "Recieved the message %s, from the socket\n", commands);
             char * response = handleCommand(commands);
             send(socketReturnFd, response, sizeof(response), 0);
-
+            close(socketReturnFd);
           }
+        } else {
+          fprintf(stderr, "Error on accept getting FD: %s\n", strerror(errno));
         }
       }
 

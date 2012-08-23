@@ -343,8 +343,7 @@ void placeNode(Node * node, int x, int y, int width, int height) {
     XMapWindow(display, node -> window);
     XRaiseWindow(display, node -> window);
     XMoveResizeWindow(display, node -> window, 
-        (x < 0) ? 0 : x, 
-        (y < 0) ? 0 : y, 
+        (x < 0) ? 0 : x, (y < 0) ? 0 : y, 
         (width -  (border * 2)) > 0 ? (width - border * 2) : 1, 
         (height - (border * 2)) > 0 ? (height- border * 2) : 1);
     XSetWindowBorderWidth(display, node -> window, border);
