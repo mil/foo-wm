@@ -57,6 +57,7 @@ void handleEvents(void) {
         socketReturnFd = accept(
             socketFd, 
             (struct sockaddr*)&returnAddress, 
+
             &returnAddressSize);
         if (socketReturnFd != -1) {
           if ((commandsLength = recv(socketReturnFd, commands, sizeof(commands), 0)) > 1) {
@@ -86,11 +87,6 @@ void handleEvents(void) {
 }
 
 void setup(void) {
-  // Setting from defines from config.h
-  defaultLayout    = CONTAINER_DEFAULT_LAYOUT;
-  containerPadding = CONTAINER_PADDING;
-  clientPadding    = CLIENT_PADDING;
-
   // Open display, set screen, set root, and select root input
   assert((display = XOpenDisplay(NULL)));
   activeScreen    = DefaultScreen(display);
@@ -98,25 +94,25 @@ void setup(void) {
   XSelectInput(display, root, SubstructureRedirectMask | SubstructureNotifyMask);
   setCursor(&root, 68);
 
-  // Setup Clients Defaults
+  // Setup Defaults from config.h
+  defaultLayout          = CONTAINER_DEFAULT_LAYOUT;
+  containerPadding       = CONTAINER_PADDING;
+  clientPadding          = CLIENT_PADDING;
   border                 = CLIENT_BORDER_WIDTH;
+  screenPaddingLeft      = SCREEN_PADDING_LEFT;
+  screenPaddingTop       = SCREEN_PADDING_TOP;
+  screenPaddingRight     = SCREEN_PADDING_RIGHT;
+  screenPaddingBottom    = SCREEN_PADDING_BOTTOM;
   activeFocusedColor     = getColor(CLIENT_ACTIVE_FOCUSED_COLOR);
   activeUnfocusedColor   = getColor(CLIENT_ACTIVE_UNFOCUSED_COLOR);
   inactiveFocusedColor   = getColor(CLIENT_INACTIVE_FOCUSED_COLOR);
   inactiveUnfocusedColor = getColor(CLIENT_INACTIVE_UNFOCUSED_COLOR);
 
   // Setup the Root Node (top of tree)
-  rootNode                       = allocateNode();
-  rootNode -> layout             = defaultLayout;
-  rootNode -> x      = rootX     = SCREEN_PADDING_LEFT;
-  rootNode -> y      = rootY     = SCREEN_PADDING_TOP;
-  rootWidth = DisplayWidth(display, activeScreen) 
-    - SCREEN_PADDING_LEFT - SCREEN_PADDING_RIGHT;
-  rootNode -> width  = rootWidth;
-  rootHeight = DisplayHeight(display, activeScreen) 
-    - SCREEN_PADDING_TOP - SCREEN_PADDING_BOTTOM;
-  rootNode -> height = rootHeight;
+  rootNode           = allocateNode();
+  rootNode -> layout = defaultLayout;
   viewNode           = rootNode;
+  recalculateRootDimensions();
 
   // Set Error Handlers and Flush to X
   XSetErrorHandler((XErrorHandler)(xError));

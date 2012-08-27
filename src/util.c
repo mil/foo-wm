@@ -34,6 +34,14 @@ Node * allocateNode() {
   return n;
 }
 
+void recalculateRootDimensions (void) {
+  if (!rootNode) return;
+  rootNode -> x         = rootX      = screenPaddingLeft;
+  rootNode -> y         = rootY     = screenPaddingTop;
+  rootNode -> width     = rootWidth = DisplayWidth(display, activeScreen) - screenPaddingLeft - screenPaddingRight;
+  rootNode -> height    = rootHeight = DisplayHeight(display, activeScreen) - screenPaddingTop - screenPaddingBottom;
+}
+
 void gridDimensions(int children, int * rows, int * cols) {
   if (children == 2) { *rows = 1; *cols = 2; return; } /* Edgecase */
 

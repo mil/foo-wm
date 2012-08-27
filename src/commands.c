@@ -24,6 +24,8 @@ char * handleCommand(char * request) {
     dumpTree();
   else if (!strcmp(tokens[0], "focus"))
     focus(tokens[1], tokens[2]);
+  else if (!strcmp(tokens[0], "get"))
+    get(tokens[1]);
   else if(!strcmp(tokens[0], "jump"))
     jump(tokens[1]);
   else if (!strcmp(tokens[0], "kill"))
@@ -32,6 +34,8 @@ char * handleCommand(char * request) {
     layout(tokens[1]);
   else if (!strcmp(tokens[0], "mark"))
     mark(tokens[1]);
+  else if (!strcmp(tokens[0], "set"))
+    set(tokens[1], tokens[2]);
   else if (!strcmp(tokens[0], "shift"))
     shift(tokens[1], atoi(tokens[2]));
   else if (!strcmp(tokens[0], "zoom"))
@@ -104,6 +108,10 @@ void focus(char * argA, char * argB) {
     focusNode(newFocus, NULL, True, True);
     delta = delta + ( delta > 0 ? -1 : 1);  
   }
+
+}
+
+void get(char * property) {
 
 }
 
@@ -180,6 +188,26 @@ void mark(char * markName) {
   fprintf(stderr, "\nAdded the mark::  %s // %s\n", markName, markTail -> name);
 }
 
+void set(char * property, char * value) {
+
+  if (!strcmp(property, "client_padding")) {
+
+  } else if (!strcmp(property, "container_padding")) {
+
+  } else if (!strcmp(property, "screen_padding_top")) {
+    screenPaddingTop = atoi(value);
+  } else if (!strcmp(property, "screen_padding_left")) {
+    screenPaddingLeft = atoi(value);
+  } else if (!strcmp(property, "screen_padding_right")) {
+    screenPaddingRight = atoi(value);
+  } else if (!strcmp(property, "screen_padding_bottom")) {
+    screenPaddingBottom = atoi(value);
+  }
+
+  recalculateRootDimensions();
+  rePlaceNode(viewNode);
+
+}
 
 //Moves the current selection given amount
 void shift(char * argA, int delta) {

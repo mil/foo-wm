@@ -11,19 +11,21 @@
 /* --------------------------------------------------------------------------
  * Bool Returns 
  * -------------------------------------------------------------------------- */
-Bool isClient(Node * node) { /* Is the node a client? */
+Bool isClient(Node * node) { 
+  /* Is the node a client? */
   if (node && (node -> window != (Window) NULL)) return True;
   else return False;  
 }
 
-Bool isOnlyChild(Node * node) { /* Is the node an only child */
+Bool isOnlyChild(Node * node) { 
+  /* Is the node an only child */
   if (node && (node -> next || node -> previous)) return False;
   else return True;
 }
 
-/* Searches nodeA for an occurance of nodeB
- * if successful, return true */
 Bool nodeIsParentOf(Node * nodeA, Node * nodeB) {
+  /* Searches nodeA for an occurance of nodeB
+   * if successful, return true */
   if (nodeA == nodeB) return True;
 
   Node *n = NULL;
@@ -35,10 +37,10 @@ Bool nodeIsParentOf(Node * nodeA, Node * nodeB) {
   return False;
 }
 
-/* Unfocuses the currently focused node, called only by focusNode 
- * Returns Bool if an update of the view is needed
- * Dangerous if called alone */
 Bool unfocusNode(Node * n, Bool focusPath) {
+  /* Unfocuses the currently focused node, called only by focusNode 
+   * Returns Bool if an update of the view is needed
+   * Dangerous if called alone */
   if (!n) return False;
 
   Bool setView = (n == viewNode) ? True : False;
@@ -289,9 +291,9 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
     } 
 
     if (focusPath) {
-        XSetInputFocus(display, n -> window, RevertToParent, CurrentTime);  
-        XUngrabButton(display, AnyButton, AnyModifier, n ->window);
-        XRaiseWindow(display, n -> window);
+      XSetInputFocus(display, n -> window, RevertToParent, CurrentTime);  
+      XUngrabButton(display, AnyButton, AnyModifier, n ->window);
+      XRaiseWindow(display, n -> window);
 
       if (event) {
         // Set the Input focus, and ungrab the window (no longer point to click)
@@ -466,7 +468,7 @@ void unparentNode(Node *node) {
   fprintf(stderr, "Unparent called\n");
   //Move parent's child pointer if were it....
   if (node -> parent -> child == node)
-      node -> parent -> child = node -> next;
+    node -> parent -> child = node -> next;
   if (node -> parent -> focus == node)
     node -> parent -> focus = node -> parent -> child;
 

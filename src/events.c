@@ -57,7 +57,7 @@ void eMapRequest(XEvent *event) {
 
 void eDestroyNotify(XEvent *event) {
   fprintf(stderr, "DESTROY NOTIFY RECIEVED");
-
+  fprintf(stderr, "\n\n Got here\n\n");
   Node *n = getNodeByWindow(&(event -> xdestroywindow.window));
   if (n == NULL) return;
 

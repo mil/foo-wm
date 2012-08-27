@@ -19,6 +19,7 @@ Mark   * markTail;
 
 //Customizations
 int clientPadding, containerPadding;
+int screenPaddingLeft, screenPaddingRight, screenPaddingTop, screenPaddingBottom;
 int defaultLayout, border;
 long activeFocusedColor, activeUnfocusedColor, 
      inactiveFocusedColor, inactiveUnfocusedColor;
