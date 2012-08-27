@@ -191,9 +191,9 @@ void mark(char * markName) {
 void set(char * property, char * value) {
 
   if (!strcmp(property, "client_padding")) {
-
+  } else if (!strcmp(property, "client_border_width"))
+    border = atoi(value);
   } else if (!strcmp(property, "container_padding")) {
-
   } else if (!strcmp(property, "screen_padding_top")) {
     screenPaddingTop = atoi(value);
   } else if (!strcmp(property, "screen_padding_left")) {
