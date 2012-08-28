@@ -5,3 +5,4 @@ void gridDimensions(int children, int * rows, int * cols);
 Bool isPrime(int number);
 Node * focusOrChildOf(Node * node);
 int directionStringToInt(char * directionString);
+void recalculateRootDimensions (void);
