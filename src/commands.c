@@ -113,6 +113,7 @@ void focus(char * argA, char * argB) {
 
 void get(char * property) {
 
+
 }
 
 void kill(void) {
@@ -190,9 +191,7 @@ void mark(char * markName) {
 
 void set(char * property, char * value) {
 
-  if (!strcmp(property, "client_padding")) {
-
-  } else if (!strcmp(property, "client_border_width")) {
+  if (!strcmp(property, "client_border_width")) {
     border = atoi(value);
   } else if (!strcmp(property, "container_padding")) {
     containerPadding = atoi(value);
