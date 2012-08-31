@@ -238,7 +238,7 @@ void destroyNode(Node * n) {
   if (isClient(n)) {
     removeLookupEntry(&n -> window);
     XDestroyWindow(display, n -> window);
-  } else {
+  } else if (n) {
     Node *destroy = n -> child; Node *next = NULL;
     do {
       if (destroy) {
@@ -269,7 +269,9 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
   fprintf(stderr, "Focusing %p", n);
 
   Node *oldFocus = focusedNode;
-  //Bool setView = False; //Wether the viewNode needs to be moved
+
+  if (oldFocus == viewNode) viewNode = n;
+
   if (focusPath && setFocused) { 
     fprintf(stderr, "\n\nNode %p, is in the focus patho\n\n", n);
     unfocusNode(focusedNode, True);
@@ -278,11 +280,10 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
 
   if (setFocused)  {
     focusedNode = n;
+
     if (oldFocus && nodeIsParentOf(viewNode, oldFocus))
       rePlaceNode(oldFocus);
   }
-
-  //if (setView)     viewNode    = n;
 
   // Are we at the bottom level 
   if (isClient(n)) {
@@ -312,7 +313,9 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
           i -> parent -> focus == i ? True : False);
     }
   }
-  //placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+
+  if (viewNode == n)
+    placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 }
 
 

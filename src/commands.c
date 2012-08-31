@@ -103,8 +103,6 @@ void focus(char * argA, char * argB) {
         focusedNode -> parent : focusOrChildOf(focusedNode);
     }
 
-    fprintf(stderr, "Going to focus node: %p", newFocus);
-
     focusNode(newFocus, NULL, True, True);
     delta = delta + ( delta > 0 ? -1 : 1);  
   }
