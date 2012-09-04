@@ -18,6 +18,8 @@ char * handleCommand(char * request) {
     i++;
   }
 
+  char * response = "Some arbitrary response back to the socket\0";
+
   if (!strcmp(tokens[0], "absorb"))
     absorb(tokens[1], tokens[2]);
   if (!strcmp(tokens[0], "containerize"))
@@ -44,7 +46,6 @@ char * handleCommand(char * request) {
     zoom(atoi(tokens[1]));
 
   XFlush(display);
-  char * response = "I'm sending back to the socket\0";
   return response;
 }
 

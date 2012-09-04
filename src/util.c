@@ -86,5 +86,6 @@ int bytesUntilNull(char * string) {
   while (string[counter] != '\0')
     counter++;
 
-  return counter;
+  /* Include the NULL Byte */
+  return ++counter;
 }

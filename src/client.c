@@ -20,12 +20,11 @@ int main(int argc, char **argv) {
 	connect(socketFd, (struct sockaddr *)&socketAddress, sizeof(socketAddress));
 	send(socketFd, argv[2], strlen(argv[2]), 0);
 
-
 	/* Check if we recieved a response */
-  while (recv(socketFd, buffer, sizeof(buffer), 0) > 0) {
-    printf("Buffer is %s", buffer);
-  }
+  while (recv(socketFd, buffer, sizeof(buffer), 0) > 0)
+    strcat(response, buffer);
 
+  printf("%s", response);
 
 	/* Close and return */
 	close(socketFd);
