@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
@@ -7,7 +8,8 @@
 int main(int argc, char **argv) {
 	int socketFd;
 	struct sockaddr_un socketAddress;
-	char response[256];
+	char buffer[256];
+  char * response;
 
 	/* Initialize the sockaddr_un struct */
 	socketAddress.sun_family = AF_UNIX;
@@ -18,9 +20,12 @@ int main(int argc, char **argv) {
 	connect(socketFd, (struct sockaddr *)&socketAddress, sizeof(socketAddress));
 	send(socketFd, argv[2], strlen(argv[2]), 0);
 
+
 	/* Check if we recieved a response */
-	if ((recv(socketFd, response, sizeof(response), 0)) > 0)
-		printf("%s\n", response);
+  while (recv(socketFd, buffer, sizeof(buffer), 0) > 0) {
+    printf("Buffer is %s", buffer);
+  }
+
 
 	/* Close and return */
 	close(socketFd);

@@ -270,7 +270,6 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
 
   Node *oldFocus = focusedNode;
 
-  if (oldFocus == viewNode) viewNode = n;
 
   if (focusPath && setFocused) { 
     fprintf(stderr, "\n\nNode %p, is in the focus patho\n\n", n);
@@ -283,7 +282,11 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
 
     if (oldFocus && nodeIsParentOf(viewNode, oldFocus))
       rePlaceNode(oldFocus);
+  
+    if (oldFocus == viewNode) viewNode = n;
   }
+
+  //if (setView)     viewNode    = n;
 
   // Are we at the bottom level 
   if (isClient(n)) {
@@ -313,7 +316,6 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
           i -> parent -> focus == i ? True : False);
     }
   }
-
   if (viewNode == n)
     placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 }

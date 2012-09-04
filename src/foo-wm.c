@@ -64,7 +64,7 @@ void handleEvents(void) {
             commands[commandsLength] = '\0';
             fprintf(stderr, "Recieved the message %s, from the socket\n", commands);
             char * response = handleCommand(commands);
-            send(socketReturnFd, response, sizeof(response), 0);
+            send(socketReturnFd, response, bytesUntilNull(response), 0);
             close(socketReturnFd);
           }
         } else {

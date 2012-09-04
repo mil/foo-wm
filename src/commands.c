@@ -18,6 +18,8 @@ char * handleCommand(char * request) {
     i++;
   }
 
+  if (!strcmp(tokens[0], "absorb"))
+    absorb(tokens[1], tokens[2]);
   if (!strcmp(tokens[0], "containerize"))
     containerize();
   else if (!strcmp(tokens[0], "dump"))
@@ -42,7 +44,7 @@ char * handleCommand(char * request) {
     zoom(atoi(tokens[1]));
 
   XFlush(display);
-  char * response = "I'm sending back to the socket";
+  char * response = "I'm sending back to the socket\0";
   return response;
 }
 
@@ -63,6 +65,16 @@ char * nextToken(char ** tokenString) {
 /* -----------------------------------------------------------------------------
  * IPC Commands 
  * ---------------------------------------------------------------------------*/
+void absorb(char * argA, char * argB) {
+  /* Absorbs the given node into the container of the focused node 
+   * If the focused node is a client, containerize will be called then absorb
+   * */
+  if (!focusedNode) return;
+
+  if (isClient(focusedNode)) containerize();
+
+}
+
 void containerize(void) {
   if (!focusedNode) return;
   if (focusedNode -> child && !isClient(focusedNode -> child))

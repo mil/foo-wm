@@ -80,3 +80,11 @@ int directionStringToInt(char * directionString) {
   else if (!strcmp(directionString, "down"))  return DOWN;
   else return -1;
 }
+
+int bytesUntilNull(char * string) {
+  int counter = 0;
+  while (string[counter] != '\0')
+    counter++;
+
+  return counter;
+}
