@@ -1,6 +1,7 @@
 char * handleCommand(char * request);
 char * nextToken(char ** tokenString);
 
+void absorb(char * argA, char * argB);
 void containerize(void);
 void focus(char * argA, char * argB);
 void get(char * property);
