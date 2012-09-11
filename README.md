@@ -43,11 +43,17 @@ IPC Commands
 ------------
 All user interaction with foo-wm takes place through its IPC via the socket. The one exception to this is mouse actions which are bound by the IPC.
 
-### dump
+### get 
 **Usage:**
-`dump`
+`get tree|view|focus`
 
-Dumps a tree view of the root container to STDERR.
+Gets a specific internal property within the WM.
+
+### set 
+**Usage:**
+`set `
+
+Sets a specific internal property of the WM.
 
 ### layout 
 **Usage:**
