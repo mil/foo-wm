@@ -74,11 +74,11 @@ char * crawlNode(Node * node, int level) {
   char * returnString = "";
   int j; for (j = level; j > 0; j--) { returnString = stringAppend(returnString, "|\t"); }
 
+  char nodeInfo[1000];
   if (isClient(node)) {
 
-    char * clientString;
-    sprintf(clientString, "Client (%p)", node);
-    returnString = stringAppend(returnString, clientString);
+    sprintf(nodeInfo, "Client (%p)", node);
+    returnString = stringAppend(returnString, nodeInfo);
 
     if (node == focusedNode) { returnString = stringAppend(returnString, " [Focused]"); }
     if (node == viewNode) { returnString = stringAppend(returnString, " [View]"); }
@@ -95,10 +95,8 @@ char * crawlNode(Node * node, int level) {
 
     }
 
-    char * containerString;
-    sprintf(containerString, "Container (%p) %s (focus=%p)", node, label, node -> focus);
-
-    returnString = stringAppend(returnString, containerString);
+    sprintf(nodeInfo, "Container (%p) %s (focus=%p)", node, label, node -> focus);
+    returnString = stringAppend(returnString, nodeInfo);
 
     if (node == focusedNode) returnString = stringAppend(returnString, "[Focused]");
     if (node == viewNode)    returnString = stringAppend(returnString, " [View]");

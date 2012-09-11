@@ -7,3 +7,4 @@ Node * focusOrChildOf(Node * node);
 int directionStringToInt(char * directionString);
 void recalculateRootDimensions (void);
 int bytesUntilNull(char * string);
+char * stringAppend(char * originalString, char * appendContent);
