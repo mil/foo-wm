@@ -1,6 +1,7 @@
 #include <X11/Xlib.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include "foo-wm.h"
 #include "tree.h"
@@ -66,9 +67,61 @@ Bool unfocusNode(Node * n, Bool focusPath) {
   return setView;
 }
 
+/* --------------------------------------------------------------------------
+ * Char * Returns 
+ * -------------------------------------------------------------------------- */
+char * crawlNode(Node * node, int level) {
+  char * returnString = "";
+  int j; for (j = level; j > 0; j--) { returnString = stringAppend(returnString, "|\t"); }
+
+  if (isClient(node)) {
+
+    char * clientString;
+    sprintf(clientString, "Client (%p)", node);
+    returnString = stringAppend(returnString, clientString);
+
+    if (node == focusedNode) { returnString = stringAppend(returnString, " [Focused]"); }
+    if (node == viewNode) { returnString = stringAppend(returnString, " [View]"); }
+    //fprintf(stderr, " || N[%p] P[%p]", node -> next, node -> previous);
+    returnString = stringAppend(returnString, "\n");
+
+  } else {
+    char *label = NULL;
+    switch (node -> layout) {
+      case VERTICAL   : label = "Vertical"; break;
+      case HORIZONTAL : label = "Horizontal"; break;
+      case GRID       : label = "Grid"; break;
+      case MAX        : label = "Max"; break;
+      case FLOAT      : label = "Float"; break;
+
+    }
+
+    char containerString[300];
+    sprintf(containerString, "Container (%p) %s (focus=%p)", node, label, node -> focus);
+
+    returnString = stringAppend(returnString, containerString);
+
+
+    if (node == focusedNode) returnString = stringAppend(returnString, "[Focused]");
+    if (node == viewNode)    returnString = stringAppend(returnString, " [View]");
+    //fprintf(stderr, " || N[%p] P[%p]", node -> next, node -> previous);
+    returnString = stringAppend(returnString, "\n");
+    fprintf(stderr, "The String appended after is %s", returnString);
+
+    Node *n = NULL;
+    for (n = node -> child; n; n = n -> next)
+      returnString = stringAppend(returnString, crawlNode(n, level + 1));
+  }
+
+  fprintf(stderr, "YO THE FINAL (((%s)))\n", returnString);
+
+  return returnString;
+}
+
+
 
 /* --------------------------------------------------------------------------
- * LongReturns 
+ * Long Returns 
  * -------------------------------------------------------------------------- */
 long getBorderColor(Node * node, Bool focusPath) {
   if (focusPath) {
@@ -182,41 +235,6 @@ void brotherNode(Node *node, Node * brother, int position) {
     if (node -> next) node -> next -> previous = node;
     brother -> next = node;
   }
-}
-
-
-void crawlNode(Node * node, int level) {
-  int j; for (j = level; j > 0; j--) { fprintf(stderr, "|\t"); }
-
-  if (isClient(node)) {
-    fprintf(stderr, "Client (%p)", node);
-    if (node == focusedNode) fprintf(stderr, " [Focused]");
-    if (node == viewNode)    fprintf(stderr, " [View]");
-    //fprintf(stderr, " || N[%p] P[%p]", node -> next, node -> previous);
-    fprintf(stderr, "\n");
-
-  } else {
-    char *label;
-    switch (node -> layout) {
-      case VERTICAL   : label = "Vertical"; break;
-      case HORIZONTAL : label = "Horizontal"; break;
-      case GRID       : label = "Grid"; break;
-      case MAX        : label = "Max"; break;
-      case FLOAT      : label = "Float"; break;
-
-    }
-
-    fprintf(stderr, "Container (%p) %s (focus=%p)", node, label, node -> focus);
-    if (node == focusedNode)  fprintf(stderr, " [Focused]");
-    if (node == viewNode)     fprintf(stderr, " [View]");
-    //fprintf(stderr, " || N[%p] P[%p]", node -> next, node -> previous);
-    fprintf(stderr, "\n");
-
-    Node *n;
-    for (n = node -> child; n; n = n -> next)
-      crawlNode(n, level + 1);  
-  }
-
 }
 
 

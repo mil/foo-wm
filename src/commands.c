@@ -24,12 +24,10 @@ char * handleCommand(char * request) {
     absorb(tokens[1], tokens[2]);
   if (!strcmp(tokens[0], "containerize"))
     containerize();
-  else if (!strcmp(tokens[0], "dump"))
-    dumpTree();
   else if (!strcmp(tokens[0], "focus"))
     focus(tokens[1], tokens[2]);
   else if (!strcmp(tokens[0], "get"))
-    get(tokens[1]);
+    response = get(tokens[1]);
   else if(!strcmp(tokens[0], "jump"))
     jump(tokens[1]);
   else if (!strcmp(tokens[0], "kill"))
@@ -122,8 +120,9 @@ void focus(char * argA, char * argB) {
 
 }
 
-void get(char * property) {
-
+char * get(char * property) {
+  if (!strcmp(property, "tree"))
+    return crawlNode(rootNode, 0);
 
 }
 
