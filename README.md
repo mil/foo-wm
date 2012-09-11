@@ -39,6 +39,8 @@ foo-wm-c
 
 *Usage:* `foo-wm-c socketpath "ipc command"`
 
+Properties
+----------
 IPC Commands
 ------------
 All user interaction with foo-wm takes place through its IPC via the socket. The one exception to this is mouse actions which are bound by the IPC.
@@ -47,13 +49,26 @@ All user interaction with foo-wm takes place through its IPC via the socket. The
 **Usage:**
 `get tree|view|focus`
 
-Gets a specific internal property within the WM.
+Gets data from the WM.
+*Gettable Properties*:
+tree (returns json tree starting from root node)
+view (returns json tree starting from view node)
+focus (returns json tree starting from focus node)
 
 ### set 
 **Usage:**
-`set `
+`set client_padding 10`
 
-Sets a specific internal property of the WM.
+Sets WM data.
+*Settable Properties*:
+client_border_width (integer)
+container_padding (integer)
+client_padding (integer)
+screen_padding_top (integer)
+screen_padding_left (integer)
+screen_padding_right (integer)
+screen_padding_bottom (integer)
+
 
 ### layout 
 **Usage:**
