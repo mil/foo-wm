@@ -82,7 +82,6 @@ char * crawlNode(Node * node, int level) {
 
     if (node == focusedNode) { returnString = stringAppend(returnString, " [Focused]"); }
     if (node == viewNode) { returnString = stringAppend(returnString, " [View]"); }
-    //fprintf(stderr, " || N[%p] P[%p]", node -> next, node -> previous);
     returnString = stringAppend(returnString, "\n");
 
   } else {
@@ -96,24 +95,19 @@ char * crawlNode(Node * node, int level) {
 
     }
 
-    char containerString[300];
+    char * containerString;
     sprintf(containerString, "Container (%p) %s (focus=%p)", node, label, node -> focus);
 
     returnString = stringAppend(returnString, containerString);
 
-
     if (node == focusedNode) returnString = stringAppend(returnString, "[Focused]");
     if (node == viewNode)    returnString = stringAppend(returnString, " [View]");
-    //fprintf(stderr, " || N[%p] P[%p]", node -> next, node -> previous);
     returnString = stringAppend(returnString, "\n");
-    fprintf(stderr, "The String appended after is %s", returnString);
 
     Node *n = NULL;
     for (n = node -> child; n; n = n -> next)
       returnString = stringAppend(returnString, crawlNode(n, level + 1));
   }
-
-  fprintf(stderr, "YO THE FINAL (((%s)))\n", returnString);
 
   return returnString;
 }

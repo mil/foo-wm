@@ -123,6 +123,11 @@ void focus(char * argA, char * argB) {
 char * get(char * property) {
   if (!strcmp(property, "tree"))
     return crawlNode(rootNode, 0);
+  else if (!strcmp(property, "view"))
+    return crawlNode(viewNode, 0);
+  else if (!strcmp(property, "focus"))
+    return crawlNode(focusNode, 0);
+
 
 }
 
