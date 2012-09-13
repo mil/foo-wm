@@ -73,13 +73,6 @@ Node * focusOrChildOf(Node * node) {
   else return node -> child;
 }
 
-int directionStringToInt(char * directionString) {
-  if (!strcmp(directionString, "left"))       return LEFT; 
-  else if (!strcmp(directionString, "up"))    return UP;
-  else if (!strcmp(directionString, "right")) return RIGHT; 
-  else if (!strcmp(directionString, "down"))  return DOWN;
-  else return -1;
-}
 
 int bytesUntilNull(char * string) {
   int counter = 0;
@@ -90,10 +83,24 @@ int bytesUntilNull(char * string) {
   return ++counter;
 }
 
-char * stringAppend(char * originalString, char * appendContent) {
-  char * returnString = (char *) malloc(strlen(originalString) + strlen(appendContent));
-  strcpy(returnString, originalString); 
-  strcat(returnString, appendContent);
+void stringAppend(char ** oldString, char * appendContent) {
+  fprintf(stderr, "IN string append");
 
-  return returnString;
+  char * newString = 
+    (char *) malloc(strlen(oldString) + strlen(appendContent));
+
+  strcpy(newString, oldString); 
+  fprintf(stderr, "after strcpy %s\n\n", newString);
+  strcat(newString, appendContent);
+
+
+  free(oldString);
+  oldString = malloc(strlen(newString));
+  oldString = newString;
+
+  fprintf(stderr, "BEFORE REALLOC");
+//oldString = realloc(oldString, strlen(newString)); 
+  fprintf(stderr, "AFTER REALLOC");
+  //oldString = newString;
+
 }

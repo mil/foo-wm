@@ -4,7 +4,6 @@ Node * allocateNode();
 void gridDimensions(int children, int * rows, int * cols);
 Bool isPrime(int number);
 Node * focusOrChildOf(Node * node);
-int directionStringToInt(char * directionString);
 void recalculateRootDimensions (void);
 int bytesUntilNull(char * string);
-char * stringAppend(char * originalString, char * appendContent);
+void stringAppend(char ** originalString, char * appendContent);

@@ -71,18 +71,26 @@ Bool unfocusNode(Node * n, Bool focusPath) {
  * Char * Returns 
  * -------------------------------------------------------------------------- */
 char * crawlNode(Node * node, int level) {
-  char * returnString = "";
-  int j; for (j = level; j > 0; j--) { returnString = stringAppend(returnString, "|\t"); }
+  fprintf(stderr, "Within starting the crawlNode");
+  char * returnString = (char *) malloc(0);
+  stringAppend(returnString, "");
+  int j; 
+
+
+  
+  for (j = level; j > 0; j--) { 
+    stringAppend(returnString, "|\t"); 
+  }
 
   char nodeInfo[1000];
   if (isClient(node)) {
 
     sprintf(nodeInfo, "Client (%p)", node);
-    returnString = stringAppend(returnString, nodeInfo);
+    stringAppend(returnString, nodeInfo);
 
-    if (node == focusedNode) { returnString = stringAppend(returnString, " [Focused]"); }
-    if (node == viewNode) { returnString = stringAppend(returnString, " [View]"); }
-    returnString = stringAppend(returnString, "\n");
+    if (node == focusedNode) { stringAppend(returnString, " [Focused]"); }
+    if (node == viewNode) { stringAppend(returnString, " [View]"); }
+    stringAppend(returnString, "\n");
 
   } else {
     char *label = NULL;
@@ -96,15 +104,16 @@ char * crawlNode(Node * node, int level) {
     }
 
     sprintf(nodeInfo, "Container (%p) %s (focus=%p)", node, label, node -> focus);
-    returnString = stringAppend(returnString, nodeInfo);
+    stringAppend(returnString, nodeInfo);
+    fprintf(stderr, "\n\nReturn string has %s\n\n", returnString);
 
-    if (node == focusedNode) returnString = stringAppend(returnString, "[Focused]");
-    if (node == viewNode)    returnString = stringAppend(returnString, " [View]");
-    returnString = stringAppend(returnString, "\n");
+    if (node == focusedNode) stringAppend(returnString, "[Focused]");
+    if (node == viewNode)   stringAppend(returnString, " [View]");
+    stringAppend(returnString, "\n");
 
     Node *n = NULL;
     for (n = node -> child; n; n = n -> next)
-      returnString = stringAppend(returnString, crawlNode(n, level + 1));
+      stringAppend(returnString, crawlNode(n, level + 1));
   }
 
   return returnString;
