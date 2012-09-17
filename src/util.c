@@ -91,9 +91,12 @@ int bytesUntilNull(char * string) {
 }
 
 char * stringAppend(char * originalString, char * appendContent) {
+  /*
   char * returnString = (char *) malloc(strlen(originalString) + strlen(appendContent));
   strcpy(returnString, originalString); 
   strcat(returnString, appendContent);
 
   return returnString;
+  */
+  return originalString;
 }
