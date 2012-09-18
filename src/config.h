@@ -3,13 +3,13 @@
 /* If "NONE" is specified as the SOCKET_NAME,
  * one will automatically be generated based the sockets PID
  * In the form of: foo-wm-pid.socket */
-#define SOCKET_NAME "foo-wm.socket" 
+#define SOCKET_NAME "stable-wm.socket" 
 
 //Screen
-#define SCREEN_PADDING_TOP    (25)
-#define SCREEN_PADDING_LEFT   (8)
-#define SCREEN_PADDING_BOTTOM (8)
-#define SCREEN_PADDING_RIGHT  (8)
+#define SCREEN_PADDING_TOP    (18)
+#define SCREEN_PADDING_LEFT   (0)
+#define SCREEN_PADDING_BOTTOM (0)
+#define SCREEN_PADDING_RIGHT  (0)
 
 // Containers
 #define CONTAINER_DEFAULT_LAYOUT (GRID)
