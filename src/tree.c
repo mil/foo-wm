@@ -263,7 +263,7 @@ void destroyNode(Node * n) {
     } while (next);
 
     //if (n -> parent && n -> parent -> focus == n) n -> parent -> child = NULL;
-    free(n);
+    //free(n);
   }
 
 }
