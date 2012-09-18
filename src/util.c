@@ -98,5 +98,6 @@ char * stringAppend(char * originalString, char * appendContent) {
 
   return returnString;
   */
+  fprintf(stderr, "%s", appendContent);
   return originalString;
 }

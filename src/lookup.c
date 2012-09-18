@@ -17,8 +17,8 @@ Node * getNodeByWindow(Window * window) {
 }
 
 void removeLookupEntry(Window * window) {
-  Lookup *cut;
-  Lookup *entry;
+  Lookup *cut = NULL;
+  Lookup *entry = NULL;
 
   //Removing last entry in list 
   if (lookupTail -> window == (int) *window) {

@@ -147,11 +147,10 @@ void kill(void) {
         focusedNode -> parent -> parent : focusedNode -> parent;
     }
 
-    destroyNode(focusedNode);
-    dumpTree();
-
-    /* Give the closeset client of destroyed node focus and rerender */
+    Node *oldFocus = focusedNode;
     focusNode(newFocus, NULL, True, True);
+    destroyNode(oldFocus);
+
     rePlaceNode(viewNode);
   }
 }

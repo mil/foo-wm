@@ -80,6 +80,7 @@ char * crawlNode(Node * node, int level) {
     sprintf(nodeInfo, "Client (%p)", node);
     returnString = stringAppend(returnString, nodeInfo);
 
+    if (node == rootNode) { returnString = stringAppend(returnString, " [Root]"); }
     if (node == focusedNode) { returnString = stringAppend(returnString, " [Focused]"); }
     if (node == viewNode) { returnString = stringAppend(returnString, " [View]"); }
     returnString = stringAppend(returnString, "\n");
@@ -134,7 +135,7 @@ long getBorderColor(Node * node, Bool focusPath) {
  * Node Returns 
  * -------------------------------------------------------------------------- */
 Node * getBrother(Node * node, int delta) {
-  fprintf(stderr, "Getting the brother node");
+  if (!node) return NULL;
 
   while (delta > 0) {
     if (node -> next)
@@ -244,10 +245,14 @@ void destroyNode(Node * n) {
   unparentNode(n);
   fprintf(stderr, "Made it here");
 
+  if (n == focusedNode) focusedNode = NULL;
+  fprintf(stderr, "n is %p", n);
+
   //Recursivly unmap down all children of the node
   if (isClient(n)) {
     removeLookupEntry(&n -> window);
     XDestroyWindow(display, n -> window);
+    free(n);
   } else if (n) {
     Node *destroy = n -> child; Node *next = NULL;
     do {
@@ -257,11 +262,10 @@ void destroyNode(Node * n) {
       } else { next = NULL; }
     } while (next);
 
+    //if (n -> parent && n -> parent -> focus == n) n -> parent -> child = NULL;
+    free(n);
   }
 
-  //Set Focused Node if we just destroyed the focus, and free 
-  if (n == focusedNode) focusedNode = NULL;
-  free(n);
 }
 
 
@@ -494,6 +498,6 @@ void unparentNode(Node *node) {
   //Set our parent to NULL
   Node * oldParent = node -> parent;
   node -> parent = NULL; node -> next = NULL; node -> previous = NULL;
-  if (oldParent -> child == NULL)
+  if (!oldParent -> child)
     destroyNode(oldParent);
 }

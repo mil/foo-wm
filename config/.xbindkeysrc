@@ -108,7 +108,7 @@
 
 
 # Dumps the Tree
-"foo-wm-c  /tmp/foo-wm.socket 'dump tree'"
+"foo-wm-c  /tmp/foo-wm.socket 'get tree'"
 	m:0x40 + c:28
 	Mod4 + t
 
