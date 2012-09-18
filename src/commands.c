@@ -98,7 +98,6 @@ void containerize(void) {
 void focus(char * argA, char * argB) {
   int delta = atoi(argB);
 
-  fprintf(stderr, "Cycling focus");
   int brotherSwitch = -1;
   if (!strcmp(argA, "brother")) brotherSwitch = 1;
   else if (!strcmp(argA, "pc")) brotherSwitch = 0;
