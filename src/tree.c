@@ -285,28 +285,30 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
   Node *oldFocus = focusedNode;
 
 
-  if (focusPath && setFocused) { 
-    fprintf(stderr, "\n\nNode %p, is in the focus patho\n\n", n);
+  /* Focus path and set focus --> Update the focus ptr of parent */
+  if (focusPath && setFocused) {
+    fprintf(stderr, "\n\nNode %p, is in the focus path\n\n", n);
     unfocusNode(focusedNode, True);
     if (setFocused && n -> parent)   n -> parent -> focus = n;
   }
 
+  /* Setting focus */
   if (setFocused)  {
     focusedNode = n;
 
     if (oldFocus && nodeIsParentOf(viewNode, oldFocus))
       rePlaceNode(oldFocus);
   
-    if (oldFocus == viewNode) viewNode = n;
+    if (oldFocus == viewNode && nodeIsParentOf(focusedNode, viewNode)) {
+      viewNode = n;
+      placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+    }
   }
-
-  //if (setView)     viewNode    = n;
 
   // Are we at the bottom level 
   if (isClient(n)) {
-    if (n -> parent)  {
+    if (n -> parent)
       rePlaceNode(n -> parent);
-    } 
 
     if (focusPath) {
       XSetInputFocus(display, n -> window, RevertToParent, CurrentTime);  
@@ -317,21 +319,18 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
         // Set the Input focus, and ungrab the window (no longer point to click)
         XSendEvent(display, n -> window, True, ButtonPressMask, event);
       } else {
-        fprintf(stderr, "YO I AM CENTERING POINT on %p !\n\n", n);
         centerPointer(&n -> window);
       }
     }
 
-
   } else {
-    fprintf(stderr, "focus called on a container");
-    Node *i; for (i = n -> child; i; i = i -> next) {
-      focusNode(i, NULL, False, //Recall Focusnode
+    /* Focus on container -- recur down focus path */
+    Node *i = NULL;
+    for (i = n -> child; i; i = i -> next) {
+      focusNode(i, NULL, False, 
           i -> parent -> focus == i ? True : False);
     }
   }
-  if (viewNode == n)
-    placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 }
 
 
