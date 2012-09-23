@@ -1,5 +1,5 @@
 ### Applications 
-"urxvt -cd `cat /home/mil/.wd`"
+"urxvt"
     m:0x40 + c:36
     mod4 + enter 
 "urxvt"
@@ -183,3 +183,11 @@
 "scrot -s"
     m:0x41 + c:13
     Shift+Mod4 + 4
+
+"`sselp`"
+  m:0x40 + c:27
+  Mod4 + r
+
+"dwb `sselp`"
+  m:0x40 + c:28
+  Mod4 + t
