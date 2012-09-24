@@ -96,6 +96,7 @@ void containerize(void) {
 
 
 void focus(char * argA, char * argB) {
+  if (!focusedNode) return;
   int delta = atoi(argB);
 
   int brotherSwitch = -1;
@@ -104,7 +105,7 @@ void focus(char * argA, char * argB) {
   else return;
 
   while (delta != 0) {
-    Node * newFocus;
+    Node * newFocus = NULL;
 
     if (brotherSwitch) {
       newFocus = getBrother(focusedNode, (delta < 0) ? -1 : 1);
