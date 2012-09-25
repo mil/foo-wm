@@ -12,6 +12,7 @@ Bugs
       * zoom 1
       * focus brother 1
 - 'set screen_padding_(top|left|right|bottom)' does not take immediate affect
+- 1 Child containers within containers
 
 Planned Features
 ================
