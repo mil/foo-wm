@@ -126,6 +126,10 @@ Jumps to the predefined marked node.
 Kills the currently focused node (and any nodes that are the focused node's children).
 
 Inspiration
-------
+-----------
 Inspirations include: 
 DWM, monsterwm, catwm, dminiwm, i3, herbstluftwm, wmii, and tinywm
+
+Contributing
+------------
+Foo Window Manager is very much open to contribution. Please get in touch via email if you are interested or just take a stab at something in `TODO.md` and send a pull request.
