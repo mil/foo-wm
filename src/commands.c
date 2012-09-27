@@ -24,6 +24,8 @@ char * handleCommand(char * request) {
     absorb(tokens[1], tokens[2]);
   if (!strcmp(tokens[0], "containerize"))
     containerize();
+  else if (!strcmp(tokens[0], "dimensions"))
+    dimensions(tokens[1], tokens[2]);
   else if (!strcmp(tokens[0], "focus"))
     focus(tokens[1], tokens[2]);
   else if (!strcmp(tokens[0], "get"))
@@ -92,6 +94,16 @@ void containerize(void) {
   parentNode(focusedNode, newContainer);
   brotherNode(newContainer, insertNode, insertPosition);
   placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+}
+
+void dimensions(char *w, char *h) {
+  int width = atoi(w);
+  int height = atoi(h);
+  rootNode -> x         = rootX      = screenPaddingLeft;
+  rootNode -> y         = rootY     = screenPaddingTop;
+  rootNode -> width     = rootWidth = width - screenPaddingLeft - screenPaddingRight;
+  rootNode -> height    = rootHeight = height - screenPaddingTop - screenPaddingBottom;
+
 }
 
 
