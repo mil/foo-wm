@@ -12,6 +12,20 @@
 /* --------------------------------------------------------------------------
  * Bool Returns 
  * -------------------------------------------------------------------------- */
+Bool areBrothers(Node * nodeA, Node * nodeB) {
+  if ((!nodeA || !nodeB) || nodeA -> parent != nodeB -> parent) return False;
+
+  Bool hasA, hasB;
+  Node *n = NULL;
+  for (n = nodeA -> parent -> child; n; n = n -> next) {
+    if (n == nodeA) hasA = True;
+    if (n == nodeB) hasB = True;
+  }
+
+  if (hasA && hasB) return True;
+  else return False;
+}
+
 Bool isClient(Node * node) { 
   /* Is the node a client? */
   if (node && (node -> window != (Window) NULL)) return True;
@@ -301,15 +315,18 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
   
     if (oldFocus == viewNode && nodeIsParentOf(focusedNode, viewNode)) {
       viewNode = n;
-      placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
     }
+
+    if (areBrothers(oldFocus, focusedNode)) {
+      placeNode(focusedNode, oldFocus -> x, oldFocus -> y, oldFocus -> width, oldFocus -> height);
+    }
+
+    placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+
   }
 
   // Are we at the bottom level 
   if (isClient(n)) {
-    if (n -> parent)
-      rePlaceNode(n -> parent);
-
     if (focusPath) {
       XSetInputFocus(display, n -> window, RevertToParent, CurrentTime);  
       XUngrabButton(display, AnyButton, AnyModifier, n ->window);
