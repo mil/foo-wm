@@ -85,44 +85,42 @@ Bool unfocusNode(Node * n, Bool focusPath) {
  * Char * Returns 
  * -------------------------------------------------------------------------- */
 char * crawlNode(Node * node, int level) {
-  char * returnString = "";
-  int j; for (j = level; j > 0; j--) { returnString = stringAppend(returnString, "|\t"); }
+  //int j; for (j = level; j > 0; j--) { returnString = stringAppend(returnString, "|\t"); }
+  char *buffer = malloc(10000);
+  char 
+    *label = "", 
+    *nestString = malloc(1000);
 
-  char nodeInfo[1000];
-  if (isClient(node)) {
+  if (!isClient(node)) {
+    Node *n = NULL;
+    for (n = node -> child; n; n = n -> next) {
+      sprintf(nestString, "%s\n%s", nestString, crawlNode(n, level +1));
+    }
 
-    sprintf(nodeInfo, "Client (%p)", node);
-    returnString = stringAppend(returnString, nodeInfo);
-
-    if (node == rootNode) { returnString = stringAppend(returnString, " [Root]"); }
-    if (node == focusedNode) { returnString = stringAppend(returnString, " [Focused]"); }
-    if (node == viewNode) { returnString = stringAppend(returnString, " [View]"); }
-    returnString = stringAppend(returnString, "\n");
-
-  } else {
-    char *label = NULL;
     switch (node -> layout) {
       case VERTICAL   : label = "Vertical"; break;
       case HORIZONTAL : label = "Horizontal"; break;
       case GRID       : label = "Grid"; break;
       case MAX        : label = "Max"; break;
       case FLOAT      : label = "Float"; break;
-
     }
-
-    sprintf(nodeInfo, "Container (%p) %s (focus=%p)", node, label, node -> focus);
-    returnString = stringAppend(returnString, nodeInfo);
-
-    if (node == focusedNode) returnString = stringAppend(returnString, "[Focused]");
-    if (node == viewNode)    returnString = stringAppend(returnString, " [View]");
-    returnString = stringAppend(returnString, "\n");
-
-    Node *n = NULL;
-    for (n = node -> child; n; n = n -> next)
-      returnString = stringAppend(returnString, crawlNode(n, level + 1));
   }
 
-  return returnString;
+  sprintf(buffer,
+    /* Type (Pointer) (?Layout) (?R/V/F) (?ChildFocus) */
+    "%s (%p) %s %s%s%s%s%s",
+        isClient(node) ? "Client" : "Container",
+        node,
+        label,
+        node == rootNode    ? "[Root]"    : "",
+        node == focusedNode ? "[Focused]" : "",
+        node == viewNode    ? "[View]"    : "",
+        node -> focus ? node -> focus : "",
+        nestString
+  );
+
+  free(nestString);
+  return buffer;
 }
 
 
