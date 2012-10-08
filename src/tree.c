@@ -85,41 +85,63 @@ Bool unfocusNode(Node * n, Bool focusPath) {
  * Char * Returns 
  * -------------------------------------------------------------------------- */
 char * crawlNode(Node * node, int level) {
-  //int j; for (j = level; j > 0; j--) { returnString = stringAppend(returnString, "|\t"); }
-  char *buffer = malloc(10000);
   char 
+    *buffer = malloc(5120),
     *label = "", 
-    *nestString = malloc(1000);
+    *nestString = "";
 
+  /* Recursivly Crawl Children */
   if (!isClient(node)) {
-    Node *n = NULL;
-    for (n = node -> child; n; n = n -> next) {
-      sprintf(nestString, "%s\n%s", nestString, crawlNode(n, level +1));
-    }
+    nestString = malloc(5120);
+    Node *n = NULL; int c = 0;
 
-    switch (node -> layout) {
-      case VERTICAL   : label = "Vertical"; break;
-      case HORIZONTAL : label = "Horizontal"; break;
-      case GRID       : label = "Grid"; break;
-      case MAX        : label = "Max"; break;
-      case FLOAT      : label = "Float"; break;
+    int last = -1;
+    for (n = node -> child; n; n = n -> next, last++) { }
+    n = NULL;
+
+    for (n = node -> child; n; n = n -> next, c++) {
+      char *crawlResult = malloc(5120);
+      crawlResult = crawlNode(n, level + 1);
+      sprintf(nestString, "%s%s%s", 
+          c == 0 ? "" : nestString, 
+          crawlResult,
+          c != last  ? "," : ""
+          );
+      free(crawlResult);
     }
   }
+  
 
+  /* Determine Label for sprintf */
+  if (!isClient(node)) {
+    switch (node -> layout) {
+      case VERTICAL   : label = ",\"layout\":\"vertical\""; break;
+      case HORIZONTAL : label = ",\"layout\":\"horizontal\""; break;
+      case GRID       : label = ",\"layout\":\"grid\""; break;
+      case MAX        : label = ",\"layout\":\"max\""; break;
+      case FLOAT      : label = ",\"layout\":\"float\""; break;
+      }
+  }
+
+  /* Print to the buffer */
   sprintf(buffer,
     /* Type (Pointer) (?Layout) (?R/V/F) (?ChildFocus) */
-    "%s (%p) %s %s%s%s%s%s",
-        isClient(node) ? "Client" : "Container",
+    "{\"node\":\"(%p)\",\"type\":\"%s\"%s%s%s%s%s,\"children\":[%s]}\0",
         node,
+        isClient(node) ? "client" : "container",
         label,
-        node == rootNode    ? "[Root]"    : "",
-        node == focusedNode ? "[Focused]" : "",
-        node == viewNode    ? "[View]"    : "",
+        node == rootNode    ? ",\"root\":\"true\""    : "",
+        node == focusedNode ? ",\"focus\":\"true\""    : "",
+        node == viewNode    ? ",\"view\":\"true\""    : "",
         node -> focus ? node -> focus : "",
         nestString
   );
 
-  free(nestString);
+  /* If it was a container, we malloc'd room for nestString */
+  if (sizeof(nestString) > sizeof(char*))
+    free(nestString);
+
+  realloc(buffer, bytesUntilNull(buffer));
   return buffer;
 }
 
