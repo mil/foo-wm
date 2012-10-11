@@ -3,6 +3,7 @@
 #include <string.h>
 #include "foo-wm.h"
 #include "commands.h"
+#include "responses.h"
 #include "tree.h"
 #include "util.h"
 
@@ -122,40 +123,16 @@ void focus(char * argA, char * argB) {
 
 char * get(char * property) {
   if (!strcmp(property, "tree"))
-    return crawlNode(rootNode, 0);
+    return jsonTree(rootNode, 0);
   else if (!strcmp(property, "view"))
-    return crawlNode(viewNode, 0);
+    return jsonTree(viewNode, 0);
   else if (!strcmp(property, "focus"))
-    return crawlNode(focusedNode, 0);
-
-
-  char * marksResponse = malloc(1024);
-  if (!strcmp(property,  "marks")) {
-    sprintf(marksResponse, "{\"marks\":[");
-    Mark *n = NULL;
-    for(n = markTail; n; n = n -> previous) {
-      fprintf(stderr, "%s%s%s\n", marksResponse, n == markTail ? "," : "", n -> name);
-      sprintf(marksResponse, 
-          "%s%s\"%s\"",
-          marksResponse,
-          n != markTail ? "," : "",
-          n -> name 
-      );
-      fprintf(stderr, "After the Sprintf");
-    }
-    fprintf(stderr, "The Marks Response is %s\n", marksResponse);
-
-    sprintf(marksResponse, "%s]}", marksResponse);
-    realloc(marksResponse, bytesUntilNull(marksResponse));
-    return marksResponse;
-  }
-    
-
-
+    return jsonTree(focusedNode, 0);
+  else if (!strcmp(property, "marks"))
+    return jsonMarks();
 }
 
 void kill(void) {
-  dumpTree();
   fprintf(stderr, "Destroying Client %p\n", focusedNode);
 
   if (isClient(focusedNode)) {
