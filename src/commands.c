@@ -77,8 +77,8 @@ void absorb(char * argA, char * argB) {
 
 void containerize(void) {
   if (!focusedNode) return;
-  if (focusedNode -> child && !isClient(focusedNode -> child))
-    if (isOnlyChild(focusedNode -> child)) return;
+  if (focusedNode -> parent && focusedNode -> parent -> child && !isClient(focusedNode -> parent))
+    if (isOnlyChild(focusedNode)) return;
 
   Node *insertNode, *newContainer = allocateNode(); int insertPosition;
   if (focusedNode -> parent && focusedNode -> parent -> focus == focusedNode)
