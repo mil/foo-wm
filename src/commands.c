@@ -126,7 +126,30 @@ char * get(char * property) {
   else if (!strcmp(property, "view"))
     return crawlNode(viewNode, 0);
   else if (!strcmp(property, "focus"))
-    return crawlNode(focusNode, 0);
+    return crawlNode(focusedNode, 0);
+
+
+  char * marksResponse = malloc(1024);
+  if (!strcmp(property,  "marks")) {
+    sprintf(marksResponse, "{\"marks\":[");
+    Mark *n = NULL;
+    for(n = markTail; n; n = n -> previous) {
+      fprintf(stderr, "%s%s%s\n", marksResponse, n == markTail ? "," : "", n -> name);
+      sprintf(marksResponse, 
+          "%s%s\"%s\"",
+          marksResponse,
+          n != markTail ? "," : "",
+          n -> name 
+      );
+      fprintf(stderr, "After the Sprintf");
+    }
+    fprintf(stderr, "The Marks Response is %s\n", marksResponse);
+
+    sprintf(marksResponse, "%s]}", marksResponse);
+    realloc(marksResponse, bytesUntilNull(marksResponse));
+    return marksResponse;
+  }
+    
 
 
 }

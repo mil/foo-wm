@@ -72,15 +72,6 @@ Node * focusOrChildOf(Node * node) {
   else if (node -> focus) return node -> focus;
   else return node -> child;
 }
-
-int directionStringToInt(char * directionString) {
-  if (!strcmp(directionString, "left"))       return LEFT; 
-  else if (!strcmp(directionString, "up"))    return UP;
-  else if (!strcmp(directionString, "right")) return RIGHT; 
-  else if (!strcmp(directionString, "down"))  return DOWN;
-  else return -1;
-}
-
 int bytesUntilNull(char * string) {
   int counter = 0;
   while (string[counter] != '\0')

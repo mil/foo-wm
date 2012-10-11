@@ -28,6 +28,7 @@ int main(int argc, char **argv) {
   }
 
 	/* Close and return */
+  printf("\n");
 	close(socketFd);
 	return 0;
 }
