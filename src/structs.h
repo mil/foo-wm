@@ -8,6 +8,7 @@ typedef struct Node Node;
 struct Node {
   int layout;
   int x, y, width, height;
+  int id;
 
   Node *parent;
   Node *next;

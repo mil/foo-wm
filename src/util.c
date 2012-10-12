@@ -8,6 +8,8 @@
 #include "foo-wm.h"
 #include "util.h"
 
+int totalNodes = 0;
+
 
 //Thank you DWM ;)
 unsigned long getColor(const char *colstr) {
@@ -25,12 +27,15 @@ int xError(XErrorEvent *e) {
 }
 
 Node * allocateNode() {
+  totalNodes++;
+
   Node *n = malloc(sizeof(Node));
   n -> previous = NULL; n -> next = NULL;
   n -> parent = NULL;   n -> child = NULL;
-  n -> focus = NULL;    
+  n -> focus  = NULL;    
   n -> window = (Window) NULL; 
   n -> layout = defaultLayout;
+  n -> id     = totalNodes;
   return n;
 }
 
