@@ -39,6 +39,7 @@ Node * allocateNode() {
   return n;
 }
 
+
 void recalculateRootDimensions (void) {
   if (!rootNode) return;
   rootNode -> x         = rootX      = screenPaddingLeft;

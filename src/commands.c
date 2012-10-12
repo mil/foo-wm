@@ -103,6 +103,7 @@ void focus(char * argA, char * argB) {
   Node * newFocus = NULL;
 
   if (!strcmp(argA, "id")) {
+    newFocus = getNodeById(delta);
 
   } else if (!strcmp(argA, "brother")) {
       newFocus = getBrother(focusedNode, delta);
