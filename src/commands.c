@@ -98,27 +98,24 @@ void containerize(void) {
 
 void focus(char * argA, char * argB) {
   if (!focusedNode) return;
+
   int delta = atoi(argB);
+  Node * newFocus = NULL;
 
-  int brotherSwitch = -1;
-  if (!strcmp(argA, "brother")) brotherSwitch = 1;
-  else if (!strcmp(argA, "pc")) brotherSwitch = 0;
-  else return;
+  if (!strcmp(argA, "id")) {
 
-  while (delta != 0) {
-    Node * newFocus = NULL;
-
-    if (brotherSwitch) {
-      newFocus = getBrother(focusedNode, (delta < 0) ? -1 : 1);
-    } else {
+  } else if (!strcmp(argA, "brother")) {
+      newFocus = getBrother(focusedNode, delta);
+  } else if (!strcmp(argA, "pc")) {
+    while (delta != 0) {
       newFocus = (delta < 0) ? 
-        focusedNode -> parent : focusOrChildOf(focusedNode);
-    }
-
-    focusNode(newFocus, NULL, True, True);
-    delta = delta + ( delta > 0 ? -1 : 1);  
+          focusedNode -> parent : focusOrChildOf(focusedNode);
+      delta = delta + ( delta > 0 ? -1 : 1);  
+      focusNode(newFocus, NULL, True, True);
+    } return;
   }
 
+  focusNode(newFocus, NULL, True, True);
 }
 
 char * get(char * property) {
