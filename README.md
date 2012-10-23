@@ -101,12 +101,6 @@ Shift the currently focused node. This wraps around if you attempt to move to a 
 
 If the current client is in a container with 2 or more other clients, containerize creates  new container and parents the current client into this new container.
 
-### uncontainerize
-**Usage:**
-`uncontainerize`
-
-Removes the current focused node from its container.
-
 ### mark
 **Usage:**
 `mark markName`
