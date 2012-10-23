@@ -8,6 +8,15 @@ Bugs
 - brotherNode() in tree.c, node->parent = brother->parent ?
     * This could potentially break the old node's brothers and node parent child ptr
 - XMapWindow and XRaiseWindow always called for Windows in placeNode regardless if already mapped/raised
+- Destroying last client doesn't focus container / set focusedNode
+    * Tree: 
+        - Container (1)
+            * Container (2)
+            * Client (3)
+            * Client (4)
+            * Client (5) [Focus]
+    * 'kill' 'kill' 'kill' 'focus pc -1' ==> causes crash
+    * void focus asserts focusedNode?
 
 Fixed Bugs
 ==========
@@ -27,3 +36,4 @@ Planned Features
 - Multi-Monitor
 - Percent Fill for Nodes whose parent is Vertical/Horizontal mode (Resize)
 - If 2 (Container) Nodes in a Parent, and 1 Destroyed -->  Last Container becomes Client
+- kill command should work for container nodes not just client nodes
