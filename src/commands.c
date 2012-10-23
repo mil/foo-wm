@@ -41,6 +41,8 @@ char * handleCommand(char * request) {
     set(tokens[1], tokens[2]);
   else if (!strcmp(tokens[0], "shift"))
     shift(tokens[1], atoi(tokens[2]));
+  else if (!strcmp(tokens[0], "swap"))
+    swap(tokens[1], tokens[2]);
   else if (!strcmp(tokens[0], "zoom"))
     zoom(atoi(tokens[1]));
 
@@ -249,6 +251,20 @@ void shift(char * argA, int delta) {
       }
     }
   }
+
+}
+
+/* Swaps two nodes in place based on node ids */
+Bool swap(char * argA , char * argB) {
+  int idA     = atoi(argA),
+      idB     = atoi(argB);
+  Node *nodeA = getNodeById(idA),
+       *nodeB = getNodeById(idB);
+
+  if (!nodeA || !nodeB) return False;
+
+  swapNodes(nodeA, nodeB);
+  return True;
 }
 
 
