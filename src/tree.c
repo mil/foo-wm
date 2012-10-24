@@ -417,7 +417,7 @@ void swapNodes(Node * a, Node * b) {
   if (b -> parent && b -> parent -> child == a) b -> parent -> child = b;
   
   /* Update Previous Pointer */
-    temp = a -> previous; a -> previous = b -> previous;
+  temp = a -> previous; a -> previous = b -> previous;
   if (a -> previous) a -> previous -> next = a;
   b -> previous = temp;
   if (b -> previous) b -> previous -> next = b;
@@ -427,7 +427,6 @@ void swapNodes(Node * a, Node * b) {
   if (a -> next) a -> next -> previous = a;
   b -> next = temp;
   if (b -> next) b -> next -> previous = b;
-
 
   /* Replace node */
   placeNode(viewNode, viewNode -> x, viewNode -> y,
