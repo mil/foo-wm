@@ -16,6 +16,15 @@ Node * getNodeByWindow(Window * window) {
   return NULL;
 }
 
+Node * getNodeById(int id) {
+  Lookup *entry;
+  for (entry = lookupTail; entry != NULL; entry = entry -> previous)
+    if (id == entry -> node -> id) 
+      return entry -> node;
+
+  return NULL;
+}
+
 void removeLookupEntry(Window * window) {
   Lookup *cut = NULL;
   Lookup *entry = NULL;

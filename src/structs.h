@@ -1,6 +1,5 @@
 #include <X11/Xlib.h>
 
-enum { LEFT, UP, RIGHT, DOWN };
 enum { VERTICAL, HORIZONTAL, GRID, MAX, TABBED, FLOAT, FREEFLOAT };
 enum { PREVIOUS, NEXT };
 
@@ -9,6 +8,7 @@ typedef struct Node Node;
 struct Node {
   int layout;
   int x, y, width, height;
+  int id;
 
   Node *parent;
   Node *next;

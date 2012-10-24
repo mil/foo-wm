@@ -3,6 +3,8 @@
 #include <string.h>
 #include "foo-wm.h"
 #include "commands.h"
+#include "lookup.h"
+#include "responses.h"
 #include "tree.h"
 #include "util.h"
 
@@ -40,6 +42,8 @@ char * handleCommand(char * request) {
     set(tokens[1], tokens[2]);
   else if (!strcmp(tokens[0], "shift"))
     shift(tokens[1], atoi(tokens[2]));
+  else if (!strcmp(tokens[0], "swap"))
+    swap(tokens[1], tokens[2]);
   else if (!strcmp(tokens[0], "zoom"))
     zoom(atoi(tokens[1]));
 
@@ -76,8 +80,8 @@ void absorb(char * argA, char * argB) {
 
 void containerize(void) {
   if (!focusedNode) return;
-  if (focusedNode -> child && !isClient(focusedNode -> child))
-    if (isOnlyChild(focusedNode -> child)) return;
+  if (focusedNode -> parent && focusedNode -> parent -> child && !isClient(focusedNode -> parent))
+    if (isOnlyChild(focusedNode)) return;
 
   Node *insertNode, *newContainer = allocateNode(); int insertPosition;
   if (focusedNode -> parent && focusedNode -> parent -> focus == focusedNode)
@@ -96,42 +100,42 @@ void containerize(void) {
 
 
 void focus(char * argA, char * argB) {
+  if (!focusedNode) return;
+
   int delta = atoi(argB);
+  Node * newFocus = NULL;
 
-  int brotherSwitch = -1;
-  if (!strcmp(argA, "brother")) brotherSwitch = 1;
-  else if (!strcmp(argA, "pc")) brotherSwitch = 0;
-  else return;
+  if (!strcmp(argA, "id")) {
+    newFocus = getNodeById(delta);
 
-  while (delta != 0) {
-    Node * newFocus;
-
-    if (brotherSwitch) {
-      newFocus = getBrother(focusedNode, (delta < 0) ? -1 : 1);
-    } else {
+  } else if (!strcmp(argA, "brother")) {
+      newFocus = getBrother(focusedNode, delta);
+  } else if (!strcmp(argA, "pc")) {
+    while (delta != 0) {
       newFocus = (delta < 0) ? 
-        focusedNode -> parent : focusOrChildOf(focusedNode);
-    }
-
-    focusNode(newFocus, NULL, True, True);
-    delta = delta + ( delta > 0 ? -1 : 1);  
+          focusedNode -> parent : focusOrChildOf(focusedNode);
+      delta = delta + ( delta > 0 ? -1 : 1);  
+      focusNode(newFocus, NULL, True, True);
+    } return;
   }
 
+  focusNode(newFocus, NULL, True, True);
 }
 
 char * get(char * property) {
   if (!strcmp(property, "tree"))
-    return crawlNode(rootNode, 0);
+    return jsonTree(rootNode, 0);
   else if (!strcmp(property, "view"))
-    return crawlNode(viewNode, 0);
+    return jsonTree(viewNode, 0);
   else if (!strcmp(property, "focus"))
-    return crawlNode(focusNode, 0);
+    return jsonTree(focusedNode, 0);
+  else if (!strcmp(property, "marks"))
+    return jsonMarks();
 
-
+  return "";
 }
 
 void kill(void) {
-  dumpTree();
   fprintf(stderr, "Destroying Client %p\n", focusedNode);
 
   if (isClient(focusedNode)) {
@@ -249,6 +253,22 @@ void shift(char * argA, int delta) {
         delta++;
       }
     }
+  }
+
+}
+
+/* Swaps two nodes in place based on node ids */
+Bool swap(char * argA , char * argB) {
+  int idA     = atoi(argA),
+      idB     = atoi(argB);
+  Node *nodeA = getNodeById(idA),
+       *nodeB = getNodeById(idB);
+
+  if (!nodeA || !nodeB) {
+    return False;
+  } else {
+    swapNodes(nodeA, nodeB);
+    return True;
   }
 }
 

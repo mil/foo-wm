@@ -11,4 +11,5 @@ void layout(char * l);
 void mark(char * markName);
 void set(char * property, char * value);
 void shift(char * argA, int delta);
+Bool swap(char * argA , char * argB);
 void zoom(int level);

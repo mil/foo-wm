@@ -101,12 +101,6 @@ Shift the currently focused node. This wraps around if you attempt to move to a 
 
 If the current client is in a container with 2 or more other clients, containerize creates  new container and parents the current client into this new container.
 
-### uncontainerize
-**Usage:**
-`uncontainerize`
-
-Removes the current focused node from its container.
-
 ### mark
 **Usage:**
 `mark markName`
@@ -126,6 +120,10 @@ Jumps to the predefined marked node.
 Kills the currently focused node (and any nodes that are the focused node's children).
 
 Inspiration
-------
+-----------
 Inspirations include: 
 DWM, monsterwm, catwm, dminiwm, i3, herbstluftwm, wmii, and tinywm
+
+Contributing
+------------
+Foo Window Manager is very much open to contribution. Please get in touch via email if you are interested or just take a stab at something in `TODO.md` and send a pull request.
