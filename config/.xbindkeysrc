@@ -137,12 +137,15 @@
   m:0x40 + c:38
   Mod4 + a
 
-# Dmenu
+# Wifi Network Listings in DMenu
 "find /etc/network.d -maxdepth 1 -type f -printf '%f\n' | dmenu -h 40 -x 100 -y 400 -w 1100 -fn 'Envy Code R-16' -sb '#ffffff' -nf '#2b4f00' -nb '#cfcfcf' -sf '#0052d6' -b -p 'Netcfg' | tr -d '\n' | xargs -0 -I NETWORK sudo netcfg NETWORK"
   m:0x40 + c:25
   Mod4 + w
 
-
+#File Browser
+"ls ~ | dmenu -h 10 -x 0 -y 19 -w 400 -fn 'Ency Code R-11' -sb '#ffffff' -sf '#000000' -l 10 -p '~' | xargs -0 -I FILE handler /home/mil/FILE"
+  m:0x40 + c:41
+  Mod4 + f
 
 
 #Brightness controls
@@ -191,3 +194,7 @@
 "dwb `sselp`"
   m:0x40 + c:28
   Mod4 + t
+
+"`sselp`"
+  m:0x0 + c:169
+  XF86Eject
