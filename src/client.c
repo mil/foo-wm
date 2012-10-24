@@ -8,8 +8,8 @@
 int main(int argc, char **argv) {
 	int socketFd;
 	struct sockaddr_un socketAddress;
-	char buffer[256];
-  char * response;
+  int bufferSize = 256;
+	char buffer[bufferSize];
 
 	/* Initialize the sockaddr_un struct */
 	socketAddress.sun_family = AF_UNIX;
@@ -21,12 +21,13 @@ int main(int argc, char **argv) {
 	send(socketFd, argv[2], strlen(argv[2]), 0);
 
 	/* Check if we recieved a response */
-  while (recv(socketFd, buffer, sizeof(buffer), 0) > 0)
-    strcat(response, buffer);
-
-  printf("%s", response);
+  while (recv(socketFd, buffer, sizeof(buffer), 0) > 0) {
+    buffer[sizeof(buffer)] = '\0';
+    printf("%s", buffer);
+  }
 
 	/* Close and return */
+  printf("\n");
 	close(socketFd);
 	return 0;
 }

@@ -8,6 +8,8 @@
 #include "foo-wm.h"
 #include "util.h"
 
+int totalNodes = 0;
+
 
 //Thank you DWM ;)
 unsigned long getColor(const char *colstr) {
@@ -25,14 +27,18 @@ int xError(XErrorEvent *e) {
 }
 
 Node * allocateNode() {
+  totalNodes++;
+
   Node *n = malloc(sizeof(Node));
   n -> previous = NULL; n -> next = NULL;
   n -> parent = NULL;   n -> child = NULL;
-  n -> focus = NULL;    
+  n -> focus  = NULL;    
   n -> window = (Window) NULL; 
   n -> layout = defaultLayout;
+  n -> id     = totalNodes;
   return n;
 }
+
 
 void recalculateRootDimensions (void) {
   if (!rootNode) return;
@@ -72,15 +78,6 @@ Node * focusOrChildOf(Node * node) {
   else if (node -> focus) return node -> focus;
   else return node -> child;
 }
-
-int directionStringToInt(char * directionString) {
-  if (!strcmp(directionString, "left"))       return LEFT; 
-  else if (!strcmp(directionString, "up"))    return UP;
-  else if (!strcmp(directionString, "right")) return RIGHT; 
-  else if (!strcmp(directionString, "down"))  return DOWN;
-  else return -1;
-}
-
 int bytesUntilNull(char * string) {
   int counter = 0;
   while (string[counter] != '\0')
@@ -88,16 +85,4 @@ int bytesUntilNull(char * string) {
 
   /* Include the NULL Byte */
   return ++counter;
-}
-
-char * stringAppend(char * originalString, char * appendContent) {
-  /*
-  char * returnString = (char *) malloc(strlen(originalString) + strlen(appendContent));
-  strcpy(returnString, originalString); 
-  strcat(returnString, appendContent);
-
-  return returnString;
-  */
-  fprintf(stderr, "%s", appendContent);
-  return originalString;
 }

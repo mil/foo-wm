@@ -12,6 +12,20 @@
 /* --------------------------------------------------------------------------
  * Bool Returns 
  * -------------------------------------------------------------------------- */
+Bool areBrothers(Node * nodeA, Node * nodeB) {
+  if ((!nodeA || !nodeB) || nodeA -> parent != nodeB -> parent) return False;
+
+  Bool hasA, hasB;
+  Node *n = NULL;
+  for (n = nodeA -> parent -> child; n; n = n -> next) {
+    if (n == nodeA) hasA = True;
+    if (n == nodeB) hasB = True;
+  }
+
+  if (hasA && hasB) return True;
+  else return False;
+}
+
 Bool isClient(Node * node) { 
   /* Is the node a client? */
   if (node && (node -> window != (Window) NULL)) return True;
@@ -66,52 +80,6 @@ Bool unfocusNode(Node * n, Bool focusPath) {
 
   return setView;
 }
-
-/* --------------------------------------------------------------------------
- * Char * Returns 
- * -------------------------------------------------------------------------- */
-char * crawlNode(Node * node, int level) {
-  char * returnString = "";
-  int j; for (j = level; j > 0; j--) { returnString = stringAppend(returnString, "|\t"); }
-
-  char nodeInfo[1000];
-  if (isClient(node)) {
-
-    sprintf(nodeInfo, "Client (%p)", node);
-    returnString = stringAppend(returnString, nodeInfo);
-
-    if (node == rootNode) { returnString = stringAppend(returnString, " [Root]"); }
-    if (node == focusedNode) { returnString = stringAppend(returnString, " [Focused]"); }
-    if (node == viewNode) { returnString = stringAppend(returnString, " [View]"); }
-    returnString = stringAppend(returnString, "\n");
-
-  } else {
-    char *label = NULL;
-    switch (node -> layout) {
-      case VERTICAL   : label = "Vertical"; break;
-      case HORIZONTAL : label = "Horizontal"; break;
-      case GRID       : label = "Grid"; break;
-      case MAX        : label = "Max"; break;
-      case FLOAT      : label = "Float"; break;
-
-    }
-
-    sprintf(nodeInfo, "Container (%p) %s (focus=%p)", node, label, node -> focus);
-    returnString = stringAppend(returnString, nodeInfo);
-
-    if (node == focusedNode) returnString = stringAppend(returnString, "[Focused]");
-    if (node == viewNode)    returnString = stringAppend(returnString, " [View]");
-    returnString = stringAppend(returnString, "\n");
-
-    Node *n = NULL;
-    for (n = node -> child; n; n = n -> next)
-      returnString = stringAppend(returnString, crawlNode(n, level + 1));
-  }
-
-  return returnString;
-}
-
-
 
 /* --------------------------------------------------------------------------
  * Long Returns 
@@ -269,14 +237,6 @@ void destroyNode(Node * n) {
 }
 
 
-void dumpTree() {
-  fprintf(stderr, "Printing the tree\n");
-  fprintf(stderr, "----------------------------------\n");
-  crawlNode(rootNode, 0);
-  fprintf(stderr, "----------------------------------\n");
-}
-
-
 //This should focus OR select
 void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
   if (!n || n == focusedNode) return;
@@ -301,15 +261,18 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
   
     if (oldFocus == viewNode && nodeIsParentOf(focusedNode, viewNode)) {
       viewNode = n;
-      placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
     }
+
+    if (areBrothers(oldFocus, focusedNode)) {
+      placeNode(focusedNode, oldFocus -> x, oldFocus -> y, oldFocus -> width, oldFocus -> height);
+    }
+
+    placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
+
   }
 
   // Are we at the bottom level 
   if (isClient(n)) {
-    if (n -> parent)
-      rePlaceNode(n -> parent);
-
     if (focusPath) {
       XSetInputFocus(display, n -> window, RevertToParent, CurrentTime);  
       XUngrabButton(display, AnyButton, AnyModifier, n ->window);
@@ -444,12 +407,15 @@ void rePlaceNode(Node * node) {
 void swapNodes(Node * a, Node * b) {
   if (!a || !b || a == b) return;
 
-
-  /* First child / start of linked list */
+  /* Update Parent / Parent -> Child Pointer */
   Node *temp = NULL;
-  if (a -> parent -> child == a)      a -> parent -> child = b;
-  else if (b -> parent -> child == b) b -> parent -> child = a;
 
+  /* Parent Client Server */
+  temp = a -> parent;  a -> parent = b -> parent;
+  if (a -> parent && a -> parent -> child == b) a -> parent -> child = a;
+  b -> parent = temp;
+  if (b -> parent && b -> parent -> child == a) b -> parent -> child = b;
+  
   /* Update Previous Pointer */
   temp = a -> previous; a -> previous = b -> previous;
   if (a -> previous) a -> previous -> next = a;
@@ -461,7 +427,6 @@ void swapNodes(Node * a, Node * b) {
   if (a -> next) a -> next -> previous = a;
   b -> next = temp;
   if (b -> next) b -> next -> previous = b;
-
 
   /* Replace node */
   placeNode(viewNode, viewNode -> x, viewNode -> y,
