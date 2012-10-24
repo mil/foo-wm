@@ -407,14 +407,17 @@ void rePlaceNode(Node * node) {
 void swapNodes(Node * a, Node * b) {
   if (!a || !b || a == b) return;
 
-
-  /* First child / start of linked list */
+  /* Update Parent / Parent -> Child Pointer */
   Node *temp = NULL;
-  if (a -> parent -> child == a)      a -> parent -> child = b;
-  else if (b -> parent -> child == b) b -> parent -> child = a;
 
+  /* Parent Client Server */
+  temp = a -> parent;  a -> parent = b -> parent;
+  if (a -> parent && a -> parent -> child == b) a -> parent -> child = a;
+  b -> parent = temp;
+  if (b -> parent && b -> parent -> child == a) b -> parent -> child = b;
+  
   /* Update Previous Pointer */
-  temp = a -> previous; a -> previous = b -> previous;
+    temp = a -> previous; a -> previous = b -> previous;
   if (a -> previous) a -> previous -> next = a;
   b -> previous = temp;
   if (b -> previous) b -> previous -> next = b;
