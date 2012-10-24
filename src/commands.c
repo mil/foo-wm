@@ -3,6 +3,7 @@
 #include <string.h>
 #include "foo-wm.h"
 #include "commands.h"
+#include "lookup.h"
 #include "responses.h"
 #include "tree.h"
 #include "util.h"
@@ -130,6 +131,8 @@ char * get(char * property) {
     return jsonTree(focusedNode, 0);
   else if (!strcmp(property, "marks"))
     return jsonMarks();
+
+  return "";
 }
 
 void kill(void) {
@@ -261,10 +264,12 @@ Bool swap(char * argA , char * argB) {
   Node *nodeA = getNodeById(idA),
        *nodeB = getNodeById(idB);
 
-  if (!nodeA || !nodeB) return False;
-
-  swapNodes(nodeA, nodeB);
-  return True;
+  if (!nodeA || !nodeB) {
+    return False;
+  } else {
+    swapNodes(nodeA, nodeB);
+    return True;
+  }
 }
 
 

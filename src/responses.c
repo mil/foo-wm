@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "foo-wm.h"
+#include "util.h"
+#include "tree.h"
 #include "responses.h"
 
 

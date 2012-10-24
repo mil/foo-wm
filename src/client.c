@@ -10,7 +10,6 @@ int main(int argc, char **argv) {
 	struct sockaddr_un socketAddress;
   int bufferSize = 256;
 	char buffer[bufferSize];
-  char * response = malloc(sizeof(buffer));
 
 	/* Initialize the sockaddr_un struct */
 	socketAddress.sun_family = AF_UNIX;
