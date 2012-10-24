@@ -17,6 +17,7 @@ Bugs
             * Client (5) [Focus]
     * 'kill' 'kill' 'kill' 'focus pc -1' ==> causes crash
     * void focus asserts focusedNode?
+- mark'ing and jump'ing to a client doesn't restore the client but the container
 
 Fixed Bugs
 ==========
