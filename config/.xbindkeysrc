@@ -1,7 +1,12 @@
 ### Applications 
-"urxvt"
+"urxvt -cd `cat /home/mil/.wd`"
     m:0x40 + c:36
-    Mod4 + Enter 
+    mod4 + enter 
+"urxvt"
+	m:0x40 + c:48
+	Mod4 + apostrophe
+
+"
 
 "dwb"
     m:0x40 + c:51
@@ -14,112 +19,167 @@
 ### WM
 
 # Layout Commands
-"foo-wm-c  /tmp/foo-wm.socket 'layout vertical'"
+"foo-wm-c  /tmp/stable-wm.socket 'layout vertical'"
 	m:0x40 + c:55
 	Mod4 + v
 
-"foo-wm-c /tmp/foo-wm.socket 'layout horizontal'"
+"foo-wm-c /tmp/stable-wm.socket 'layout horizontal'"
 	m:0x40 + c:56
 	Mod4 + b
 
-"foo-wm-c /tmp/foo-wm.socket 'layout grid'"
+"foo-wm-c /tmp/stable-wm.socket 'layout grid'"
 	m:0x40 + c:57
 	Mod4 + n
 
-"foo-wm-c /tmp/foo-wm.socket 'layout max'"
+"foo-wm-c /tmp/stable-wm.socket 'layout max'"
 	m:0x40 + c:58
 	Mod4 + m
 
 # Containerize Command
-"foo-wm-c  /tmp/foo-wm.socket 'containerize'"
+"foo-wm-c  /tmp/stable-wm.socket 'containerize'"
 	m:0x40 + c:47
 	Mod4 + semicolon
 
 # Focus Commands
-"foo-wm-c  /tmp/foo-wm.socket 'focus brother 1'"
+"foo-wm-c  /tmp/stable-wm.socket 'focus brother 1'"
 	m:0x40 + c:23
 	Mod4 + Tab
 
-"foo-wm-c  /tmp/foo-wm.socket 'focus brother -2'"
+"foo-wm-c  /tmp/stable-wm.socket 'focus brother 2'"
 	m:0x40 + c:43
 	Mod4 + h
 
-"foo-wm-c  /tmp/foo-wm.socket 'focus brother 1'"
+"foo-wm-c  /tmp/stable-wm.socket 'focus brother 1'"
 	m:0x40 + c:44
 	Mod4 + j
 
-"foo-wm-c  /tmp/foo-wm.socket 'focus brother -1'"
+"foo-wm-c  /tmp/stable-wm.socket 'focus brother -1'"
 	m:0x40 + c:45
 	Mod4 + k
 
-"foo-wm-c  /tmp/foo-wm.socket 'focus brother -2'"
+"foo-wm-c  /tmp/stable-wm.socket 'focus brother -2'"
 	m:0x40 + c:46
 	Mod4 + l
 
 
 
-"foo-wm-c  /tmp/foo-wm.socket 'focus pc -1'"
+"foo-wm-c  /tmp/stable-wm.socket 'focus pc -1'"
 	m:0x40 + c:32
 	Mod4 + o
 
-"foo-wm-c  /tmp/foo-wm.socket 'focus pc 1'"
+"foo-wm-c  /tmp/stable-wm.socket 'focus pc 1'"
 	m:0x40 + c:33
 	Mod4 + p
 
 # Move Commands
-"foo-wm-c  /tmp/foo-wm.socket 'shift brother 1'"
+"foo-wm-c  /tmp/stable-wm.socket 'move 1'"
 	m:0x41 + c:23
 	Shift+Mod4 + Tab
 
-"foo-wm-c  /tmp/foo-wm.socket 'shift brother 2'"
+# Shift VIM-Esque Movement
+"foo-wm-c  /tmp/stable-wm.socket 'shift brother -2'"
 	m:0x41 + c:43
 	Shift+Mod4 + h
 
-"foo-wm-c  /tmp/foo-wm.socket 'shift brother 1'"
+"foo-wm-c  /tmp/stable-wm.socket 'shift brother 1'"
 	m:0x41 + c:44
 	Shift+Mod4 + j
 
 
-"foo-wm-c  /tmp/foo-wm.socket 'shift brother -1'"
+"foo-wm-c  /tmp/stable-wm.socket 'shift brother -1'"
 	m:0x41 + c:45
 	Shift+Mod4 + k
 
-"foo-wm-c  /tmp/foo-wm.socket 'shift brother -2'"
+"foo-wm-c  /tmp/stable-wm.socket 'shift brother -2'"
 	m:0x41 + c:46
 	Shift+Mod4 + l
 
 
+"foo-wm-c  /tmp/stable-wm.socket 'set client_border_width 1'"
+    m:0x40 + c:10
+    Mod4 + 1
+
+"foo-wm-c  /tmp/stable-wm.socket 'set client_border_width 20'"
+    m:0x40 + c:11
+    Mod4 + 2
+
 
 
 # Zoom Commands
-"foo-wm-c  /tmp/foo-wm.socket 'zoom -1'"
+"foo-wm-c  /tmp/stable-wm.socket 'zoom -1'"
 	m:0x40 + c:31
 	Mod4 + i 
 
-"foo-wm-c  /tmp/foo-wm.socket 'zoom 1'"
+"foo-wm-c  /tmp/stable-wm.socket 'zoom 1'"
 	m:0x40 + c:30
 	Mod4 + u
 
 
 # Killing Clients
-"foo-wm-c  /tmp/foo-wm.socket 'kill client'"
+"foo-wm-c  /tmp/stable-wm.socket 'kill client'"
 	m:0x40 + c:24
 	Mod4 + q
 
 
 # Dumps the Tree
-"foo-wm-c  /tmp/foo-wm.socket 'get tree'"
+"foo-wm-c  /tmp/stable-wm.socket 'dump tree'"
 	m:0x40 + c:28
 	Mod4 + t
 
 
 # Dmenu
-"dmenu-suggestions.rb | dmenu -h 40 -x 100 -y 400 -w 1100 -fn 'Envy Code R-16' -sb '#ffffff' -nf '#2b4f00' -nb '#cfcfcf' -sf '#0052d6' -b -p 'Command:' | xargs -0 -I INPUT handler INPUT"
+"dmenu-suggestions.rb | dmenu -h 40 -x 100 -y 400 -w 1100 -fn 'Envy Code R-16' -sb '#ffffff' -nf '#2b4f00' -nb '#cfcfcf' -sf '#0052d6' -b -p 'Command' | xargs -0 -I INPUT handler INPUT"
 	m:0x40 + c:40
 	Mod4 + d
 
-
 # Dmenu
-"cat /home/mil/code/repos/github/foo-wm/config/commands | dmenu -h 40 -x 100 -y 400 -w 1100 -fn 'Envy Code R-16' -sb '#ffffff' -nf '#2b4f00' -nb '#cfcfcf' -sf '#0052d6' -b -p 'Foo-WM' | xargs -0 -I INPUT foo-wm-c /tmp/foo-wm.socket INPUT"
+"cat /home/mil/code/stable/foo-wm/config/commands | dmenu -h 40 -x 100 -y 400 -w 1100 -fn 'Envy Code R-16' -sb '#ffffff' -nf '#2b4f00' -nb '#cfcfcf' -sf '#0052d6' -b -p 'Foo-WM' | xargs -0 -I INPUT foo-wm-c /tmp/stable-wm.socket INPUT"
   m:0x40 + c:38
   Mod4 + a
+
+# Dmenu
+"find /etc/network.d -maxdepth 1 -type f -printf '%f\n' | dmenu -h 40 -x 100 -y 400 -w 1100 -fn 'Envy Code R-16' -sb '#ffffff' -nf '#2b4f00' -nb '#cfcfcf' -sf '#0052d6' -b -p 'Netcfg' | tr -d '\n' | xargs -0 -I NETWORK sudo netcfg NETWORK"
+  m:0x40 + c:25
+  Mod4 + w
+
+
+
+
+#Brightness controls
+"sudo brightcontrol down"
+	m:0x0 + c:232
+	XF86MonBrightnessDown
+
+"sudo brightcontrol up"
+	m:0x0 + c:233
+	XF86MonBrightnessDown
+
+
+#Multimedia
+"dvol -i 2"
+	m:0x0 + c:123
+	XF86AudioRaiseVolume
+
+"dvol -d 2"
+	m:0x0 + c:122
+	XF86AudioLowerVolume
+
+"dvol -t"
+	m:0x0 + c:121
+	XF86AudioMute	
+
+"mediaControl previous"
+	m:0x0 + c:173
+	XF86AudioPrev
+
+"mediaControl next"
+	m:0x0 + c:171
+	XF86AudioNext
+
+"mediaControl pause"
+	m:0x0 + c:172
+	XF86AudioPlay
+
+"scrot -s"
+    m:0x41 + c:13
+    Shift+Mod4 + 4

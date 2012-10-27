@@ -1,10 +1,20 @@
 dump
 jump
 mark
+zoom
+layout
 layout grid 
 layout horizontal 
 layout vertical
+layout max
 view child 
 view parent
 containerize
 kill client
+set
+set client_border_width
+set container_padding
+set screen_padding_top
+set screen_padding_left
+set screen_padding_bottom
+set screen_padding_right
