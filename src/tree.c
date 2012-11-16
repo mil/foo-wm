@@ -409,13 +409,9 @@ void swapNodes(Node * a, Node * b) {
 
   /* Update Parent / Parent -> Child Pointer */
   Node *temp = NULL;
+  if (a -> parent -> child == a)      a -> parent -> child = b;
+  else if (b -> parent -> child == b) b -> parent -> child = a;
 
-  /* Parent Client Server */
-  temp = a -> parent;  a -> parent = b -> parent;
-  if (a -> parent && a -> parent -> child == b) a -> parent -> child = a;
-  b -> parent = temp;
-  if (b -> parent && b -> parent -> child == a) b -> parent -> child = b;
-  
   /* Update Previous Pointer */
   temp = a -> previous; a -> previous = b -> previous;
   if (a -> previous) a -> previous -> next = a;

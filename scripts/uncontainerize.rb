@@ -2,7 +2,7 @@
 require 'socket'
 require 'json'
 require 'pp'
-$socketPath = "/tmp/foo-wm.socket"
+$socketPath = "/tmp/stable-wm.socket"
 
 def sendCommand(command)
   response = ""
