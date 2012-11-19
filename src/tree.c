@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "atoms.h"
 #include "foo-wm.h"
 #include "tree.h"
 #include "lookup.h"
@@ -219,6 +220,11 @@ void destroyNode(Node * n) {
   //Recursivly unmap down all children of the node
   if (isClient(n)) {
     removeLookupEntry(&n -> window);
+
+    //Send ICCCM Delete Atom
+    sendDeleteWindow(&n -> window);
+
+
     XDestroyWindow(display, n -> window);
     free(n);
   } else if (n) {

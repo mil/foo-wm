@@ -13,10 +13,13 @@
 #include "config.h"
 #include "commands.h"
 #include "foo-wm.h"
+
+#include "atoms.h"
 #include "events.h"
 #include "tree.h"
 #include "util.h"
 #include "window.h"
+
 
 void handleEvents(void) {
   XEvent event;   
@@ -92,7 +95,8 @@ void setup(void) {
   activeScreen    = DefaultScreen(display);
   root            = RootWindow(display, activeScreen);
   XSelectInput(display, root, SubstructureRedirectMask | SubstructureNotifyMask);
-  setCursor(&root, 68);
+  setCursor(&root, 68); 
+  setupAtoms();
 
   // Setup Defaults from config.h
   defaultLayout          = CONTAINER_DEFAULT_LAYOUT;
