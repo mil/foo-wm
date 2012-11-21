@@ -2,8 +2,8 @@ foo-wm: Foo Window Manager
 ============================
 Foo Window Manager is a minimalistic window manager that does two things and two things only:
 
-1. Provide a tree data structure in which you can organize windows.
-2. Provide a socket for IPC along with a basic DSL for manipulating and traversing the tree.
+1. Provides a tree data structure in which you can organize windows.
+2. Provides a socket for IPC along with a basic DSL for manipulating and traversing the tree.
 
 As a results of *only* doing these two things, `foo-wm` most likely works a bit differently than other window managers you may be acquainted with. Mainly, strangest of all to the newcomer, `foo-wm` **does not provide**: workspaces or keybindings. The former can be emulated through foo-wm's tree and the latter can be provided through any X keybinding program (such as `xbindkeys`).
 
@@ -12,6 +12,7 @@ As a results of *only* doing these two things, `foo-wm` most likely works a bit 
 The Tree
 --------
 All operations in `foo-wm` are related to manipulating and the traversal of the tree.  All nodes within the tree are one of two types.
+
 1. **Client** Nodes
 	- Just a single  X11 Window
 2. **Container** Nodes
@@ -19,13 +20,14 @@ All operations in `foo-wm` are related to manipulating and the traversal of the 
     - Has a *Layout* property which may be changed with the *layout* IPC command
 
 At any given time using `foo-wm` there are three essential nodes within the tree at play:
+
 1. **Root** Node
     - The top of the tree
     - Issuing a zoom command with a negative delta approximates this node
 2. **Focus** Node
     - The node which is currently manipulated on by using IPC commands
     - Issuing a zoom command with a positive delta approximates  this node
-2. **View** Node
+3. **View** Node
     - The node which the screen is currently viewing
 
 
