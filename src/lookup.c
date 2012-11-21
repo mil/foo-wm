@@ -19,7 +19,7 @@ Node * getNodeByWindow(Window * window) {
 Node * getNodeById(int id) {
   Lookup *entry;
   for (entry = lookupTail; entry != NULL; entry = entry -> previous)
-    if (id == entry -> node -> id) 
+    if (id == (int) entry -> node -> window) 
       return entry -> node;
 
   return NULL;
