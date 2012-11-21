@@ -1,33 +1,33 @@
 foo-wm: Foo Window Manager
 ============================
-The basic premises of Foo Window Manager are:
+Foo Window Manager is a minimalistic window manager that does two things and two things only:
 
 1. Provide a tree data structure in which you can organize windows.
 2. Provide a socket for IPC along with a basic DSL for manipulating and traversing the tree.
 
-foo-wm was previously named fifo-wm and used a FIFO for IPC. The switch over to a socket was in need for provide responses to IPC commands. Foo-wm may not be this window manager's final name.
+As a results of *only* doing these two things, `foo-wm` most likely works a bit differently than other window managers you may be acquainted with. Mainly, strangest of all to the newcomer, `foo-wm` **does not provide**: workspaces or keybindings. The former can be emulated through foo-wm's tree and the latter can be provided through any X keybinding program (such as `xbindkeys`).
 
-foo-wm should be considered unusable pre-alpha software. I use foo-wm on a daily basis though that doesn't mean you should. Foo-wm doesn't have support for many basic window managment functions (ICCCM/EWMH). If you're interested in contributing, contact me. Below is an explanation of the basic structure of foo-wm if you want to hack on it.
+`foo-wm` should be considered unusable alpha software. I use `foo-wm` on a daily basis, although that doesn't mean you should (unless you are interested in contributing). `foo-wm` doesn't have full support for many basic window managment functions (ICCCM/EWMH). Although, ICCCM/EWMH support is a top priority currently.
 
 The Tree
 --------
-All windows are stored as nodes within a tree data structure. The tree is made up of two fundamental types of nodes. 
-
+All operations in `foo-wm` are related to manipulating and the traversal of the tree.  All nodes within the tree are one of two types.
 1. **Client** Nodes
-	- Holds: 1 X11 Window
-
+	- Just a single  X11 Window
 2. **Container** Nodes
-	- Holds: 1 or more **Client** Nodes
-	- Holds: 1 or more **Container** Nodes**
-	- Has a Property called *Layout* Which May Be Set To:
-		* *Vertical*: Children are arranged side by side vertically
-		* *Horizontal*: Children are arranged horizontally
-		* *Grid*: Children are arranged to be equal size in a grid	
-		* *Max*: One child takes up the full view of the container 
-			- The other children are hidden
-		* *Tabbed*: Exactly like Max, only there is a visual tab indication
-		* *Float*: Clients are floated, but bound by the container
-		* *Freefloat*: Clients are free to float, even on top of the current view
+    - Holds one or more other **Client** or **Container** Nodes
+    - Has a *Layout* property which may be changed with the *layout* IPC command
+
+At any given time using `foo-wm` there are three essential nodes within the tree at play:
+1. **Root** Node
+    - The top of the tree
+    - Issuing a zoom command with a negative delta approximates this node
+2. **Focus** Node
+    - The node which is currently manipulated on by using IPC commands
+    - Issuing a zoom command with a positive delta approximates  this node
+2. **View** Node
+    - The node which the screen is currently viewing
+
 
 Foo-WM's Socket
 ---------------
@@ -73,6 +73,15 @@ screen_padding_bottom (integer)
 ### layout 
 **Usage:**
 `layout vertical|horizontal|grid|max|tabbed|float|freefloat`
+
+- `vertical`: Children are arranged side by side vertically
+- `horizontal`: Children are arranged horizontally
+- `grid`: Children are arranged to be equal size in a grid	
+- `max`: One child takes up the full view of the container 
+-   * The other children are hidden
+- `tabbed`: Exactly like Max, only there is a visual tab indication
+- `float`: Clients are floated, but bound by the container
+- `freefloat`: Clients are free to float, even on top of the current view
 
 Updates the layout of the current container. Currenly only vertical and horizontal layouts are supported, although future layouts planned include: floating, max, and tabbed.
 
