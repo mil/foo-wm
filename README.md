@@ -7,7 +7,12 @@ Foo Window Manager is a minimalistic window manager that does two things and two
 
 As a results of *only* doing these two things, `foo-wm` most likely works a bit differently than other window managers you may be acquainted with. Mainly, strangest of all to the newcomer, `foo-wm` **does not provide**: workspaces or keybindings. The former can be emulated through foo-wm's tree and the latter can be provided through any X keybinding program (such as `xbindkeys`).
 
-`foo-wm` should be considered unusable alpha software. I use `foo-wm` on a daily basis, although that doesn't mean you should (unless you are interested in contributing). `foo-wm` doesn't have full support for many basic window managment functions (ICCCM/EWMH). Although, ICCCM/EWMH support is a top priority currently.
+> A foreword: `foo-wm` should be considered unusable alpha software. I use `foo-wm` on a daily basis, although that doesn't mean you should (unless you are interested in contributing). `foo-wm` doesn't have full support for many basic window managment functions (ICCCM/EWMH). Although, ICCCM/EWMH support is a top priority currently.
+
+### The Makefile will generate:
+`foo-wm`: The window manager itself which can be thrown in `.xinitrc`. It is reccomeneded that you start `foo-wm` with a keybindings manager, such as `.xbindkeys`, as it will be very diffucult to interact with `foo-wm`'s socket otherwise. The location and name of the socket, is to be specified in `src/config.h`. If no `SOCKET_NAME`, is specified then a name will be automatically generated based on the PID of the socket in the form of `/tmp/foo-wm-pid.socket`.
+
+`foo-wm-c`: This is a simple and dumb command line client for interacting with `foo-wm`. `foo-wm-c` takes the syntax of `foo-wm-c '/tmp/your-foo-socket.socket' 'ipc command'`. Any language that provides a UNIX socket interface can be used to communicate with `foo-wm`, `foo-wm-c` is just a simple C client for doing so. Additionally a ruby client for interacting with `foo-wm`'s socket can be found at `scrips/client.rb`
 
 The Tree
 --------
@@ -31,21 +36,9 @@ At any given time using `foo-wm` there are three essential nodes within the tree
     - The node which the screen is currently viewing
 
 
-Foo-WM's Socket
----------------
-The location and name of the socket, is to be specified in `src/config.h`. If no SOCKET_NAME, is specified then a name will be automatically generated based on the PID of the socket in the form of `foo-wm-pid.socket`.
-
-foo-wm-c
---------
-`foo-wm-c` is a command line client to interface with foo-wm's socket, although similar interfaces could be made in any language with a socket class.
-
-*Usage:* `foo-wm-c socketpath "ipc command"`
-
-Properties
-----------
-IPC Commands
-------------
-All user interaction with foo-wm takes place through its IPC via the socket. The one exception to this is mouse actions which are bound by the IPC.
+The Foo-WM IPC DSL Commands
+---------------------------
+All user interaction with `foo-wm` takes place through its IPC via the socket `foo-wm` created on start.
 
 ### get 
 **Usage:**
