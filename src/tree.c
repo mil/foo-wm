@@ -263,15 +263,11 @@ void focusNode(Node * n, XEvent * event, Bool setFocused, Bool focusPath) {
     focusedNode = n;
 
     if (oldFocus && nodeIsParentOf(viewNode, oldFocus))
-      rePlaceNode(oldFocus);
-  
-    if (oldFocus == viewNode && nodeIsParentOf(focusedNode, viewNode)) {
+      rePlaceNode(oldFocus); 
+    if (oldFocus == viewNode && nodeIsParentOf(focusedNode, viewNode))
       viewNode = n;
-    }
-
-    if (areBrothers(oldFocus, focusedNode)) {
+    if (areBrothers(oldFocus, focusedNode)) 
       placeNode(focusedNode, oldFocus -> x, oldFocus -> y, oldFocus -> width, oldFocus -> height);
-    }
 
     placeNode(viewNode, rootX, rootY, rootWidth, rootHeight);
 
