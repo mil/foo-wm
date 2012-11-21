@@ -70,16 +70,13 @@ void eDestroyNotify(XEvent *event) {
 }
 
 void eConfigureRequest(XEvent *e) {
-
   /* Structed From DWM */
   XConfigureRequestEvent *ev = &e->xconfigurerequest;
   Node *configuredNode = getNodeByWindow(&ev->window);
 
-  if (!configuredNode) return;
-
   XWindowChanges wc;
-  wc.x = configuredNode -> x; 
-  wc.y = configuredNode -> y;
+  wc.x = configuredNode ? configuredNode -> x : ev -> x; 
+  wc.y = configuredNode ? configuredNode -> y : ev -> y;
   wc.width = ev->width;       
   wc.height = ev->height;
   wc.border_width = ev->border_width;
@@ -87,10 +84,12 @@ void eConfigureRequest(XEvent *e) {
   wc.stack_mode = ev->detail;
   XConfigureWindow(display, ev->window, ev->value_mask, &wc);
 
-  placeNode(configuredNode, 
+  if (configuredNode)
+    placeNode(configuredNode, 
       configuredNode -> x, configuredNode -> y,
       configuredNode -> width, configuredNode -> height);
 
+  XSync(display, False);
 }
 
 void eResizeRequest(XEvent *event) {
