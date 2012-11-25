@@ -28,10 +28,10 @@ At any given time using `foo-wm` there are three essential nodes within the tree
 
 1. **Root** Node
     - The top of the tree
-    - Issuing a zoom command with a negative &Delta; approximates this node
+    - Issuing a zoom command with a negative delta approximates this node
 2. **Focus** Node
     - The node which is currently manipulated on by using IPC commands
-    - Issuing a zoom command with a positive &Delta; approximates  this node
+    - Issuing a zoom command with a positive delta approximates  this node
 3. **View** Node
     - The node which the screen is currently viewing
 
@@ -82,22 +82,22 @@ Updates the layout of the current container. Currenly only vertical and horizont
 
 ### zoom 
 **Usage:**
-`zoom -+&Delta;`
+`zoom -+delta`
 
-Controls the view of the screen. Using zoom with a negative &Delta; will zoom out based on the current view node. Using zoom with a positive number will zoom the screen in one level closer to the focused node.
+Controls the view of the screen. Using zoom with a negative delta will zoom out based on the current view node. Using zoom with a positive number will zoom the screen in one level closer to the focused node.
 
 ### focus 
 **Usage:**
-`focus brother|pc -+&Delta;`
+`focus brother|pc -+delta`
 `focus direction left|up|right|down`
 
 The focus command switches the node which is currently focused.
 
 ### shift 
 **Usage:**
-`shift brother|pc -+ &Delta;`
+`shift brother|pc -+ delta`
 
-Shift the currently focused node. This wraps around if you attempt to move to a node that doesn't exist. Note, shifting to a positive pc won't do anything, shift pc should only be used with a negative &Delta; to shift a client up toward its parent.
+Shift the currently focused node. This wraps around if you attempt to move to a node that doesn't exist. Note, shifting to a positive pc won't do anything, shift pc should only be used with a negative delta to shift a client up toward its parent.
 
 ### containerize
 **Usage:**
