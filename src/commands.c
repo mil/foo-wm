@@ -22,6 +22,10 @@ char * handleCommand(char * request) {
 
   char * response = "Some arbitrary response back to the socket\0";
 
+  if (!strcmp(tokens[0], "dimensions"))
+    dimensions(tokens[1], tokens[2]);
+
+
   if (!strcmp(tokens[0], "absorb"))
     absorb(tokens[1], tokens[2]);
   if (!strcmp(tokens[0], "containerize"))
@@ -68,6 +72,16 @@ char * nextToken(char ** tokenString) {
 /* -----------------------------------------------------------------------------
  * IPC Commands 
  * ---------------------------------------------------------------------------*/
+void dimensions(char * w, char * h) {
+  int width  = atoi(w);
+  int height = atoi(h);
+  rootNode -> x = rootX = screenPaddingLeft;
+  rootNode -> y = rootY = screenPaddingTop;
+  rootNode -> width = rootWidth = width - screenPaddingLeft - screenPaddingRight;
+  rootNode -> height = rootHeight = height - screenPaddingTop - screenPaddingBottom;
+}
+
+
 void absorb(char * argA, char * argB) {
   /* Absorbs the given node into the container of the focused node 
    * If the focused node is a client, containerize will be called then absorb
