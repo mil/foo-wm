@@ -69,16 +69,18 @@ screen_padding_bottom (integer)
 **Usage:**
 `layout vertical|horizontal|grid|max|tabbed|float|freefloat`
 
-- `vertical`: Children are arranged side by side vertically
-- `horizontal`: Children are arranged horizontally
-- `grid`: Children are arranged to be equal size in a grid	
-- `max`: One child takes up the full view of the container 
--   * The other children are hidden
-- `tabbed`: Exactly like Max, only there is a visual tab indication
-- `float`: Clients are floated, but bound by the container
-- `freefloat`: Clients are free to float, even on top of the current view
-
 Updates the layout of the current container. Currenly only vertical and horizontal layouts are supported, although future layouts planned include: floating, max, and tabbed.
+
+* Layout Options
+    - Currently Implemented
+        * `vertical`: Children are arranged side by side vertically
+        * `horizontal`: Children are arranged horizontally
+        * `grid`: Children are arranged to be equal size in a grid	
+        * `max`: One child takes up the full view of the container, other children hidden
+    * Planned Implementation
+        * `tabbed`: Exactly like Max, only there is a visual tab indication
+        * `float`: Clients are floated, but bound by the container
+        * `freefloat`: Clients are free to float, even on top of the current view
 
 ### zoom 
 **Usage:**
@@ -89,7 +91,6 @@ Controls the view of the screen. Using zoom with a negative delta will zoom out 
 ### focus 
 **Usage:**
 `focus brother|pc -+delta`
-`focus direction left|up|right|down`
 
 The focus command switches the node which is currently focused.
 
