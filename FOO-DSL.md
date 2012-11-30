@@ -10,7 +10,7 @@ Gets a json representation of the tree with the parent being the `nodeIdentifier
     * `view`
     * `focus`
 
-#### > `set` `propertyName propertyValue`
+## `set` `propertyName propertyValue`
 Sets an global `propertyName` to `propertyValue`.  For example to make clients border width 30 pixels simply issue a `set client_border_width 30`. The screen_padding_direction globals can be used to make room for a bar such as [dzen](), [conky](), [bar](), or similar minimal X bars.
 
 - *Properties Names and Types*:
@@ -22,16 +22,14 @@ Sets an global `propertyName` to `propertyValue`.  For example to make clients b
     * `screen_padding_right` : (integer)
     * `screen_padding_bottom` : (integer)
 
-## Zooming around the Tree with the **ViewNode**
-#### > `zoom delta`
+## `zoom delta`
 Given that the **View Node** tracks what is currently on the screen, you can zoom in and out to see the full tree or only a part of the tree by simply by manipulating the **View Node**. `zoom -1000` would zoom out or travel up a thousand levels in ancestory within the tree. `zoom 3` would zoom in 3 levels. 
 
 In foo-wm there is no fullscreen command, rather issuing zoom until the **View Node** hits the **Focus Node** is equivilant going "fullscreen". Functionality of a fullscreen kind of action can be easily implemented to jump back and forth in maximizing 1 window and then traveling back to a "zoomed out" view via scripting and the get command.
 
 
-## Manipulating the **Focus Node**
-#### > `layout type`
-Sets the layout type of the focus node. This is useful for displaying certain windows within a container node. For example, `layout vertical` tiles nodes vertically.
+## `layout type`
+Manipulates the **Focus Node**. Sets the layout type of the focus node. This is useful for displaying certain windows within a container node. For example, `layout vertical` tiles nodes vertically.
 
 * Layout Options
     - Currently Implemented
@@ -44,34 +42,29 @@ Sets the layout type of the focus node. This is useful for displaying certain wi
         * `float`: Clients are floated, but bound by the container
         * `freefloat`: Clients are free to float, even on top of the current view
 
-
-### focus 
-#### > **Usage:**
 `focus brother|pc -+delta`
 
 Changes the `focus node`, selection via brother or pc will approximate the current location of the focus node.
 
-### shift 
+## `shift`
 **Usage:**
 `shift brother|pc -+ delta`
 
 Shift the currently focused node. This wraps around if you attempt to move to a node that doesn't exist. Note, shifting to a positive pc won't do anything, shift pc should only be used with a negative delta to shift a client up toward its parent.
 
-### containerize
+## `containerize`
 **Usage:**
 `containerize`
 
 If the current client is in a container with 2 or more other clients, containerize creates  new container and parents the current client into this new container.
 
-### kill
+## `kill`
 **Usage:**
 `kill`
 
 Kills the currently focused node (and any nodes that are the focused node's children).
 
-
-## Marking and Jumping 
-### mark
+## mark
 **Usage:**
 `mark markName`
 
@@ -82,12 +75,3 @@ Marks the current View Node. The viewnode may be restored with the `jump` comman
 `jump markName`
 
 Jumps to the predefined marked node.
-
-Inspiration
------------
-Inspirations include: 
-DWM, monsterwm, catwm, dminiwm, i3, herbstluftwm, wmii, and tinywm
-
-Contributing
-------------
-Foo Window Manager is very much open to contribution. Please get in touch via email if you are interested or just take a stab at something in `TODO.md` and send a pull request.
