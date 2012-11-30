@@ -63,10 +63,12 @@ Sets an global `propertyName` to `propertyValue`.  For example to make clients b
     * `screen_padding_right` : (integer)
     * `screen_padding_bottom` : (integer)
 
-## Commands For Manipulating the **View Node**
-### zoom 
+## Zooming around the Tree with the **ViewNode**
+### > zoom 
 **Usage:**
 `zoom -+delta`
+
+Given that the **View Node** tracks what is currently on the screen, you can zoom in and out to see the tree simply by manipulating the **View Node** of this node. `zoom -1000` would zoom out a thousand levels vertically within the tree.
 
 Controls the view of the screen. Using zoom with a negative delta will zoom out based on the current view node. Using zoom with a positive number will zoom the screen in one level closer to the focused node.
 
