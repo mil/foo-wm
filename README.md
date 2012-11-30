@@ -44,16 +44,18 @@ All user interaction with `foo-wm` takes place through its IPC via the socket `f
 In understanding foo-wm it is always good to be thinking about the current "state" of the tree. All commands within foo-wm serve a purpose of nothing more than manipulating the tree.
 
 #### `get` `nodeIdentifier`
-- `get tree`
-- Gets a json representation of the tree with the parent being the `nodeIdentifier`.
-- Node Identifiers:
+`get tree`
+Gets a json representation of the tree with the parent being the `nodeIdentifier`.
+
+- *Node Identifiers*:
     * `tree`
     * `view`
     * `focus`
 
 #### `set` `propertyName propertyValue`
-- `set client_padding 10`
-- Properties:
+`set client_padding 10`
+
+- *Properties Names and Types*:
     * `client_border_width` : (integer)
     * `container_padding` : (integer)
     * `client_padding` : (integer)
