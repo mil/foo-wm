@@ -40,6 +40,7 @@ The Foo-WM IPC DSL Commands
 ---------------------------
 All user interaction with `foo-wm` takes place through its IPC via the socket `foo-wm` created on start.
 
+## Changing the Globals
 ### get 
 **Usage:**
 `get tree|view|focus`
@@ -64,12 +65,20 @@ screen_padding_left (integer)
 screen_padding_right (integer)
 screen_padding_bottom (integer)
 
+## Manipulating the **View Node**
+### zoom 
+**Usage:**
+`zoom -+delta`
 
+Controls the view of the screen. Using zoom with a negative delta will zoom out based on the current view node. Using zoom with a positive number will zoom the screen in one level closer to the focused node.
+
+
+## Manipulating the **Focus Node**
 ### layout 
 **Usage:**
 `layout vertical|horizontal|grid|max|tabbed|float|freefloat`
 
-Updates the layout of the current container. Currenly only vertical and horizontal layouts are supported, although future layouts planned include: floating, max, and tabbed.
+Sets the layout property of the focus node.
 
 * Layout Options
     - Currently Implemented
@@ -82,17 +91,12 @@ Updates the layout of the current container. Currenly only vertical and horizont
         * `float`: Clients are floated, but bound by the container
         * `freefloat`: Clients are free to float, even on top of the current view
 
-### zoom 
-**Usage:**
-`zoom -+delta`
-
-Controls the view of the screen. Using zoom with a negative delta will zoom out based on the current view node. Using zoom with a positive number will zoom the screen in one level closer to the focused node.
 
 ### focus 
 **Usage:**
 `focus brother|pc -+delta`
 
-The focus command switches the node which is currently focused.
+Changes the `focus node`, selection via brother or pc will approximate the current location of the focus node.
 
 ### shift 
 **Usage:**
@@ -106,6 +110,14 @@ Shift the currently focused node. This wraps around if you attempt to move to a 
 
 If the current client is in a container with 2 or more other clients, containerize creates  new container and parents the current client into this new container.
 
+### kill
+**Usage:**
+`kill`
+
+Kills the currently focused node (and any nodes that are the focused node's children).
+
+
+## Marking and Jumping 
 ### mark
 **Usage:**
 `mark markName`
@@ -117,12 +129,6 @@ Marks the current View Node. The viewnode may be restored with the `jump` comman
 `jump markName`
 
 Jumps to the predefined marked node.
-
-### kill
-**Usage:**
-`kill`
-
-Kills the currently focused node (and any nodes that are the focused node's children).
 
 Inspiration
 -----------
