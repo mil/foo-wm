@@ -64,21 +64,15 @@ Sets an global `propertyName` to `propertyValue`.  For example to make clients b
     * `screen_padding_bottom` : (integer)
 
 ## Zooming around the Tree with the **ViewNode**
-### > zoom 
-**Usage:**
-`zoom -+delta`
+#### > `zoom delta`
+Given that the **View Node** tracks what is currently on the screen, you can zoom in and out to see the full tree or only a part of the tree by simply by manipulating the **View Node**. `zoom -1000` would zoom out or travel up a thousand levels in ancestory within the tree. `zoom 3` would zoom in 3 levels. 
 
-Given that the **View Node** tracks what is currently on the screen, you can zoom in and out to see the tree simply by manipulating the **View Node** of this node. `zoom -1000` would zoom out a thousand levels vertically within the tree.
-
-Controls the view of the screen. Using zoom with a negative delta will zoom out based on the current view node. Using zoom with a positive number will zoom the screen in one level closer to the focused node.
+In foo-wm there is no fullscreen command, rather issuing zoom until the **View Node** hits the **Focus Node** is equivilant going "fullscreen". Functionality of a fullscreen kind of action can be easily implemented to jump back and forth in maximizing 1 window and then traveling back to a "zoomed out" view via scripting and the get command.
 
 
 ## Manipulating the **Focus Node**
-### layout 
-**Usage:**
-`layout vertical|horizontal|grid|max|tabbed|float|freefloat`
-
-Sets the layout property of the focus node.
+#### > `layout type`
+Sets the layout type of the focus node. This is useful for displaying certain windows within a container node. For example, `layout vertical` tiles nodes vertically.
 
 * Layout Options
     - Currently Implemented
@@ -93,7 +87,7 @@ Sets the layout property of the focus node.
 
 
 ### focus 
-**Usage:**
+#### > **Usage:**
 `focus brother|pc -+delta`
 
 Changes the `focus node`, selection via brother or pc will approximate the current location of the focus node.
