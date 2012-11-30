@@ -2,7 +2,7 @@ Foo DSL
 ======
 The Foo DSL is foo-wm's set of commands which are accepted from the socket.
 
-# `get` `nodeIdentifier`
+## `get` `nodeIdentifier`
 Gets a json representation of the tree with the parent being the `nodeIdentifier`. For example to get the JSON from what's visible do a: `get tree`. Or get the currently focused window do a `get focus`.
 
 - *Node Identifiers*:
