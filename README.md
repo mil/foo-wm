@@ -41,8 +41,7 @@ The Foo-WM IPC DSL Commands
 All user interaction with `foo-wm` takes place through its IPC via the socket `foo-wm` created on start.
 
 ## Changing the Globals
-### get 
-**Usage:**
+#### `get` Command
 `get tree|view|focus`
 
 Gets data from the WM.
@@ -51,7 +50,7 @@ tree (returns json tree starting from root node)
 view (returns json tree starting from view node)
 focus (returns json tree starting from focus node)
 
-### set 
+#### set 
 **Usage:**
 `set client_padding 10`
 
