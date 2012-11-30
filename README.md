@@ -43,7 +43,7 @@ All user interaction with `foo-wm` takes place through its IPC via the socket `f
 ## Getting the Foo-WM tree in JSON
 In understanding foo-wm it is always good to be thinking about the current "state" of the tree. All commands within foo-wm serve a purpose of nothing more than manipulating the tree.
 
-#### `get` `nodeIdentifier`
+#### > `get` `nodeIdentifier`
 Gets a json representation of the tree with the parent being the `nodeIdentifier`. For example to get the JSON from what's visible do a: `get tree`. Or get the currently focused window do a `get focus`.
 
 - *Node Identifiers*:
@@ -51,7 +51,7 @@ Gets a json representation of the tree with the parent being the `nodeIdentifier
     * `view`
     * `focus`
 
-#### `set` `propertyName propertyValue`
+#### > `set` `propertyName propertyValue`
 Sets an global `propertyName` to `propertyValue`.  For example to make clients border width 30 pixels simply issue a `set client_border_width 30`. The screen_padding_direction globals can be used to make room for a bar such as [dzen](), [conky](), [bar](), or similar minimal X bars.
 
 - *Properties Names and Types*:
