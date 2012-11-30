@@ -40,31 +40,29 @@ The Foo-WM IPC DSL Commands
 ---------------------------
 All user interaction with `foo-wm` takes place through its IPC via the socket `foo-wm` created on start.
 
-## Changing the Globals
-#### `get` Command
-`get tree|view|focus`
+## Getting the Foo-WM tree in JSON
+In understanding foo-wm it is always good to be thinking about the current "state" of the tree. All commands within foo-wm serve a purpose of nothing more than manipulating the tree.
 
-Gets data from the WM.
-*Gettable Properties*:
-tree (returns json tree starting from root node)
-view (returns json tree starting from view node)
-focus (returns json tree starting from focus node)
+#### `get` `nodeIdentifier`
+- Example => `get tree`
+- Gets a json representation of the tree with the parent being the `nodeIdentifier`.
+- Node Identifiers:
+    * `tree`
+    * `view`
+    * `focus`
 
-#### set 
-**Usage:**
-`set client_padding 10`
+#### `set` `propertyName propertyValue`
+- Example => `set client_padding 10`
+- Properties:
+    * `client_border_width` : (integer)
+    * `container_padding` : (integer)
+    * `client_padding` : (integer)
+    * `screen_padding_top` : (integer)
+    * `screen_padding_left` : (integer)
+    * `screen_padding_right` : (integer)
+    * `screen_padding_bottom` : (integer)
 
-Sets WM data.
-*Settable Properties*:
-client_border_width (integer)
-container_padding (integer)
-client_padding (integer)
-screen_padding_top (integer)
-screen_padding_left (integer)
-screen_padding_right (integer)
-screen_padding_bottom (integer)
-
-## Manipulating the **View Node**
+## Commands For Manipulating the **View Node**
 ### zoom 
 **Usage:**
 `zoom -+delta`
