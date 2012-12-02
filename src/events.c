@@ -18,14 +18,8 @@ void eMapRequest(XEvent *event) {
   Node *newNode = allocateNode();
   newNode -> window = event -> xmaprequest.window;
 
-  /* For Click to Focus */
-  XGrabButton(display, AnyButton, AnyModifier, newNode -> window,
-      True, ButtonPressMask | ButtonReleaseMask, GrabModeAsync, GrabModeSync,
-      None, None);
-
   //Containerize and move the viewNode
   if (focusedNode == viewNode) {
-    fprintf(stderr, "Focused node is equal to the viewnode\n");
     containerize();
     viewNode = viewNode -> parent ? viewNode -> parent : viewNode;
 
@@ -42,17 +36,11 @@ void eMapRequest(XEvent *event) {
         focusedNode -> parent -> width, focusedNode -> parent -> height);
   } else {
     //No focus node, fist element created
-    fprintf(stderr, "FIRST NODE YO\n");
-
     parentNode(newNode, viewNode);
   }
 
-  fprintf(stderr, "\n\nAFTA\n\n");
-
   addLookupEntry(newNode, &newNode -> window);
-  fprintf(stderr, "added the lookup entry\n");
   focusNode(newNode, NULL, True, True);
-  fprintf(stderr, "done with the map request\n");
 }
 
 void eDestroyNotify(XEvent *event) {
@@ -97,11 +85,8 @@ void eResizeRequest(XEvent *event) {
 }
 
 void eButtonPress(XEvent *event) {
-  fprintf(stderr, "Button Event Window is %p\n", &(event -> xbutton.window));
-
   // Root Window
   if (event -> xbutton.window == None) return;
-
   // Click to Focus
   focusNode(getNodeByWindow(&(event -> xbutton.window)), event, True, True);
 }

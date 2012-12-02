@@ -46,9 +46,16 @@ char * handleCommand(char * request) {
     swap(tokens[1], tokens[2]);
   else if (!strcmp(tokens[0], "zoom"))
     zoom(atoi(tokens[1]));
+  else if (!strcmp(tokens[0], "test"))
+    test();
 
   XFlush(display);
   return response;
+}
+
+void test() {
+  rePlaceNode(viewNode);
+  focusNode(viewNode, NULL, True, True);
 }
 
 
@@ -136,26 +143,8 @@ char * get(char * property) {
 }
 
 void kill(void) {
-  fprintf(stderr, "Destroying Client %p\n", focusedNode);
-
-  if (isClient(focusedNode)) {
-
-    /* Save closest client and destroy node */
-    Node *newFocus = getClosestClient(focusedNode);
-
-    if (focusedNode == viewNode) viewNode = viewNode -> parent;
-
-    if ( isOnlyChild(focusedNode) && focusedNode -> parent) {
-      viewNode = focusedNode -> parent -> parent ?
-        focusedNode -> parent -> parent : focusedNode -> parent;
-    }
-
-    Node *oldFocus = focusedNode;
-    focusNode(newFocus, NULL, True, True);
-    destroyNode(oldFocus);
-
-    rePlaceNode(viewNode);
-  }
+  destroyNode(focusedNode);
+  rePlaceNode(viewNode);
 }
 
 void jump(char * markName) {

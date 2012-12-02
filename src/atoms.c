@@ -18,7 +18,11 @@ void sendDeleteWindow(Window * window) {
   dw.xclient.data.l[0]    = icccmAtoms[WmDeleteWindow];
   dw.xclient.data.l[1]    = CurrentTime;
   XSendEvent(display, *window, False, NoEventMask, &dw);
+}
 
+void setNetActive(Window * window) {
+  XChangeProperty(display, root, ewmhAtoms[NetActive], 
+      XA_WINDOW, 32, PropModeReplace, (unsigned char *) window, 1);
 }
 
 
@@ -29,6 +33,16 @@ void setupAtoms(void) {
       display, "WM_PROTOCOLS", False);
   icccmAtoms[WmDeleteWindow] = XInternAtom(
       display, "WM_DELETE_WINDOW", False);
+
+  // Setup EWMH Atoms for:
+  // _NET_WM_SUPPORTED & _NET_ACTIVE_WINDOW
+  ewmhAtoms[NetSupported] = XInternAtom(
+      display, "_NET_SUPPORTED", False);
+  ewmhAtoms[NetActive] = XInternAtom(
+      display, "_NET_ACTIVE_WINDOW", False);
+
+  XChangeProperty(display, root, ewmhAtoms[NetSupported], 
+      XA_ATOM, 32, PropModeReplace, (unsigned char *) ewmhAtoms, NetCount);
 
   XSync(display, False);
 }
