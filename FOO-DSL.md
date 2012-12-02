@@ -22,13 +22,13 @@ Sets an global `propertyName` to `propertyValue`.  For example to make clients b
     * `screen_padding_right` : (integer)
     * `screen_padding_bottom` : (integer)
 
-## `zoom delta`
+## `zoom` `delta`
 Given that the **View Node** tracks what is currently on the screen, you can zoom in and out to see the full tree or only a part of the tree by simply by manipulating the **View Node**. `zoom -1000` would zoom out or travel up a thousand levels in ancestory within the tree. `zoom 3` would zoom in 3 levels. 
 
 In foo-wm there is no fullscreen command, rather issuing zoom until the **View Node** hits the **Focus Node** is equivilant going "fullscreen". Functionality of a fullscreen kind of action can be easily implemented to jump back and forth in maximizing 1 window and then traveling back to a "zoomed out" view via scripting and the get command.
 
 
-## `layout type`
+## `layout` `type`
 Manipulates the **Focus Node**. Sets the layout type of the focus node. This is useful for displaying certain windows within a container node. For example, `layout vertical` tiles nodes vertically.
 
 * Layout Options
@@ -42,36 +42,20 @@ Manipulates the **Focus Node**. Sets the layout type of the focus node. This is 
         * `float`: Clients are floated, but bound by the container
         * `freefloat`: Clients are free to float, even on top of the current view
 
-`focus brother|pc -+delta`
+## `focus`  `brother|pc -+delta`
+Sets the **Focus Node**, in the form `brother|pc -+delta` approximating the current node. Good for shifting focus around. For example, get the focus' brother, simply issue `focus brother 1` or to select the **Focus Node **'s parent, do a `focus pc -1`.
 
-Changes the `focus node`, selection via brother or pc will approximate the current location of the focus node.
-
-## `shift`
-**Usage:**
-`shift brother|pc -+ delta`
-
-Shift the currently focused node. This wraps around if you attempt to move to a node that doesn't exist. Note, shifting to a positive pc won't do anything, shift pc should only be used with a negative delta to shift a client up toward its parent.
+## `shift` `brother|pc -+delta`
+Shift the current **Focus Node** in . This wraps around if you attempt to move to a node that doesn't exist. Note, shifting to a positive pc won't do anything, shift pc should only be used with a negative delta to shift a client up toward its parent.
 
 ## `containerize`
-**Usage:**
-`containerize`
-
-If the current client is in a container with 2 or more other clients, containerize creates  new container and parents the current client into this new container.
+If the current client is in a container with 2 or more other clients, containerize creates a new container and parents the current client into this new container. Syntax is just `containerize` with no arguments.
 
 ## `kill`
-**Usage:**
-`kill`
+Kills the **Focus Node** and any of its children. Simply issue `kill` to eliminate the **Focus Node** from the tree.
 
-Kills the currently focused node (and any nodes that are the focused node's children).
+## `mark` `markname`
+Marks the current **View Node**  so that it can later be `jump`'d back to. To mark the current **View Node** at any point: `mark nameOfMark`.
 
-## mark
-**Usage:**
-`mark markName`
-
-Marks the current View Node. The viewnode may be restored with the `jump` command.
-
-### jump
-**Usage:**
-`jump markName`
-
-Jumps to the predefined marked node.
+### `jump` `markname`
+Jumps to the predefined marked node, syntax takes form of `jump markName`.
