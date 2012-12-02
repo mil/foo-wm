@@ -57,5 +57,5 @@ Kills the **Focus Node** and any of its children. Simply issue `kill` to elimina
 ## `mark` `markname`
 Marks the current **View Node**  so that it can later be `jump`'d back to. To mark the current **View Node** at any point: `mark nameOfMark`.
 
-### `jump` `markname`
+## `jump` *`markname`*
 Jumps to the predefined marked node, syntax takes form of `jump markName`.
