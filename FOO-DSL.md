@@ -10,7 +10,7 @@ Gets a json representation of the tree with the parent being the `nodeIdentifier
     * `view`
     * `focus`
 
-## `set` *`propertyName`* *`propertyValue`*
+## `set` *`propertyName` `propertyValue`*
 Sets an global `propertyName` to `propertyValue`.  For example to make clients border width 30 pixels simply issue a `set client_border_width 30`. The screen_padding_direction globals can be used to make room for a bar such as [dzen](), [conky](), [bar](), or similar minimal X bars.
 
 - *Properties Names and Types*:
@@ -42,10 +42,10 @@ Manipulates the **Focus Node**. Sets the layout type of the focus node. This is 
         * `float`: Clients are floated, but bound by the container
         * `freefloat`: Clients are free to float, even on top of the current view
 
-## `focus`  *`brother|pc`* *`-+delta`*
+## `focus`  *`brother|pc` `-+delta`*
 Sets the **Focus Node**, in the form `brother|pc -+delta` approximating the current node. Good for shifting focus around. For example, get the focus' brother, simply issue `focus brother 1` or to select the **Focus Node **'s parent, do a `focus pc -1`.
 
-## `shift` *`brother|pc`* *`-+delta`*
+## `shift` *`brother|pc` `-+delta`*
 Shift the current **Focus Node** in . This wraps around if you attempt to move to a node that doesn't exist. Note, shifting to a positive pc won't do anything, shift pc should only be used with a negative delta to shift a client up toward its parent.
 
 ## `containerize`
