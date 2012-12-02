@@ -42,14 +42,14 @@ Manipulates the **Focus Node**. Sets the layout type of the focus node. This is 
         * `float`: Clients are floated, but bound by the container
         * `freefloat`: Clients are free to float, even on top of the current view
 
-## `focus`  *`brother|pc` `-+delta`*
-Sets the **Focus Node**, in the form `brother|pc -+delta` approximating the current node. Good for shifting focus around. For example, get the focus' brother, simply issue `focus brother 1` or to select the **Focus Node **'s parent, do a `focus pc -1`.
+## `focus`  *`brother|pc` `(-)delta`*
+Sets the **Focus Node**, approximating the current **Focus Node**. Good for shifting focus around. For example, to get the focus' brother next in its parent container, simply issue `focus brother 1` or to select the **Focus Node **'s parent, do a `focus pc -1`.
 
-## `shift` *`brother|pc` `-+delta`*
+## `shift` *`brother|pc` `(-)delta`*
 Shift the current **Focus Node** in . This wraps around if you attempt to move to a node that doesn't exist. Note, shifting to a positive pc won't do anything, shift pc should only be used with a negative delta to shift a client up toward its parent.
 
 ## `containerize`
-If the current client is in a container with 2 or more other clients, containerize creates a new container and parents the current client into this new container. Syntax is just `containerize` with no arguments.
+If the current **Focus Node** is not an only child, containerize creates a container in place of the currrent **Focus Node**, reparent the old **Focus Node** to this container, and then focuses this child.
 
 ## `kill`
 Kills the **Focus Node** and any of its children. Simply issue `kill` to eliminate the **Focus Node** from the tree.
@@ -58,4 +58,4 @@ Kills the **Focus Node** and any of its children. Simply issue `kill` to elimina
 Marks the current **View Node**  so that it can later be `jump`'d back to. To mark the current **View Node** at any point: `mark nameOfMark`.
 
 ## `jump` *`markname`*
-Jumps to the predefined marked node, syntax takes form of `jump markName`.
+Sets the **View Node** set by `mark` at **Mark Name**. Simple syntax of `jump markName`.
