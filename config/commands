@@ -1,16 +1,20 @@
 dump
 jump
 mark
+kill
+containerize
 zoom
+focus
+focus brother
+focus pc
+shift
+shift brother
+shift pc
 layout
 layout grid 
 layout horizontal 
 layout vertical
 layout max
-view child 
-view parent
-containerize
-kill client
 set
 set client_border_width
 set container_padding
