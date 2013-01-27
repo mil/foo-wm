@@ -36,92 +36,13 @@ At any given time using `foo-wm` there are three essential nodes within the tree
     - The node which the screen is currently viewing
 
 
-The Foo-WM IPC DSL Commands
+The FOO-DSL and the Zooming Nature
 ---------------------------
-All user interaction with `foo-wm` takes place through its IPC via the socket `foo-wm` created on start.
+Now that you understand that all foo-wm does is maintain a tree of windows, now you'll want to know how to mainuplate the windows in the tree. For this, you simply send commands to foo-wm in the specifications provided in `FOO-DSL.md`. 
 
-### get 
-**Usage:**
-`get tree|view|focus`
+For example, sending the zoom command through the provided command line client. 
+`foo-wm-c '/tmp/foo-wm.socket' 'zoom 2'`
 
-Gets data from the WM.
-*Gettable Properties*:
-tree (returns json tree starting from root node)
-view (returns json tree starting from view node)
-focus (returns json tree starting from focus node)
-
-### set 
-**Usage:**
-`set client_padding 10`
-
-Sets WM data.
-*Settable Properties*:
-client_border_width (integer)
-container_padding (integer)
-client_padding (integer)
-screen_padding_top (integer)
-screen_padding_left (integer)
-screen_padding_right (integer)
-screen_padding_bottom (integer)
-
-
-### layout 
-**Usage:**
-`layout vertical|horizontal|grid|max|tabbed|float|freefloat`
-
-- `vertical`: Children are arranged side by side vertically
-- `horizontal`: Children are arranged horizontally
-- `grid`: Children are arranged to be equal size in a grid	
-- `max`: One child takes up the full view of the container 
--   * The other children are hidden
-- `tabbed`: Exactly like Max, only there is a visual tab indication
-- `float`: Clients are floated, but bound by the container
-- `freefloat`: Clients are free to float, even on top of the current view
-
-Updates the layout of the current container. Currenly only vertical and horizontal layouts are supported, although future layouts planned include: floating, max, and tabbed.
-
-### zoom 
-**Usage:**
-`zoom -+delta`
-
-Controls the view of the screen. Using zoom with a negative delta will zoom out based on the current view node. Using zoom with a positive number will zoom the screen in one level closer to the focused node.
-
-### focus 
-**Usage:**
-`focus brother|pc -+delta`
-`focus direction left|up|right|down`
-
-The focus command switches the node which is currently focused.
-
-### shift 
-**Usage:**
-`shift brother|pc -+ delta`
-
-Shift the currently focused node. This wraps around if you attempt to move to a node that doesn't exist. Note, shifting to a positive pc won't do anything, shift pc should only be used with a negative delta to shift a client up toward its parent.
-
-### containerize
-**Usage:**
-`containerize`
-
-If the current client is in a container with 2 or more other clients, containerize creates  new container and parents the current client into this new container.
-
-### mark
-**Usage:**
-`mark markName`
-
-Marks the current View Node. The viewnode may be restored with the `jump` command.
-
-### jump
-**Usage:**
-`jump markName`
-
-Jumps to the predefined marked node.
-
-### kill
-**Usage:**
-`kill`
-
-Kills the currently focused node (and any nodes that are the focused node's children).
 
 Inspiration
 -----------
