@@ -65,7 +65,7 @@ char * jsonTree(Node * node, int level) {
   /* Print to the buffer */
   sprintf(buffer,
       /* Type (Pointer) (?Layout) (?R/V/F) (?ChildFocus) */
-      "{ \"node\":\"%p\",\"id\":\"%d\",\"type\":\"%s\"%s%s%s%s,\"focus\":\"%p\",\"children\":[%s]}",
+      "{ \"node\":\"%p\",\"id\":\"%p\",\"type\":\"%s\"%s%s%s%s,\"focus\":\"%p\",\"children\":[%s]}",
       node,
       node -> window,
       isClient(node) ? "client" : "container",
