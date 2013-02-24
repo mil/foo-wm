@@ -27,6 +27,7 @@ char * jsonMarks(void) {
 
 
 char * jsonTree(Node * node, int level) {
+  if (!node) return "Foo";
   char 
     *buffer = malloc(5120),
     *label = "", 
